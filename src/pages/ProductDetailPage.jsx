@@ -565,30 +565,38 @@ function FrequentlyBoughtTogether({ product }) {
               onChange={() => handleItemToggle(0)}
               className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
             />
-            <img
-              src={product.images[0]}
-              alt={product.name}
-              className="h-16 w-16 rounded-md object-cover"
-            />
-            <div className="min-w-0 flex-1">
-              <h3 className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                {product.name}
-              </h3>
-              <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                ${product.price}
-              </p>
-              <span className="text-xs text-green-600 dark:text-green-400">
-                ✓ This item
-              </span>
-            </div>
+            <button
+              onClick={() => navigate(`/products/${product.id}`)}
+              className="flex min-w-0 flex-1 items-center space-x-3 rounded-md p-1 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+            >
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                className="h-16 w-16 rounded-md object-cover"
+              />
+              <div className="min-w-0 flex-1">
+                <h3 className="truncate text-sm font-medium text-gray-900 hover:text-primary-600 dark:text-white dark:hover:text-primary-400">
+                  {product.name}
+                </h3>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                  ${product.price}
+                </p>
+                <span className="text-xs text-green-600 dark:text-green-400">
+                  ✓ This item
+                </span>
+              </div>
+            </button>
             <button
               onClick={() => handleFavoriteToggle(0)}
-              className="text-gray-400 hover:text-red-500"
+              className="rounded-full bg-gray-100 p-2 shadow-sm transition-all hover:scale-110 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+              aria-label={
+                favoriteItems[0] ? 'Remove from favorites' : 'Add to favorites'
+              }
             >
               {favoriteItems[0] ? (
                 <HeartSolidIcon className="h-5 w-5 text-red-500" />
               ) : (
-                <HeartIcon className="h-5 w-5" />
+                <HeartIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               )}
             </button>
           </div>
@@ -606,43 +614,48 @@ function FrequentlyBoughtTogether({ product }) {
                 disabled={!item.inStock}
                 className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
               />
-              <img
-                src={item.image}
-                alt={item.name}
-                className="h-16 w-16 rounded-md object-cover"
-              />
-              <div className="min-w-0 flex-1">
-                <h3 className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                  {item.name}
-                </h3>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                  ${item.price}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`text-xs ${
-                      item.inStock
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}
-                  >
-                    {item.inStock ? '✓ In stock' : '✗ Out of stock'}
-                  </span>
-                  {item.inStock && (
-                    <button className="text-xs text-primary-600 hover:text-primary-500 dark:text-primary-400">
-                      Add alone
-                    </button>
-                  )}
+              <button
+                onClick={() => navigate(`/products/${item.id}`)}
+                className="flex min-w-0 flex-1 items-center space-x-3 rounded-md p-1 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+              >
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="h-16 w-16 rounded-md object-cover"
+                />
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-sm font-medium text-gray-900 hover:text-primary-600 dark:text-white dark:hover:text-primary-400">
+                    {item.name}
+                  </h3>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                    ${item.price}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`text-xs ${
+                        item.inStock
+                          ? 'text-green-600 dark:text-green-400'
+                          : 'text-red-600 dark:text-red-400'
+                      }`}
+                    >
+                      {item.inStock ? '✓ In stock' : '✗ Out of stock'}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </button>
               <button
                 onClick={() => handleFavoriteToggle(index + 1)}
-                className="text-gray-400 hover:text-red-500"
+                className="rounded-full bg-gray-100 p-2 shadow-sm transition-all hover:scale-110 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                aria-label={
+                  favoriteItems[index + 1]
+                    ? 'Remove from favorites'
+                    : 'Add to favorites'
+                }
               >
                 {favoriteItems[index + 1] ? (
                   <HeartSolidIcon className="h-5 w-5 text-red-500" />
                 ) : (
-                  <HeartIcon className="h-5 w-5" />
+                  <HeartIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                 )}
               </button>
             </div>
