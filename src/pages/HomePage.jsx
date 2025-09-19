@@ -1,6 +1,6 @@
 import Hero from '../components/common/Hero'
 import Features from '../components/common/Features'
-import CategoryGrid from '../components/common/CategoryGrid'
+import CategoryGrid from '../components/category/CategoryGrid'
 import FeaturedProducts from '../components/product/FeaturedProducts'
 
 export default function HomePage() {

@@ -50,7 +50,7 @@ export default function CategoryGrid() {
           </h2>
           <Link
             to="/categories"
-            className="hidden text-sm font-medium text-primary-600 hover:text-primary-500 sm:block dark:text-primary-400 dark:hover:text-primary-300"
+            className="hidden text-sm font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 sm:block"
           >
             Browse all categories
             <span aria-hidden="true"> &rarr;</span>
