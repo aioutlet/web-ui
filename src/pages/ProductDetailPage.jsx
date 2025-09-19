@@ -685,6 +685,29 @@ function FrequentlyBoughtTogether({ product }) {
 
 // Reviews Section Component
 function ReviewsSection({ product, reviews }) {
+  const navigate = useNavigate()
+
+  // Calculate rating distribution
+  const calculateRatingDistribution = () => {
+    const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+    reviews.forEach(review => {
+      distribution[review.rating]++
+    })
+
+    // Convert to percentages
+    const total = reviews.length
+    return Object.keys(distribution)
+      .map(rating => ({
+        rating: parseInt(rating),
+        count: distribution[rating],
+        percentage:
+          total > 0 ? Math.round((distribution[rating] / total) * 100) : 0,
+      }))
+      .reverse() // Show 5 stars first
+  }
+
+  const ratingDistribution = calculateRatingDistribution()
+
   const generateGravatar = user => {
     // Simple hash for demo - generates consistent avatars based on username
     const avatars = [
@@ -718,6 +741,77 @@ function ReviewsSection({ product, reviews }) {
             Write a review
           </button>
         </div>
+      </div>
+
+      {/* Detailed Rating Breakdown */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div>
+          <h4 className="text-md mb-4 font-medium text-gray-900 dark:text-white">
+            Rating Breakdown
+          </h4>
+          <div className="space-y-3">
+            {ratingDistribution.map(({ rating, count, percentage }) => (
+              <div key={rating} className="flex items-center space-x-3">
+                <span className="w-6 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {rating}★
+                </span>
+                <div className="h-3 flex-1 rounded-full bg-gray-200 dark:bg-gray-700">
+                  <div
+                    className="h-3 rounded-full bg-yellow-400 transition-all duration-300"
+                    style={{ width: `${percentage}%` }}
+                  ></div>
+                </div>
+                <span className="w-12 text-right text-sm text-gray-600 dark:text-gray-400">
+                  {percentage}%
+                </span>
+                <span className="w-8 text-right text-sm text-gray-500 dark:text-gray-500">
+                  ({count})
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col justify-center">
+          <div className="text-center">
+            <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+              Overall satisfaction
+            </p>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">
+              {product.rating}
+            </div>
+            <div className="mt-1 flex justify-center">
+              <Rating value={product.rating} size="md" />
+            </div>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {product.reviewCount} total reviews
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Gradient Separator Card */}
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary-50 via-primary-100 to-primary-200 p-6 dark:from-primary-900/20 dark:via-primary-800/30 dark:to-primary-700/40">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="h-full w-full bg-gradient-to-br from-primary-600/20 to-transparent" />
+        </div>
+
+        {/* Content */}
+        <div className="relative text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary-600/10 backdrop-blur-sm">
+            <StarIcon className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-primary-900 dark:text-primary-100">
+            Customer Reviews
+          </h3>
+          <p className="mt-1 text-sm text-primary-700 dark:text-primary-300">
+            See what our customers are saying about this product
+          </p>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary-400/20 blur-xl" />
+        <div className="absolute -bottom-4 -left-4 h-20 w-20 rounded-full bg-primary-300/15 blur-xl" />
       </div>
 
       {/* Individual Reviews */}
@@ -770,6 +864,16 @@ function ReviewsSection({ product, reviews }) {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* View All Reviews Button */}
+      <div className="mt-8 text-center">
+        <button
+          onClick={() => navigate(`/products/${product.id}/reviews`)}
+          className="inline-flex items-center rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+        >
+          View All Reviews ({product.reviewCount})
+        </button>
       </div>
     </div>
   )
