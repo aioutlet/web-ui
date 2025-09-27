@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { toggleCart } from '../../store/slices/cartSlice';
+import ThemeToggle from '../ui/ThemeToggle';
 import PropTypes from 'prop-types';
 
 // Icons matching the design
@@ -318,14 +319,14 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center space-x-2">
               <LogoIcon />
-              <span className="text-lg font-semibold text-gray-900">
+              <span className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-200">
                 AIOutlet
               </span>
             </Link>
@@ -344,8 +345,8 @@ const Header = () => {
                   to={item.href}
                   className={`px-1 py-2 text-sm font-medium transition-colors duration-200 relative group ${
                     activeDropdown === item.name
-                      ? 'text-primary-600'
-                      : 'text-gray-700 hover:text-primary-600'
+                      ? 'text-primary-600 dark:text-primary-400'
+                      : 'text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400'
                   }`}
                 >
                   {item.name}
@@ -369,7 +370,7 @@ const Header = () => {
                   >
                     {/* Transparent hover area to keep dropdown open */}
                     <div className="h-2 w-full"></div>
-                    <div className="bg-white">
+                    <div className="bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg transition-colors duration-200">
                       <div className="max-w-7xl mx-auto px-8 pt-6 pb-8">
                         <div
                           className={`grid gap-8 ${
@@ -381,7 +382,7 @@ const Header = () => {
                           {item.dropdown.sections.map(
                             (section, sectionIndex) => (
                               <div key={sectionIndex} className="space-y-3">
-                                <h3 className="text-xs font-semibold text-primary-600 uppercase tracking-wider">
+                                <h3 className="text-xs font-semibold text-primary-600 dark:text-primary-400 uppercase tracking-wider transition-colors duration-200">
                                   {section.title}
                                 </h3>
                                 <ul className="space-y-1">
@@ -394,8 +395,8 @@ const Header = () => {
                                         to={subItem.href}
                                         className={`transition-colors duration-150 text-sm py-1 relative group inline-block ${
                                           subItem.isBrowseAll
-                                            ? 'text-primary-600 font-semibold hover:text-primary-700'
-                                            : 'text-gray-600 hover:text-primary-600'
+                                            ? 'text-primary-600 dark:text-primary-400 font-semibold hover:text-primary-700 dark:hover:text-primary-300'
+                                            : 'text-gray-600 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400'
                                         }`}
                                         onClick={() => setActiveDropdown(null)}
                                       >
@@ -422,7 +423,7 @@ const Header = () => {
             {/* Search */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-full transition-all duration-200"
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-all duration-200"
               aria-label="Search"
             >
               <SearchIcon />
@@ -430,7 +431,7 @@ const Header = () => {
 
             {/* User Account */}
             <button
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-full transition-all duration-200"
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-all duration-200"
               aria-label={
                 isAuthenticated ? `Account for ${user?.name}` : 'Sign in'
               }
@@ -441,11 +442,16 @@ const Header = () => {
             {/* Cart */}
             <button
               onClick={handleCartClick}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-full transition-all duration-200 relative"
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-all duration-200 relative"
               aria-label={`Shopping cart with ${totalItems} items`}
             >
               <BasketIcon itemCount={totalItems} />
             </button>
+
+            {/* Theme Toggle */}
+            <div className="hidden sm:block">
+              <ThemeToggle />
+            </div>
 
             {/* Mobile Menu Toggle */}
             <button
@@ -483,7 +489,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white">
+        <div className="md:hidden border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 transition-colors duration-200">
           <div className="px-4 py-4 space-y-1">
             {navigationItems.map(item => (
               <div key={item.name} className="space-y-1">
@@ -492,7 +498,7 @@ const Header = () => {
                   {item.dropdown ? (
                     <button
                       onClick={() => toggleMobileSubmenu(item.name)}
-                      className="flex-1 text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-all duration-200 relative group"
+                      className="flex-1 text-left px-3 py-3 text-base font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-all duration-200 relative group"
                     >
                       {item.name}
                       <span className="absolute bottom-2 left-3 w-0 h-0.5 bg-primary-600 transition-all duration-200 group-hover:w-6"></span>
@@ -535,7 +541,7 @@ const Header = () => {
                   <div className="ml-4 space-y-1 border-l-2 border-primary-100 pl-4">
                     {item.dropdown.sections.map((section, sectionIndex) => (
                       <div key={sectionIndex} className="space-y-2">
-                        <h4 className="text-xs font-semibold text-primary-600 uppercase tracking-wider mt-3 first:mt-1">
+                        <h4 className="text-xs font-semibold text-primary-600 dark:text-primary-400 uppercase tracking-wider mt-3 first:mt-1 transition-colors duration-200">
                           {section.title}
                         </h4>
                         {section.items.map((subItem, subIndex) => (
@@ -547,8 +553,8 @@ const Header = () => {
                               to={subItem.href}
                               className={`block px-2 py-2 text-sm rounded transition-all duration-200 relative group ${
                                 subItem.isBrowseAll
-                                  ? 'text-primary-600 font-semibold hover:text-primary-700 hover:bg-primary-50'
-                                  : 'text-gray-600 hover:text-primary-600 hover:bg-primary-50'
+                                  ? 'text-primary-600 dark:text-primary-400 font-semibold hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800'
+                                  : 'text-gray-600 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-gray-800'
                               }`}
                               onClick={() => {
                                 setIsMobileMenuOpen(false);
