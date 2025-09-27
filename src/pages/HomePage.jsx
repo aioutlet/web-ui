@@ -1,12 +1,14 @@
 import React from 'react';
 import Hero from '../components/home/Hero';
 import ShopByCategory from '../components/home/ShopByCategory';
+import TrendingProducts from '../components/home/TrendingProducts';
 
 const HomePage = () => {
   return (
     <div className="min-h-screen">
       <Hero />
       <ShopByCategory />
+      <TrendingProducts />
 
       {/* Additional Homepage Sections */}
       <div className="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
