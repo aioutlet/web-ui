@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import ContactUsPage from './pages/ContactUsPage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -23,10 +24,8 @@ function App() {
                 element={<ContactUsPage />}
               />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/signup" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/signin" element={<LoginPage />} />
-              {/* 404 Page - Must be the last route */}
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Layout>
