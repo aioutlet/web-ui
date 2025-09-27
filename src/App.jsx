@@ -5,6 +5,7 @@ import { store } from './store';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/layout/Layout';
 import HomePage from './pages/HomePage';
+import ContactUs from './pages/ContactUs';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/customer-service/contact" element={<ContactUs />} />
               {/* Placeholder routes for navigation items */}
               <Route
                 path="/women"

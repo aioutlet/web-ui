@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Hero from '../components/home/Hero';
 import ShopByCategory from '../components/home/ShopByCategory';
 import TrendingProducts from '../components/home/TrendingProducts';
 
 const HomePage = () => {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div>
       <Hero />
