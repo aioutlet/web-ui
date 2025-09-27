@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 // Icons matching the design
 const LogoIcon = () => (
   <svg
-    className="w-6 h-6 text-purple-600"
+    className="w-6 h-6 text-primary-600"
     fill="currentColor"
     viewBox="0 0 24 24"
   >
@@ -63,7 +63,7 @@ const BasketIcon = ({ itemCount }) => (
       />
     </svg>
     {itemCount > 0 && (
-      <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium text-[10px]">
+      <span className="absolute -top-2 -right-2 bg-primary-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium text-[10px]">
         {itemCount}
       </span>
     )}
@@ -344,13 +344,13 @@ const Header = () => {
                   to={item.href}
                   className={`px-1 py-2 text-sm font-medium transition-colors duration-200 relative group ${
                     activeDropdown === item.name
-                      ? 'text-purple-600'
-                      : 'text-gray-700 hover:text-purple-600'
+                      ? 'text-primary-600'
+                      : 'text-gray-700 hover:text-primary-600'
                   }`}
                 >
                   {item.name}
                   <span
-                    className={`absolute bottom-0 left-0 h-0.5 bg-purple-600 transition-all duration-200 ${
+                    className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-200 ${
                       activeDropdown === item.name
                         ? 'w-full'
                         : 'w-0 group-hover:w-full'
@@ -381,7 +381,7 @@ const Header = () => {
                           {item.dropdown.sections.map(
                             (section, sectionIndex) => (
                               <div key={sectionIndex} className="space-y-3">
-                                <h3 className="text-xs font-semibold text-purple-600 uppercase tracking-wider">
+                                <h3 className="text-xs font-semibold text-primary-600 uppercase tracking-wider">
                                   {section.title}
                                 </h3>
                                 <ul className="space-y-1">
@@ -394,13 +394,13 @@ const Header = () => {
                                         to={subItem.href}
                                         className={`transition-colors duration-150 text-sm py-1 relative group inline-block ${
                                           subItem.isBrowseAll
-                                            ? 'text-purple-600 font-semibold hover:text-purple-700'
-                                            : 'text-gray-600 hover:text-purple-600'
+                                            ? 'text-primary-600 font-semibold hover:text-primary-700'
+                                            : 'text-gray-600 hover:text-primary-600'
                                         }`}
                                         onClick={() => setActiveDropdown(null)}
                                       >
                                         {subItem.name}
-                                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-600 transition-all duration-200 group-hover:w-full"></span>
+                                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-200 group-hover:w-full"></span>
                                       </Link>
                                     </li>
                                   ))}
@@ -470,7 +470,7 @@ const Header = () => {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search for products..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
                 autoFocus
               />
               <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -492,19 +492,19 @@ const Header = () => {
                   {item.dropdown ? (
                     <button
                       onClick={() => toggleMobileSubmenu(item.name)}
-                      className="flex-1 text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-all duration-200 relative group"
+                      className="flex-1 text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-all duration-200 relative group"
                     >
                       {item.name}
-                      <span className="absolute bottom-2 left-3 w-0 h-0.5 bg-purple-600 transition-all duration-200 group-hover:w-6"></span>
+                      <span className="absolute bottom-2 left-3 w-0 h-0.5 bg-primary-600 transition-all duration-200 group-hover:w-6"></span>
                     </button>
                   ) : (
                     <Link
                       to={item.href}
-                      className="flex-1 px-3 py-3 text-base font-medium text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-all duration-200 relative group"
+                      className="flex-1 px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-all duration-200 relative group"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.name}
-                      <span className="absolute bottom-2 left-3 w-0 h-0.5 bg-purple-600 transition-all duration-200 group-hover:w-6"></span>
+                      <span className="absolute bottom-2 left-3 w-0 h-0.5 bg-primary-600 transition-all duration-200 group-hover:w-6"></span>
                     </Link>
                   )}
 
@@ -532,10 +532,10 @@ const Header = () => {
 
                 {/* Sub-menu items for mobile - Only show when expanded */}
                 {item.dropdown && mobileExpandedMenu === item.name && (
-                  <div className="ml-4 space-y-1 border-l-2 border-purple-100 pl-4">
+                  <div className="ml-4 space-y-1 border-l-2 border-primary-100 pl-4">
                     {item.dropdown.sections.map((section, sectionIndex) => (
                       <div key={sectionIndex} className="space-y-2">
-                        <h4 className="text-xs font-semibold text-purple-600 uppercase tracking-wider mt-3 first:mt-1">
+                        <h4 className="text-xs font-semibold text-primary-600 uppercase tracking-wider mt-3 first:mt-1">
                           {section.title}
                         </h4>
                         {section.items.map((subItem, subIndex) => (
@@ -547,8 +547,8 @@ const Header = () => {
                               to={subItem.href}
                               className={`block px-2 py-2 text-sm rounded transition-all duration-200 relative group ${
                                 subItem.isBrowseAll
-                                  ? 'text-purple-600 font-semibold hover:text-purple-700 hover:bg-purple-50'
-                                  : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
+                                  ? 'text-primary-600 font-semibold hover:text-primary-700 hover:bg-primary-50'
+                                  : 'text-gray-600 hover:text-primary-600 hover:bg-primary-50'
                               }`}
                               onClick={() => {
                                 setIsMobileMenuOpen(false);
@@ -556,7 +556,7 @@ const Header = () => {
                               }}
                             >
                               {subItem.name}
-                              <span className="absolute bottom-1 left-2 w-0 h-0.5 bg-purple-600 transition-all duration-200 group-hover:w-4"></span>
+                              <span className="absolute bottom-1 left-2 w-0 h-0.5 bg-primary-600 transition-all duration-200 group-hover:w-4"></span>
                             </Link>
                           </div>
                         ))}
