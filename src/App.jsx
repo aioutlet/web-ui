@@ -6,6 +6,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/layout/Layout';
 import HomePage from './pages/HomePage';
 import ContactUs from './pages/ContactUs';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -49,6 +50,8 @@ function App() {
                   </div>
                 }
               />
+              {/* 404 Page - Must be the last route */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
         </Router>

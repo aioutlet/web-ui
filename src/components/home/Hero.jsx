@@ -8,8 +8,8 @@ const Hero = () => {
   const slides = [
     {
       id: 1,
-      title: 'New arrivals are',
-      highlight: 'here',
+      title: 'New arrivals',
+      highlight: 'are here',
       subtitle:
         "The new arrivals have, well, newly arrived. Check out the latest options from our summer small-batch release while they're still in stock.",
       primaryCta: {
@@ -97,10 +97,10 @@ const Hero = () => {
             }`}
           >
             {/* Fixed height container for all slides */}
-            <div className="h-[600px] sm:h-[700px] lg:h-[800px] flex items-center justify-center">
+            <div className="h-[600px] sm:h-[700px] lg:h-[800px]">
               <div className="mx-auto max-w-2xl text-center">
-                {/* Announcement banner */}
-                <div className="hidden sm:mb-8 sm:flex sm:justify-center">
+                {/* Announcement banner - Fixed position at top */}
+                <div className="hidden sm:mb-8 sm:flex sm:justify-center pt-16">
                   <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 dark:text-gray-300 ring-1 ring-gray-900/10 dark:ring-white/10 hover:ring-gray-900/20 dark:hover:ring-white/20 transition-all">
                     Latest collection now available.{' '}
                     <Link
@@ -113,35 +113,37 @@ const Hero = () => {
                   </div>
                 </div>
 
-                {/* Main content */}
-                <div className="text-center">
-                  <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
-                    <span className="text-gray-900 dark:text-white">
-                      {slide.title}
-                    </span>{' '}
-                    <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
-                      {slide.highlight}
-                    </span>
-                  </h1>
-                  <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                    {slide.subtitle}
-                  </p>
+                {/* Main content - Centered in remaining space */}
+                <div className="flex items-center justify-center h-[calc(100%-120px)]">
+                  <div className="text-center">
+                    <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
+                      <span className="text-gray-900 dark:text-white">
+                        {slide.title}
+                      </span>{' '}
+                      <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+                        {slide.highlight}
+                      </span>
+                    </h1>
+                    <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                      {slide.subtitle}
+                    </p>
 
-                  {/* CTA buttons */}
-                  <div className="mt-10 flex items-center justify-center gap-x-6">
-                    <Link
-                      to={slide.primaryCta.link}
-                      className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
-                    >
-                      {slide.primaryCta.text}
-                    </Link>
-                    <Link
-                      to={slide.secondaryCta.link}
-                      className="text-sm font-semibold leading-6 text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                    >
-                      {slide.secondaryCta.text}{' '}
-                      <span aria-hidden="true">→</span>
-                    </Link>
+                    {/* CTA buttons */}
+                    <div className="mt-10 flex items-center justify-center gap-x-6">
+                      <Link
+                        to={slide.primaryCta.link}
+                        className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
+                      >
+                        {slide.primaryCta.text}
+                      </Link>
+                      <Link
+                        to={slide.secondaryCta.link}
+                        className="text-sm font-semibold leading-6 text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                      >
+                        {slide.secondaryCta.text}{' '}
+                        <span aria-hidden="true">→</span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
