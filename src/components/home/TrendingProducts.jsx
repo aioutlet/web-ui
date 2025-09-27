@@ -23,7 +23,7 @@ const TrendingProducts = () => {
       price: 28,
       color: 'Matte Black',
       image:
-        'https://images.unsplash.com/photo-1514228742587-6b1558fcf93a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+        'https://images.unsplash.com/photo-1572119865084-43c285814d63?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
       colors: [
         { name: 'Matte Black', value: '#2D2D2D' },
         { name: 'Cream', value: '#F5F5DC' },
@@ -61,7 +61,7 @@ const TrendingProducts = () => {
   ];
 
   return (
-    <section className="bg-gray-100 dark:bg-gray-800 transition-colors duration-200">
+    <section className="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
@@ -72,7 +72,10 @@ const TrendingProducts = () => {
             to="/products"
             className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm flex items-center space-x-1 group transition-colors duration-200"
           >
-            <span>See everything</span>
+            <span className="relative inline-block">
+              See everything
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 dark:bg-primary-400 group-hover:w-full transition-all duration-200 ease-out"></span>
+            </span>
             <svg
               className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
               fill="none"
@@ -110,8 +113,9 @@ const TrendingProducts = () => {
                     <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                       {product.color}
                     </p>
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 relative inline-block">
                       {product.name}
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 dark:bg-primary-400 group-hover:w-full transition-all duration-200 ease-out"></span>
                     </h3>
                   </div>
 

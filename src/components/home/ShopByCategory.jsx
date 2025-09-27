@@ -41,8 +41,8 @@ const ShopByCategory = () => {
   ];
 
   return (
-    <section className="bg-white dark:bg-gray-900 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <section className="bg-white dark:bg-gray-800 transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white">
@@ -52,7 +52,10 @@ const ShopByCategory = () => {
             to="/categories"
             className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm flex items-center space-x-1 group transition-colors duration-200"
           >
-            <span>Browse all categories</span>
+            <span className="relative inline-block">
+              Browse all categories
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 dark:bg-primary-400 group-hover:w-full transition-all duration-200 ease-out"></span>
+            </span>
             <svg
               className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
               fill="none"
@@ -88,8 +91,9 @@ const ShopByCategory = () => {
 
                 {/* Category Title */}
                 <div className="mt-3 text-center">
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 relative inline-block">
                     {category.title}
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 dark:bg-primary-400 group-hover:w-full transition-all duration-200 ease-out"></span>
                   </h3>
                 </div>
               </Link>

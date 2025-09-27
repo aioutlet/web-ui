@@ -22,6 +22,9 @@ const Hero = () => {
       },
       background:
         'from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900',
+      image:
+        'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      imageAlt: 'Fashion model showcasing new arrivals collection',
     },
     {
       id: 2,
@@ -39,6 +42,10 @@ const Hero = () => {
       },
       background:
         'from-orange-50 to-red-100 dark:from-orange-800 dark:to-red-900',
+      image:
+        'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      imageAlt:
+        'Summer fashion collection with vibrant clothing and accessories',
     },
     {
       id: 3,
@@ -56,6 +63,9 @@ const Hero = () => {
       },
       background:
         'from-blue-50 to-indigo-100 dark:from-blue-800 dark:to-indigo-900',
+      image:
+        'https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      imageAlt: 'Modern tech workspace with devices and gadgets',
     },
   ];
 
@@ -151,34 +161,28 @@ const Hero = () => {
                     {/* Main Product Display */}
                     <div className="relative">
                       {/* Background Cards/Products */}
-                      <div className="absolute -top-4 -right-4 w-48 h-60 bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg shadow-xl transform rotate-6 opacity-60 transition-all duration-1000"></div>
-                      <div className="absolute top-8 right-0 w-48 h-60 bg-gradient-to-br from-gray-500 to-gray-600 rounded-lg shadow-xl transform rotate-3 opacity-80 transition-all duration-1000 delay-200"></div>
+                      <div className="absolute -top-4 -right-4 w-48 h-60 rounded-lg shadow-xl transform rotate-6 opacity-60 transition-all duration-1000 overflow-hidden">
+                        <img
+                          src={slide.image}
+                          alt={slide.imageAlt}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="absolute top-8 right-0 w-48 h-60 rounded-lg shadow-xl transform rotate-3 opacity-80 transition-all duration-1000 delay-200 overflow-hidden">
+                        <img
+                          src={slide.image}
+                          alt={slide.imageAlt}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
 
                       {/* Foreground Product */}
-                      <div className="relative w-48 h-60 bg-gradient-to-br from-gray-400 to-gray-500 rounded-lg shadow-2xl mx-auto transition-all duration-1000 delay-400">
-                        {/* Product placeholder */}
-                        <div className="absolute inset-4 bg-gray-300 rounded-md flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-16 h-16 bg-primary-600 rounded-full mx-auto mb-2 flex items-center justify-center">
-                              <svg
-                                className="w-8 h-8 text-white"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                                />
-                              </svg>
-                            </div>
-                            <span className="text-xs text-gray-700 font-medium">
-                              {slide.title.split(' ')[0]} Product
-                            </span>
-                          </div>
-                        </div>
+                      <div className="relative w-48 h-60 rounded-lg shadow-2xl mx-auto transition-all duration-1000 delay-400 overflow-hidden">
+                        <img
+                          src={slide.image}
+                          alt={slide.imageAlt}
+                          className="w-full h-full object-cover"
+                        />
 
                         {/* Product Details Overlay */}
                         <div className="absolute -bottom-2 -left-2 bg-white rounded-lg px-3 py-2 shadow-lg">
