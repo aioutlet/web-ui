@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ContactUs = () => {
+const ContactUsPage = () => {
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -271,4 +271,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default ContactUsPage;

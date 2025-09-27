@@ -5,8 +5,8 @@ import { store } from './store';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/layout/Layout';
 import HomePage from './pages/HomePage';
-import ContactUs from './pages/ContactUs';
-import NotFound from './pages/NotFound';
+import ContactUsPage from './pages/ContactUsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -16,7 +16,10 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/customer-service/contact" element={<ContactUs />} />
+              <Route
+                path="/customer-service/contact"
+                element={<ContactUsPage />}
+              />
               {/* Placeholder routes for navigation items */}
               <Route
                 path="/women"
@@ -51,7 +54,7 @@ function App() {
                 }
               />
               {/* 404 Page - Must be the last route */}
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Layout>
         </Router>
