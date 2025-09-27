@@ -9,27 +9,31 @@ const ShopByCategory = () => {
       link: '/collections/new-arrivals',
       image:
         'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      description: 'Latest arrivals',
     },
     {
       id: 2,
-      title: 'Productivity',
-      link: '/collections/productivity',
+      title: 'Electronics',
+      link: '/collections/electronics',
       image:
         'https://images.unsplash.com/photo-1586953208448-b95a79798f07?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      description: 'Tech essentials',
     },
     {
       id: 3,
-      title: 'Workspace',
-      link: '/collections/workspace',
+      title: 'Fashion',
+      link: '/collections/fashion',
       image:
         'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      description: 'Style & trends',
     },
     {
       id: 4,
-      title: 'Accessories',
-      link: '/collections/accessories',
+      title: 'Home & Living',
+      link: '/collections/home',
       image:
         'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      description: 'For your space',
     },
     {
       id: 5,
@@ -37,65 +41,68 @@ const ShopByCategory = () => {
       link: '/collections/sale',
       image:
         'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      description: 'Best deals',
     },
   ];
 
   return (
-    <section className="bg-white dark:bg-gray-800 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <section className="relative bg-gray-50 dark:bg-gray-800/50 py-16 sm:py-20">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-purple-50/50 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20" />
+      {/* Connecting gradient for flow */}
+      <div className="absolute -inset-y-8 inset-x-0 bg-gradient-to-b from-pink-50/20 via-transparent to-indigo-50/20 dark:from-pink-900/5 dark:to-indigo-900/5" />
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+        <div className="flex items-center justify-between mb-16">
+          <h2 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white sm:text-xl">
             Shop by Category
           </h2>
           <Link
             to="/categories"
-            className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm flex items-center space-x-1 group transition-colors duration-200"
+            className="inline-flex items-center gap-x-2 text-sm font-semibold leading-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors"
           >
-            <span className="relative inline-block">
-              Browse all categories
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 dark:bg-primary-400 group-hover:w-full transition-all duration-200 ease-out"></span>
-            </span>
+            Browse all categories
             <svg
-              className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
+              className="h-4 w-4"
               fill="none"
-              stroke="currentColor"
               viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
+                d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
               />
             </svg>
           </Link>
         </div>
 
-        {/* Category Grid - Horizontal Layout */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* Category Grid */}
+        <div className="mx-auto grid max-w-2xl auto-rows-fr grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-5">
           {categories.map(category => (
-            <div key={category.id} className="group">
-              <Link to={category.link} className="block">
-                {/* Card Container */}
-                <div className="relative bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden aspect-square hover:shadow-lg transition-all duration-300">
-                  {/* Product Image */}
-                  <img
-                    src={category.image}
-                    alt={category.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
+            <article
+              key={category.id}
+              className="group relative isolate flex flex-col justify-end overflow-hidden rounded-2xl bg-gray-900 px-8 pb-8 pt-80 sm:pt-48 lg:pt-80"
+            >
+              <img
+                src={category.image}
+                alt={category.title}
+                className="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 -z-10 bg-gradient-to-t from-gray-900 via-gray-900/40" />
+              <div className="absolute inset-0 -z-10 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
 
-                {/* Category Title */}
-                <div className="mt-3 text-center">
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 relative inline-block">
-                    {category.title}
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 dark:bg-primary-400 group-hover:w-full transition-all duration-200 ease-out"></span>
-                  </h3>
-                </div>
-              </Link>
-            </div>
+              <div className="flex flex-wrap items-center gap-y-1 overflow-hidden text-sm leading-6 text-gray-300">
+                <div className="mr-8">{category.description}</div>
+              </div>
+              <h3 className="mt-3 text-lg font-semibold leading-6 text-white">
+                <Link to={category.link}>
+                  <span className="absolute inset-0" />
+                  {category.title}
+                </Link>
+              </h3>
+            </article>
           ))}
         </div>
       </div>

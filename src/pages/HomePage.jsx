@@ -11,9 +11,40 @@ const HomePage = () => {
       <TrendingProducts />
 
       {/* Why Choose AIOutlet Section */}
-      <section className="bg-white dark:bg-gray-800 transition-colors duration-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-0">
+      <section className="relative bg-white dark:bg-gray-900 py-16 sm:py-20 pb-8">
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-50/40 via-pink-50/20 to-blue-50/30 dark:from-purple-900/20 dark:via-pink-900/15 dark:to-blue-900/20" />
+        {/* Subtle connecting gradient for light mode separation */}
+        <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-b from-transparent to-gray-50/60 dark:from-transparent dark:to-gray-900/40" />
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-8 pb-16">
+          {/* Section Header */}
+          <div className="flex items-center justify-between mb-16">
+            <h2 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white sm:text-xl">
+              Why Choose AIOutlet
+            </h2>
+            <button
+              type="button"
+              className="inline-flex items-center gap-x-2 text-sm font-semibold leading-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors"
+            >
+              Learn more
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             {[
               {
                 title: 'Free returns',
@@ -134,7 +165,7 @@ const HomePage = () => {
                 ),
               },
             ].map((feature, index) => (
-              <div key={feature.title} className="text-center mb-0">
+              <div key={feature.title} className="text-center">
                 <div
                   className={`w-16 h-16 ${feature.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm`}
                 >
@@ -143,7 +174,7 @@ const HomePage = () => {
                 <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-0">
+                <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
                   {feature.description}
                 </p>
               </div>

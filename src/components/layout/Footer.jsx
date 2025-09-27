@@ -39,8 +39,12 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-200 mt-0">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+    <footer className="relative bg-gray-50 dark:bg-gray-900 transition-colors duration-200 mt-0 pt-8">
+      {/* Subtle gradient overlay for flow without overwhelming light mode */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50/80 via-blue-50/20 to-indigo-50/30 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20" />
+      {/* Top border gradient for subtle separation */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-200/60 to-transparent dark:via-gray-700/40" />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {footerSections.map((section, index) => (
             <div key={index}>
