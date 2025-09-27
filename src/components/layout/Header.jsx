@@ -430,14 +430,15 @@ const Header = () => {
             </button>
 
             {/* User Account */}
-            <button
+            <Link
+              to="/login"
               className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-all duration-200"
               aria-label={
                 isAuthenticated ? `Account for ${user?.name}` : 'Sign in'
               }
             >
               <UserIcon />
-            </button>
+            </Link>
 
             {/* Cart */}
             <button

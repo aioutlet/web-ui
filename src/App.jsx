@@ -6,6 +6,8 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/layout/Layout';
 import HomePage from './pages/HomePage';
 import ContactUsPage from './pages/ContactUsPage';
+import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -20,39 +22,10 @@ function App() {
                 path="/customer-service/contact"
                 element={<ContactUsPage />}
               />
-              {/* Placeholder routes for navigation items */}
-              <Route
-                path="/women"
-                element={
-                  <div className="p-8 text-center">
-                    Women's Collection - Coming Soon
-                  </div>
-                }
-              />
-              <Route
-                path="/men"
-                element={
-                  <div className="p-8 text-center">
-                    Men's Collection - Coming Soon
-                  </div>
-                }
-              />
-              <Route
-                path="/company"
-                element={
-                  <div className="p-8 text-center">
-                    Company Info - Coming Soon
-                  </div>
-                }
-              />
-              <Route
-                path="/stores"
-                element={
-                  <div className="p-8 text-center">
-                    Store Locations - Coming Soon
-                  </div>
-                }
-              />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/signup" element={<RegisterPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signin" element={<LoginPage />} />
               {/* 404 Page - Must be the last route */}
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
