@@ -326,7 +326,7 @@ const Header = () => {
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center space-x-2">
               <LogoIcon />
-              <span className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-200">
+              <span className="text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400 transition-colors duration-200">
                 AIOutlet
               </span>
             </Link>

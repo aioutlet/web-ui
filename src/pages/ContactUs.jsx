@@ -58,12 +58,24 @@ const ContactUs = () => {
 
       <div className="relative max-w-lg mx-auto px-6 py-12 sm:py-16">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-            Contact{' '}
-            <span className="text-indigo-600 dark:text-indigo-400">Us</span>
+          <div className="inline-flex items-center gap-3 mb-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+            <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-full px-4 py-2">
+              <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">
+                Support
+              </span>
+            </div>
+            <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl mb-4">
+            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+              Contact
+            </span>{' '}
+            <span className="text-gray-900 dark:text-white">Us</span>
           </h1>
-          <p className="mt-3 text-base leading-6 text-gray-600 dark:text-gray-300">
-            Get in touch with our team. We'd love to hear from you.
+          <p className="text-lg leading-6 text-gray-600 dark:text-gray-300 max-w-lg mx-auto">
+            Get in touch with our team. We'd love to hear from you and help you
+            with any questions.
           </p>
         </div>
 
@@ -244,10 +256,10 @@ const ContactUs = () => {
           {/* Submit Message */}
           {submitMessage && (
             <div
-              className={`p-4 rounded-lg text-center ${
+              className={`p-4 rounded-lg text-center border ${
                 submitMessage.includes('Thank you')
-                  ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300'
-                  : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                  ? 'bg-green-50 dark:bg-green-500/30 text-green-800 dark:text-green-200 border-green-200 dark:border-green-400/50'
+                  : 'bg-red-50 dark:bg-red-500/30 text-red-800 dark:text-red-200 border-red-200 dark:border-red-400/50'
               }`}
             >
               {submitMessage}

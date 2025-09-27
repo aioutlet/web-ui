@@ -75,15 +75,15 @@ const TrendingProducts = () => {
   const getBadgeStyles = badge => {
     const styles = {
       Bestseller:
-        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
-      New: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
+        'bg-yellow-100 text-yellow-800 dark:bg-yellow-500/30 dark:text-yellow-200 border dark:border-yellow-400/50',
+      New: 'bg-green-100 text-green-800 dark:bg-green-500/30 dark:text-green-200 border dark:border-green-400/50',
       Limited:
-        'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400',
-      Sale: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
+        'bg-purple-100 text-purple-800 dark:bg-purple-500/30 dark:text-purple-200 border dark:border-purple-400/50',
+      Sale: 'bg-red-100 text-red-800 dark:bg-red-500/30 dark:text-red-200 border dark:border-red-400/50',
     };
     return (
       styles[badge] ||
-      'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
+      'bg-gray-100 text-gray-800 dark:bg-gray-600/30 dark:text-gray-200 border dark:border-gray-400/50'
     );
   };
 
@@ -95,13 +95,29 @@ const TrendingProducts = () => {
       <div className="absolute -inset-y-8 inset-x-0 bg-gradient-to-b from-purple-50/20 via-transparent to-purple-50/20 dark:from-purple-900/5 dark:to-purple-900/5" />
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex items-center justify-between mb-16">
-          <h2 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white sm:text-xl">
-            Trending Products
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-3 mb-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+            <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-full px-4 py-2">
+              <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">
+                Featured
+              </span>
+            </div>
+            <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+          </div>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
+            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+              Trending
+            </span>{' '}
+            <span className="text-gray-900 dark:text-white">Products</span>
           </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
+            Discover what's popular right now. Hand-picked products that our
+            customers love most.
+          </p>
           <Link
             to="/products"
-            className="inline-flex items-center gap-x-2 text-sm font-semibold leading-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors"
+            className="inline-flex items-center gap-x-2 text-sm font-semibold leading-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors bg-indigo-50 dark:bg-indigo-900/20 px-4 py-2 rounded-full hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
           >
             See all products
             <svg

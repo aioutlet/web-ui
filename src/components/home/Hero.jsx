@@ -116,8 +116,10 @@ const Hero = () => {
                 {/* Main content */}
                 <div className="text-center">
                   <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
-                    {slide.title}{' '}
-                    <span className="text-indigo-600 dark:text-indigo-400">
+                    <span className="text-gray-900 dark:text-white">
+                      {slide.title}
+                    </span>{' '}
+                    <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
                       {slide.highlight}
                     </span>
                   </h1>

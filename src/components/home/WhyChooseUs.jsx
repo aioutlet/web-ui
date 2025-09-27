@@ -118,13 +118,29 @@ const WhyChooseUs = () => {
       <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-b from-transparent to-gray-50/60 dark:from-transparent dark:to-gray-900/40" />
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8 pb-16">
         {/* Section Header */}
-        <div className="flex items-center justify-between mb-16">
-          <h2 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white sm:text-xl">
-            Why Choose AIOutlet
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-3 mb-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-green-500 to-transparent w-12"></div>
+            <div className="bg-green-100 dark:bg-green-900/30 rounded-full px-4 py-2">
+              <span className="text-sm font-medium text-green-700 dark:text-green-300 uppercase tracking-wide">
+                Benefits
+              </span>
+            </div>
+            <div className="h-px bg-gradient-to-r from-transparent via-green-500 to-transparent w-12"></div>
+          </div>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
+            <span className="text-gray-900 dark:text-white">Why Choose</span>{' '}
+            <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent dark:from-green-400 dark:to-blue-400">
+              AIOutlet
+            </span>
           </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
+            Experience the difference with our commitment to quality, service,
+            and customer satisfaction.
+          </p>
           <button
             type="button"
-            className="inline-flex items-center gap-x-2 text-sm font-semibold leading-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors"
+            className="inline-flex items-center gap-x-2 text-sm font-semibold leading-6 text-green-600 dark:text-green-400 hover:text-green-500 dark:hover:text-green-300 transition-colors bg-green-50 dark:bg-green-900/20 px-4 py-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900/30"
           >
             Learn more
             <svg

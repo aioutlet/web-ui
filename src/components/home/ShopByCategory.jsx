@@ -53,13 +53,29 @@ const ShopByCategory = () => {
       <div className="absolute -inset-y-8 inset-x-0 bg-gradient-to-b from-pink-50/20 via-transparent to-indigo-50/20 dark:from-pink-900/5 dark:to-indigo-900/5" />
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex items-center justify-between mb-16">
-          <h2 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white sm:text-xl">
-            Shop by Category
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-3 mb-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent w-12"></div>
+            <div className="bg-purple-100 dark:bg-purple-900/30 rounded-full px-4 py-2">
+              <span className="text-sm font-medium text-purple-700 dark:text-purple-300 uppercase tracking-wide">
+                Explore
+              </span>
+            </div>
+            <div className="h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent w-12"></div>
+          </div>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
+            <span className="text-gray-900 dark:text-white">Shop by</span>{' '}
+            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-pink-400">
+              Category
+            </span>
           </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
+            Browse our carefully curated collections. From the latest tech to
+            lifestyle essentials.
+          </p>
           <Link
             to="/categories"
-            className="inline-flex items-center gap-x-2 text-sm font-semibold leading-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors"
+            className="inline-flex items-center gap-x-2 text-sm font-semibold leading-6 text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 transition-colors bg-purple-50 dark:bg-purple-900/20 px-4 py-2 rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/30"
           >
             Browse all categories
             <svg
