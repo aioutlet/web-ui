@@ -80,13 +80,11 @@ const ShopByCategory = () => {
                 {/* Card Container */}
                 <div className="relative bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden aspect-square hover:shadow-lg transition-all duration-300">
                   {/* Product Image */}
-                  <div className="absolute inset-0 p-6 flex items-center justify-center">
-                    <img
-                      src={category.image}
-                      alt={category.title}
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
+                  <img
+                    src={category.image}
+                    alt={category.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
 
                 {/* Category Title */}
