@@ -494,14 +494,23 @@ const ProductListPage = () => {
         {/* Header */}
         <div className="mb-8">
           {/* Title and Subtitle */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-normal text-gray-900 dark:text-white">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-3 mb-4">
+              <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+              <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-full px-4 py-2">
+                <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">
+                  Featured
+                </span>
+              </div>
+              <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl mb-4">
               <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
                 New
               </span>{' '}
               <span className="text-gray-900 dark:text-white">Arrivals</span>
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-lg leading-6 text-gray-600 dark:text-gray-300 max-w-lg mx-auto">
               Checkout out the latest release of Basic Tees, new and improved
               with four openings!
             </p>
