@@ -280,6 +280,31 @@ const ProductListPage = () => {
 
   // Sort state
   const [sortBy, setSortBy] = useState('featured');
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+
+  // Sort options
+  const sortOptions = [
+    { value: 'featured', label: 'Featured' },
+    { value: 'price-low', label: 'Price: Low to High' },
+    { value: 'price-high', label: 'Price: High to Low' },
+    { value: 'newest', label: 'Newest First' },
+    { value: 'popular', label: 'Most Popular' },
+    { value: 'rating', label: 'Highest Rated' },
+  ];
+
+  // Close sort dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (sortDropdownOpen && !event.target.closest('.sort-dropdown')) {
+        setSortDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [sortDropdownOpen]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const productsPerPage = 8;
@@ -315,9 +340,28 @@ const ProductListPage = () => {
     return true;
   });
 
+  // Sort products
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-low':
+        return a.price - b.price;
+      case 'price-high':
+        return b.price - a.price;
+      case 'newest':
+        return b.id - a.id; // Assuming higher ID means newer
+      case 'popular':
+        return (b.reviews || 0) - (a.reviews || 0);
+      case 'rating':
+        return (b.rating || 0) - (a.rating || 0);
+      case 'featured':
+      default:
+        return 0; // Keep original order for featured
+    }
+  });
+
   // Pagination
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-  const paginatedProducts = filteredProducts.slice(
+  const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
+  const paginatedProducts = sortedProducts.slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
   );
@@ -388,14 +432,20 @@ const ProductListPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="relative min-h-screen bg-white dark:bg-gray-900">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-50/60 via-pink-50/40 to-blue-50/50 dark:from-purple-900/20 dark:via-pink-900/15 dark:to-blue-900/20" />
+
+      <div className="relative max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           {/* Title and Subtitle */}
           <div className="mb-6">
             <h1 className="text-3xl font-normal text-gray-900 dark:text-white">
-              New Arrivals
+              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+                New
+              </span>{' '}
+              <span className="text-gray-900 dark:text-white">Arrivals</span>
             </h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1">
               Checkout out the latest release of Basic Tees, new and improved
@@ -452,23 +502,55 @@ const ProductListPage = () => {
             </div>
 
             {/* Sort - Right Side */}
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                Sort
-              </span>
-              <svg
-                className="w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="relative sort-dropdown">
+              <button
+                onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+                <span>
+                  Sort:{' '}
+                  {sortOptions.find(option => option.value === sortBy)?.label ||
+                    'Featured'}
+                </span>
+                <svg
+                  className={`w-4 h-4 transition-transform ${sortDropdownOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {/* Sort Dropdown */}
+              {sortDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
+                  <div className="py-2">
+                    {sortOptions.map(option => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setSortBy(option.value);
+                          setSortDropdownOpen(false);
+                          setCurrentPage(1);
+                        }}
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                          sortBy === option.value
+                            ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                            : 'text-gray-700 dark:text-gray-300'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
