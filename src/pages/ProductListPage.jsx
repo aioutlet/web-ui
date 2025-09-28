@@ -507,9 +507,9 @@ const ProductListPage = () => {
             </p>
           </div>
 
-          {/* Filter Controls Row */}
+          {/* Filter Controls Row - Keep sort on right */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
               {/* Filter Toggle */}
               <button
                 onClick={() => setFiltersOpen(!filtersOpen)}
@@ -609,25 +609,28 @@ const ProductListPage = () => {
           </div>
         </div>
 
-        {/* Filters Row - Expandable/Collapsible Horizontal Layout */}
+        {/* Filters Row - Responsive Layout */}
         {filtersOpen && (
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mb-8 transition-all duration-300 ease-in-out">
-            <div className="grid grid-cols-4 gap-8">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6 mb-8 transition-all duration-300 ease-in-out">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
               {Object.entries(filterOptions).map(([filterKey, options]) => (
-                <div key={filterKey}>
-                  <h3 className="font-medium text-gray-900 dark:text-white mb-4 capitalize">
+                <div key={filterKey} className="pb-4 sm:pb-0">
+                  <h3 className="font-medium text-gray-900 dark:text-white mb-3 sm:mb-4 capitalize text-sm sm:text-base">
                     {filterKey}
                   </h3>
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {options.map(option => (
-                      <label key={option} className="flex items-center">
+                      <label
+                        key={option}
+                        className="flex items-center cursor-pointer py-1 sm:py-0"
+                      >
                         <input
                           type="checkbox"
                           checked={filters[filterKey] === option}
                           onChange={() => handleFilterChange(filterKey, option)}
-                          className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:bg-gray-700"
+                          className="w-4 h-4 sm:w-4 sm:h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:bg-gray-700 flex-shrink-0"
                         />
-                        <span className="ml-3 text-sm text-gray-700 dark:text-gray-300">
+                        <span className="ml-3 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                           {option}
                         </span>
                       </label>
