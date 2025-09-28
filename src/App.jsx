@@ -10,6 +10,7 @@ import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ProductListPage from './pages/ProductListPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -29,10 +30,7 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/products" element={<ProductListPage />} />
               <Route path="/shop" element={<ProductListPage />} />
-              <Route
-                path="/product/:id"
-                element={<div>Product Details Coming Soon</div>}
-              />
+              <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Layout>
