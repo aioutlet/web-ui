@@ -9,6 +9,7 @@ import ContactUsPage from './pages/ContactUsPage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ProductListPage from './pages/ProductListPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -26,6 +27,8 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/products" element={<ProductListPage />} />
+              <Route path="/shop" element={<ProductListPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Layout>
