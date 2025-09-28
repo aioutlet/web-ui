@@ -29,6 +29,10 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/products" element={<ProductListPage />} />
               <Route path="/shop" element={<ProductListPage />} />
+              <Route
+                path="/product/:id"
+                element={<div>Product Details Coming Soon</div>}
+              />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Layout>

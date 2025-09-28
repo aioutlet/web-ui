@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ProductListPage = () => {
+  const navigate = useNavigate();
+
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -239,6 +242,24 @@ const ProductListPage = () => {
 
   // State for favorites
   const [favorites, setFavorites] = useState(new Set());
+
+  // State for cart
+  const [cart, setCart] = useState(new Set());
+
+  // Add to cart function
+  const addToCart = (productId, e) => {
+    e.stopPropagation(); // Prevent navigation when clicking add to cart
+    if (!cart.has(productId)) {
+      setCart(prev => new Set([...prev, productId]));
+      // You can add toast notification here later
+      console.log(`Added product ${productId} to cart`);
+    }
+  };
+
+  // Navigate to product details
+  const handleProductClick = productId => {
+    navigate(`/product/${productId}`);
+  };
 
   // Toggle favorite
   const toggleFavorite = (productId, e) => {
@@ -590,7 +611,10 @@ const ProductListPage = () => {
           {paginatedProducts.map(product => (
             <div key={product.id} className="group">
               <div className="relative">
-                <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mb-4 relative">
+                <div
+                  className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mb-4 relative cursor-pointer"
+                  onClick={() => handleProductClick(product.id)}
+                >
                   <img
                     src={product.image}
                     alt={product.name}
@@ -662,6 +686,54 @@ const ProductListPage = () => {
                           d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                         />
                       </svg>
+                    </button>
+                  )}
+
+                  {/* Subtle Add to Cart Button - only show if in stock and on hover */}
+                  {product.inStock && (
+                    <button
+                      onClick={e => addToCart(product.id, e)}
+                      className={`absolute bottom-3 left-1/2 transform -translate-x-1/2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 ${
+                        cart.has(product.id)
+                          ? 'bg-green-500 text-white'
+                          : 'bg-white/90 dark:bg-gray-800/90 text-gray-900 dark:text-white hover:bg-white dark:hover:bg-gray-800 shadow-md'
+                      }`}
+                    >
+                      {cart.has(product.id) ? (
+                        <div className="flex items-center space-x-1">
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          <span>Added</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-1">
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.293 2.293a1 1 0 00-.293.707V19a2 2 0 002 2h10a2 2 0 002-2v-2.586a1 1 0 00-.293-.707L16 13"
+                            />
+                          </svg>
+                          <span>Add to Cart</span>
+                        </div>
+                      )}
                     </button>
                   )}
                 </div>
