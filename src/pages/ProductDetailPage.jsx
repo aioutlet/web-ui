@@ -17,10 +17,30 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
   const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState(new Set());
 
   // Helper function to check if product is in cart
   const isInCart = productId => {
     return cartItems.some(item => item.id === productId);
+  };
+
+  // Helper function to check if product is in favorites
+  const isFavorite = productId => {
+    return favorites.has(productId);
+  };
+
+  // Handler for toggling favorite status
+  const handleToggleFavorite = () => {
+    const newFavorites = new Set(favorites);
+    if (newFavorites.has(product.id)) {
+      newFavorites.delete(product.id);
+    } else {
+      newFavorites.add(product.id);
+    }
+    setFavorites(newFavorites);
+
+    // Here you could also dispatch to Redux store or make API call
+    // Example: dispatch(toggleFavorite(product.id));
   };
 
   // Mock product data based on the ID
@@ -424,11 +444,16 @@ const ProductDetailPage = () => {
 
                 <button
                   type="button"
-                  className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md py-3 px-3 flex items-center justify-center text-gray-400 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-500 dark:hover:text-gray-200"
+                  onClick={handleToggleFavorite}
+                  className={`border rounded-md py-3 px-3 flex items-center justify-center transition-colors duration-200 ${
+                    isFavorite(product?.id)
+                      ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30'
+                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-500 dark:hover:text-gray-200'
+                  }`}
                 >
                   <svg
                     className="h-6 w-6"
-                    fill="none"
+                    fill={isFavorite(product?.id) ? 'currentColor' : 'none'}
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -439,7 +464,11 @@ const ProductDetailPage = () => {
                       d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                     />
                   </svg>
-                  <span className="sr-only">Add to favorites</span>
+                  <span className="sr-only">
+                    {isFavorite(product?.id)
+                      ? 'Remove from favorites'
+                      : 'Add to favorites'}
+                  </span>
                 </button>
               </div>
             </div>
