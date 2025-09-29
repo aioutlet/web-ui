@@ -215,55 +215,6 @@ const ProductDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Breadcrumb */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <nav className="text-sm">
-            <ol className="list-none p-0 inline-flex">
-              <li className="flex items-center">
-                <button
-                  onClick={() => navigate('/')}
-                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  Home
-                </button>
-              </li>
-              <li className="flex items-center">
-                <svg
-                  className="fill-current w-3 h-3 mx-3"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 320 512"
-                >
-                  <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.476 239.03c9.373 9.372 9.373 24.568 0 33.941z" />
-                </svg>
-              </li>
-              <li className="flex items-center">
-                <button
-                  onClick={() => navigate('/products')}
-                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  Products
-                </button>
-              </li>
-              <li className="flex items-center">
-                <svg
-                  className="fill-current w-3 h-3 mx-3"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 320 512"
-                >
-                  <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.476 239.03c9.373 9.372 9.373 24.568 0 33.941z" />
-                </svg>
-              </li>
-              <li>
-                <span className="text-gray-700 dark:text-gray-300 font-medium">
-                  {product.name}
-                </span>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
-
       {/* Main Product Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
