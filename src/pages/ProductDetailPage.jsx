@@ -15,7 +15,7 @@ const ProductDetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState('description');
+  // Removed activeTab state - using separate sections instead
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState(new Set());
 
@@ -227,9 +227,11 @@ const ProductDetailPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="relative min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 via-indigo-50/30 to-purple-50/40 dark:from-blue-900/15 dark:via-indigo-900/10 dark:to-purple-900/15" />
       {/* Main Product Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
           {/* Image gallery */}
           <div className="flex flex-col-reverse">
@@ -471,107 +473,102 @@ const ProductDetailPage = () => {
             </section>
           </div>
         </div>
-
-        {/* Product details sections */}
-        <div className="mt-16">
-          <div className="border-b border-gray-200 dark:border-gray-700">
-            <nav className="-mb-px flex space-x-8">
-              <button
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'description'
-                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
-                }`}
-                onClick={() => setActiveTab('description')}
-              >
-                Description
-              </button>
-              <button
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'specifications'
-                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
-                }`}
-                onClick={() => setActiveTab('specifications')}
-              >
-                Specifications
-              </button>
-            </nav>
-          </div>
-
-          <div className="pt-10">
-            {activeTab === 'description' && (
-              <div className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                  About this product
-                </h3>
-                <p>{product.details}</p>
-              </div>
-            )}
-
-            {activeTab === 'specifications' && (
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">
-                  Technical Specifications
-                </h3>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  {Object.entries(product.specifications).map(
-                    ([key, value]) => (
-                      <div
-                        key={key}
-                        className="border-b border-gray-200 dark:border-gray-700 pb-4"
-                      >
-                        <dt className="text-sm font-medium text-gray-900 dark:text-white">
-                          {key}
-                        </dt>
-                        <dd className="mt-2 text-sm text-gray-700 dark:text-gray-300">
-                          {value}
-                        </dd>
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
-      {/* Customer Reviews Section */}
-      <section className="relative bg-gray-100 dark:bg-gray-800 py-16 sm:py-20">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-purple-50/50 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20" />
-        {/* Connecting gradient for flow */}
-        <div className="absolute -inset-y-8 inset-x-0 bg-gradient-to-b from-purple-50/20 via-transparent to-blue-50/20 dark:from-purple-900/5 dark:to-blue-900/5" />
-
+      {/* Description Section */}
+      <section className="relative bg-gray-50 dark:bg-gray-900 py-16 sm:py-20">
         <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
           {/* Section Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <div className="inline-flex items-center gap-3 mb-4">
-              <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent w-12"></div>
-              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full px-4 py-2">
+              <div className="h-px bg-blue-300 dark:bg-blue-600 w-12"></div>
+              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full px-4 py-2 border border-blue-200 dark:border-blue-700">
+                <span className="text-sm font-medium text-blue-700 dark:text-blue-300 uppercase tracking-wide">
+                  Overview
+                </span>
+              </div>
+              <div className="h-px bg-blue-300 dark:bg-blue-600 w-12"></div>
+            </div>
+          </div>
+
+          {/* Description Content */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 space-y-4">
+              <p className="text-base leading-relaxed">{product.details}</p>
+              <p className="text-base leading-relaxed">
+                This carefully curated collection represents the perfect balance
+                of style, comfort, and versatility. Each piece has been
+                thoughtfully designed to complement your lifestyle while
+                maintaining the highest standards of quality and craftsmanship.
+              </p>
+              <p className="text-base leading-relaxed">
+                Whether you're building a capsule wardrobe or adding essential
+                pieces to your collection, this selection offers timeless appeal
+                that transcends seasonal trends. The attention to detail and
+                premium materials ensure long-lasting durability and comfort.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Specifications Section */}
+      <section className="relative bg-white dark:bg-gray-800 py-16 sm:py-20">
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-3 mb-4">
+              <div className="h-px bg-blue-300 dark:bg-blue-600 w-12"></div>
+              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full px-4 py-2 border border-blue-200 dark:border-blue-700">
+                <span className="text-sm font-medium text-blue-700 dark:text-blue-300 uppercase tracking-wide">
+                  Tech Specs
+                </span>
+              </div>
+              <div className="h-px bg-blue-300 dark:bg-blue-600 w-12"></div>
+            </div>
+          </div>
+
+          {/* Specifications Content */}
+          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-8 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              {Object.entries(product.specifications).map(([key, value]) => (
+                <div
+                  key={key}
+                  className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0"
+                >
+                  <dt className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    {key}
+                  </dt>
+                  <dd className="text-sm text-gray-700 dark:text-gray-300">
+                    {value}
+                  </dd>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Customer Reviews Section */}
+      <section className="relative bg-gray-50 dark:bg-gray-900 py-16 sm:py-20">
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-3 mb-4">
+              <div className="h-px bg-blue-300 dark:bg-blue-600 w-12"></div>
+              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full px-4 py-2 border border-blue-200 dark:border-blue-700">
                 <span className="text-sm font-medium text-blue-700 dark:text-blue-300 uppercase tracking-wide">
                   Reviews
                 </span>
               </div>
-              <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent w-12"></div>
+              <div className="h-px bg-blue-300 dark:bg-blue-600 w-12"></div>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
-              <span className="text-gray-900 dark:text-white">Customer</span>{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">
-                Reviews
-              </span>
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
-              See what our customers are saying about this product. Real reviews
-              from verified purchases.
-            </p>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Review Summary - Left Side */}
             <div className="lg:w-1/3">
-              <div className="h-full bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-white/10 dark:border-gray-700/20 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="h-full bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div className="flex flex-col h-full">
                   <div className="flex items-center mb-4">
                     <StarRating rating={product.rating} size="w-6 h-6" />
@@ -640,7 +637,7 @@ const ProductDetailPage = () => {
 
             {/* Reviews List - Right Side */}
             <div className="lg:w-2/3">
-              <div className="h-full bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-white/10 dark:border-gray-700/20 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="h-full bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
