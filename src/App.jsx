@@ -29,8 +29,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/products" element={<ProductListPage />} />
-              <Route path="/shop" element={<ProductListPage />} />
-              <Route path="/product/:id" element={<ProductDetailPage />} />
+              <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Layout>
