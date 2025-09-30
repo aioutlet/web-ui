@@ -1,26 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-
-// StarRating component (reused from ProductDetailPage)
-const StarRating = ({ rating, size = 'w-5 h-5' }) => {
-  return (
-    <div className="flex items-center">
-      {[1, 2, 3, 4, 5].map(star => (
-        <svg
-          key={star}
-          className={`${size} ${
-            star <= rating
-              ? 'text-yellow-400 fill-current'
-              : 'text-gray-300 dark:text-gray-600'
-          }`}
-          viewBox="0 0 20 20"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ))}
-    </div>
-  );
-};
+import StarRating from '../components/ui/StarRating';
 
 const ReviewListPage = () => {
   const { id } = useParams();
@@ -39,116 +19,119 @@ const ReviewListPage = () => {
   const reviewsPerPage = 10;
 
   // Sample reviews data (expanded for pagination testing)
-  const sampleReviews = [
-    {
-      id: 1,
-      user: 'Sarah M.',
-      rating: 5,
-      date: '2024-01-15',
-      comment:
-        'Absolutely love this product! The quality is outstanding and it fits perfectly. Highly recommend to anyone looking for something reliable and stylish.',
-      verified: true,
-    },
-    {
-      id: 2,
-      user: 'James K.',
-      rating: 4,
-      date: '2024-01-10',
-      comment:
-        'Good quality product, although it took a bit longer to arrive than expected. Overall satisfied with the purchase.',
-      verified: true,
-    },
-    {
-      id: 3,
-      user: 'Maria L.',
-      rating: 5,
-      date: '2024-01-08',
-      comment:
-        'Exceeded my expectations! The craftsmanship is excellent and it looks even better in person.',
-      verified: false,
-    },
-    {
-      id: 4,
-      user: 'David R.',
-      rating: 3,
-      date: '2024-01-05',
-      comment:
-        "It's okay. The product works as described but the quality could be better for the price point.",
-      verified: true,
-    },
-    {
-      id: 5,
-      user: 'Lisa Chen',
-      rating: 5,
-      date: '2024-01-03',
-      comment:
-        'Perfect addition to my collection. Fast shipping and excellent customer service.',
-      verified: true,
-    },
-    {
-      id: 6,
-      user: 'Michael B.',
-      rating: 4,
-      date: '2024-01-01',
-      comment:
-        'Great product overall. Minor issue with packaging but the item itself is fantastic.',
-      verified: true,
-    },
-    {
-      id: 7,
-      user: 'Emma W.',
-      rating: 5,
-      date: '2023-12-28',
-      comment:
-        'This has become one of my favorite purchases. Highly durable and looks amazing.',
-      verified: true,
-    },
-    {
-      id: 8,
-      user: 'Robert T.',
-      rating: 2,
-      date: '2023-12-25',
-      comment:
-        "Unfortunately didn't meet my expectations. The color was different from the photos.",
-      verified: false,
-    },
-    {
-      id: 9,
-      user: 'Anna S.',
-      rating: 4,
-      date: '2023-12-22',
-      comment:
-        'Good value for money. The product is solid and works well for my needs.',
-      verified: true,
-    },
-    {
-      id: 10,
-      user: 'Thomas H.',
-      rating: 5,
-      date: '2023-12-20',
-      comment:
-        'Outstanding quality and design. Will definitely be purchasing more items from this brand.',
-      verified: true,
-    },
-    {
-      id: 11,
-      user: 'Sophie M.',
-      rating: 4,
-      date: '2023-12-18',
-      comment:
-        "Really happy with this purchase. The material feels premium and it's very well made.",
-      verified: true,
-    },
-    {
-      id: 12,
-      user: 'Alex P.',
-      rating: 3,
-      date: '2023-12-15',
-      comment:
-        "Average product. Does what it's supposed to do but nothing extraordinary.",
-      verified: false,
-    },
-  ];
+  const sampleReviews = React.useMemo(
+    () => [
+      {
+        id: 1,
+        user: 'Sarah M.',
+        rating: 5,
+        date: '2024-01-15',
+        comment:
+          'Absolutely love this product! The quality is outstanding and it fits perfectly. Highly recommend to anyone looking for something reliable and stylish.',
+        verified: true,
+      },
+      {
+        id: 2,
+        user: 'James K.',
+        rating: 4,
+        date: '2024-01-10',
+        comment:
+          'Good quality product, although it took a bit longer to arrive than expected. Overall satisfied with the purchase.',
+        verified: true,
+      },
+      {
+        id: 3,
+        user: 'Maria L.',
+        rating: 5,
+        date: '2024-01-08',
+        comment:
+          'Exceeded my expectations! The craftsmanship is excellent and it looks even better in person.',
+        verified: false,
+      },
+      {
+        id: 4,
+        user: 'David R.',
+        rating: 3,
+        date: '2024-01-05',
+        comment:
+          "It's okay. The product works as described but the quality could be better for the price point.",
+        verified: true,
+      },
+      {
+        id: 5,
+        user: 'Lisa Chen',
+        rating: 5,
+        date: '2024-01-03',
+        comment:
+          'Perfect addition to my collection. Fast shipping and excellent customer service.',
+        verified: true,
+      },
+      {
+        id: 6,
+        user: 'Michael B.',
+        rating: 4,
+        date: '2024-01-01',
+        comment:
+          'Great product overall. Minor issue with packaging but the item itself is fantastic.',
+        verified: true,
+      },
+      {
+        id: 7,
+        user: 'Emma W.',
+        rating: 5,
+        date: '2023-12-28',
+        comment:
+          'This has become one of my favorite purchases. Highly durable and looks amazing.',
+        verified: true,
+      },
+      {
+        id: 8,
+        user: 'Robert T.',
+        rating: 2,
+        date: '2023-12-25',
+        comment:
+          "Unfortunately didn't meet my expectations. The color was different from the photos.",
+        verified: false,
+      },
+      {
+        id: 9,
+        user: 'Anna S.',
+        rating: 4,
+        date: '2023-12-22',
+        comment:
+          'Good value for money. The product is solid and works well for my needs.',
+        verified: true,
+      },
+      {
+        id: 10,
+        user: 'Thomas H.',
+        rating: 5,
+        date: '2023-12-20',
+        comment:
+          'Outstanding quality and design. Will definitely be purchasing more items from this brand.',
+        verified: true,
+      },
+      {
+        id: 11,
+        user: 'Sophie M.',
+        rating: 4,
+        date: '2023-12-18',
+        comment:
+          "Really happy with this purchase. The material feels premium and it's very well made.",
+        verified: true,
+      },
+      {
+        id: 12,
+        user: 'Alex P.',
+        rating: 3,
+        date: '2023-12-15',
+        comment:
+          "Average product. Does what it's supposed to do but nothing extraordinary.",
+        verified: false,
+      },
+    ],
+    []
+  );
 
   // Mock product data
   useEffect(() => {
@@ -183,7 +166,7 @@ const ReviewListPage = () => {
     };
 
     fetchProductAndReviews();
-  }, [id]);
+  }, [id, sampleReviews]);
 
   // Filter and sort reviews
   useEffect(() => {
@@ -247,13 +230,6 @@ const ReviewListPage = () => {
   const handlePageChange = page => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handlePageInput = e => {
-    const page = parseInt(e.target.value);
-    if (page >= 1 && page <= totalPages) {
-      handlePageChange(page);
-    }
   };
 
   if (loading) {
