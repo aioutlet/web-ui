@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import StarRating from '../components/ui/StarRating';
+import Paginator from '../components/ui/Paginator';
 
 const ReviewListPage = () => {
   const { id } = useParams();
@@ -535,65 +536,17 @@ const ReviewListPage = () => {
               )}
             </div>
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-8 pt-6 border-t border-gray-200/40 dark:border-gray-700/30 flex justify-center">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-gray-300 dark:border-gray-600"
-                  >
-                    ←
-                  </button>
-
-                  {/* Page numbers */}
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1)
-                      .filter(page => {
-                        const delta = 2;
-                        return (
-                          page === 1 ||
-                          page === totalPages ||
-                          (page >= currentPage - delta &&
-                            page <= currentPage + delta)
-                        );
-                      })
-                      .map((page, index, array) => {
-                        const shouldShowEllipsis =
-                          index > 0 && page - array[index - 1] > 1;
-
-                        return (
-                          <React.Fragment key={page}>
-                            {shouldShowEllipsis && (
-                              <span className="px-2 py-2 text-gray-500 dark:text-gray-400">
-                                ...
-                              </span>
-                            )}
-                            <button
-                              onClick={() => handlePageChange(page)}
-                              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
-                                currentPage === page
-                                  ? 'bg-indigo-600 text-white'
-                                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                              }`}
-                            >
-                              {page}
-                            </button>
-                          </React.Fragment>
-                        );
-                      })}
-                  </div>
-
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-gray-300 dark:border-gray-600"
-                  >
-                    →
-                  </button>
-                </div>
-              </div>
-            )}
+            <Paginator
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              variant="traditional"
+              size="md"
+              color="blue"
+              showEllipsis={true}
+              maxVisiblePages={10}
+              className="mt-8 pt-6 border-t border-gray-200/40 dark:border-gray-700/30"
+            />
           </div>
         </div>
       </div>

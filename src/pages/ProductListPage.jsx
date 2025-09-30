@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart, removeFromCart } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
+import Paginator from '../components/ui/Paginator';
 
 const ProductListPage = () => {
   const navigate = useNavigate();
@@ -839,81 +840,16 @@ const ProductListPage = () => {
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-              className={`px-4 py-2 text-sm ${
-                currentPage === 1
-                  ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-              }`}
-            >
-              Previous
-            </button>
-
-            <div className="flex items-center space-x-2">
-              {Array.from(
-                { length: Math.min(totalPages, 10) },
-                (_, i) => i + 1
-              ).map(page => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`w-8 h-8 text-sm rounded ${
-                    page === currentPage
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-              {totalPages > 10 && (
-                <span className="text-gray-400 dark:text-gray-500">...</span>
-              )}
-              {totalPages > 10 && (
-                <>
-                  <button
-                    onClick={() => handlePageChange(totalPages - 1)}
-                    className={`w-8 h-8 text-sm rounded ${
-                      currentPage === totalPages - 1
-                        ? 'bg-blue-600 text-white'
-                        : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    {totalPages - 1}
-                  </button>
-                  <button
-                    onClick={() => handlePageChange(totalPages)}
-                    className={`w-8 h-8 text-sm rounded ${
-                      currentPage === totalPages
-                        ? 'bg-blue-600 text-white'
-                        : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    {totalPages}
-                  </button>
-                </>
-              )}
-            </div>
-
-            <button
-              onClick={() =>
-                handlePageChange(Math.min(totalPages, currentPage + 1))
-              }
-              disabled={currentPage === totalPages}
-              className={`px-4 py-2 text-sm ${
-                currentPage === totalPages
-                  ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-              }`}
-            >
-              Next
-            </button>
-          </div>
-        )}
+        <Paginator
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          variant="traditional"
+          size="md"
+          color="blue"
+          showEllipsis={true}
+          maxVisiblePages={10}
+        />
       </div>
     </div>
   );
