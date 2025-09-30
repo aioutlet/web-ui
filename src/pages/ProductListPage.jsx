@@ -279,7 +279,7 @@ const ProductListPage = () => {
 
   // Navigate to product details
   const handleProductClick = productId => {
-    navigate(`/product/${productId}`);
+    navigate(`/products/${productId}`);
   };
 
   // Toggle favorite

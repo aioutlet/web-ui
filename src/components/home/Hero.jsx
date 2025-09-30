@@ -14,11 +14,11 @@ const Hero = () => {
         "The new arrivals have, well, newly arrived. Check out the latest options from our summer small-batch release while they're still in stock.",
       primaryCta: {
         text: 'Shop New Arrivals',
-        link: '/collections/new-arrivals',
+        link: '/products',
       },
       secondaryCta: {
         text: 'Browse All Products',
-        link: '/collections/all',
+        link: '/products',
       },
     },
     {

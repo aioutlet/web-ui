@@ -1,7 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const TrendingProducts = () => {
+  const navigate = useNavigate();
+
+  const handleViewDetails = productLink => {
+    navigate(productLink);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const products = [
     {
       id: 1,
@@ -193,10 +200,11 @@ const TrendingProducts = () => {
                 {/* Product Title with fixed height */}
                 <div className="group relative flex-1">
                   <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
-                    <Link to={product.link}>
-                      <span className="absolute inset-0" />
-                      {product.name}
-                    </Link>
+                    <button
+                      onClick={() => handleViewDetails(product.link)}
+                      className="absolute inset-0 text-left"
+                    />
+                    {product.name}
                   </h3>
                 </div>
 
@@ -218,12 +226,12 @@ const TrendingProducts = () => {
 
                 {/* Fixed position button */}
                 <div className="mt-6">
-                  <Link
-                    to={product.link}
+                  <button
+                    onClick={() => handleViewDetails(product.link)}
                     className="inline-flex w-full items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
                   >
                     View Details
-                  </Link>
+                  </button>
                 </div>
               </div>
             </article>
