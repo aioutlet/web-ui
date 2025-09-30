@@ -698,7 +698,10 @@ const ProductDetailPage = () => {
 
                   {/* See more reviews link */}
                   <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center">
-                    <button className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors duration-200 bg-transparent border-none cursor-pointer">
+                    <button
+                      onClick={() => navigate(`/products/${id}/reviews`)}
+                      className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors duration-200 bg-transparent border-none cursor-pointer"
+                    >
                       See all {reviews.length} reviews
                     </button>
                   </div>
