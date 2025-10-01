@@ -840,16 +840,18 @@ const ProductListPage = () => {
         </div>
 
         {/* Pagination */}
-        <Paginator
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-          variant="traditional"
-          size="md"
-          color="blue"
-          showEllipsis={true}
-          maxVisiblePages={10}
-        />
+        <div className="mt-8 flex justify-center">
+          <Paginator
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            variant="traditional"
+            size="md"
+            color="blue"
+            showEllipsis={true}
+            maxVisiblePages={10}
+          />
+        </div>
       </div>
     </div>
   );

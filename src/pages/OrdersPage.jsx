@@ -325,7 +325,7 @@ function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [statusFilterOpen, setStatusFilterOpen] = useState(false);
-  const [timeFilter, setTimeFilter] = useState('past-3-months');
+  const [timeFilter, setTimeFilter] = useState('all-time');
   const [timeFilterOpen, setTimeFilterOpen] = useState(false);
   const ordersPerPage = 5;
 
