@@ -1,103 +1,147 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { useSelector } from 'react-redux';
 import OrderProgressBar from '../components/ui/OrderProgressBar';
+import { selectAllOrders } from '../store/slices/ordersSlice';
+import { getOrderById } from '../utils/orderHelpers';
 
 const OrderDetailsPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
+  const allOrders = useSelector(selectAllOrders);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Simulate loading order data
     const fetchOrder = async () => {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Mock order data based on the screenshot
-      const mockOrder = {
-        id: orderId || '54879',
-        orderNumber: `#${orderId || '54879'}`,
-        status: 'Processing',
-        placedDate: 'March 22, 2021',
-        preparingToShipDate: 'March 24, 2021',
-        items: [
+      // Get order from orders.js via Redux store
+      const foundOrder = getOrderById(allOrders, orderId);
+
+      if (!foundOrder) {
+        setOrder(null);
+        setLoading(false);
+        return;
+      }
+
+      // Calculate order summary from items
+      const subtotal = foundOrder.items.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+      const shippingCost = 5.0;
+      const tax = subtotal * 0.13; // 13% tax
+      const total = subtotal + shippingCost + tax;
+
+      // Generate tracking steps based on order status
+      const getTrackingSteps = status => {
+        const statusLower = status.toLowerCase();
+        return [
           {
-            id: 1,
-            name: 'Nomad Tumbler',
-            price: 35.0,
-            quantity: 1,
-            image:
-              'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&h=400&fit=crop&crop=center',
-            description:
-              'This durable and portable insulated tumbler will keep your beverage at the perfect temperature during your next adventure.',
+            name: 'Order placed',
+            status:
+              statusLower === 'processing' ||
+              statusLower === 'shipped' ||
+              statusLower === 'delivered'
+                ? 'completed'
+                : 'current',
+            date: foundOrder.placedDate,
           },
           {
-            id: 2,
-            name: 'Wireless Earbuds',
-            price: 89.0,
-            quantity: 1,
-            image:
-              'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&h=400&fit=crop&crop=center',
-            description:
-              'Premium wireless earbuds with active noise cancellation and superior sound quality.',
+            name: 'Processing',
+            status:
+              statusLower === 'processing'
+                ? 'current'
+                : statusLower === 'shipped' || statusLower === 'delivered'
+                  ? 'completed'
+                  : 'pending',
+            date: statusLower !== 'processing' ? null : foundOrder.placedDate,
           },
-        ],
+          {
+            name: 'Shipped',
+            status:
+              statusLower === 'shipped'
+                ? 'current'
+                : statusLower === 'delivered'
+                  ? 'completed'
+                  : 'pending',
+            date: null,
+          },
+          {
+            name: 'Delivered',
+            status: statusLower === 'delivered' ? 'completed' : 'pending',
+            date: statusLower === 'delivered' ? foundOrder.placedDate : null,
+          },
+        ];
+      };
+
+      // Transform order data to include all details needed for OrderDetailsPage
+      // Note: In production, shipping/billing/payment would come from separate microservices
+      const enhancedOrder = {
+        id: foundOrder.id,
+        orderNumber: `#${foundOrder.id}`,
+        status: foundOrder.status,
+        placedDate: foundOrder.placedDate,
+        preparingToShipDate: foundOrder.placedDate, // In real app, this would be calculated
+        items: foundOrder.items.map(item => ({
+          id: item.id,
+          name: item.title,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+          description: item.description,
+        })),
+        // Mock shipping data (would come from shipping microservice)
         shipping: {
           address: {
-            name: 'Floyd Miles',
-            street: '7363 Cynthia Pass',
+            name: 'John Doe',
+            street: '123 Main Street',
             city: 'Toronto',
             state: 'ON',
-            zip: 'N3Y 4H8',
+            zip: 'M5V 3A8',
           },
           method: 'Standard Shipping',
-          cost: 5.0,
+          cost: shippingCost,
           updates: {
-            email: 'f••••@example.com',
-            phone: '1••••••••40',
+            email: 'j••••@example.com',
+            phone: '1••••••••00',
           },
         },
+        // Mock billing data (would come from billing microservice)
         billing: {
           address: {
-            name: 'Floyd Miles',
-            street: '7363 Cynthia Pass',
+            name: 'John Doe',
+            street: '123 Main Street',
             city: 'Toronto',
             state: 'ON',
-            zip: 'N3Y 4H8',
+            zip: 'M5V 3A8',
           },
         },
+        // Mock payment data (would come from payment microservice)
         payment: {
           method: 'Visa',
           last4: '4242',
-          expires: '02 / 24',
+          expires: '12 / 25',
         },
         summary: {
-          subtotal: 72.0,
-          shipping: 5.0,
-          tax: 6.16,
-          total: 83.16,
+          subtotal: parseFloat(subtotal.toFixed(2)),
+          shipping: shippingCost,
+          tax: parseFloat(tax.toFixed(2)),
+          total: parseFloat(total.toFixed(2)),
         },
         tracking: {
-          steps: [
-            {
-              name: 'Order placed',
-              status: 'completed',
-              date: 'March 22, 2021',
-            },
-            { name: 'Processing', status: 'current', date: null },
-            { name: 'Shipped', status: 'pending', date: null },
-            { name: 'Delivered', status: 'pending', date: null },
-          ],
+          steps: getTrackingSteps(foundOrder.status),
         },
       };
 
-      setOrder(mockOrder);
+      setOrder(enhancedOrder);
       setLoading(false);
     };
 
     fetchOrder();
-  }, [orderId]);
+  }, [orderId, allOrders]);
 
   if (loading) {
     return (
@@ -117,12 +161,20 @@ const OrderDetailsPage = () => {
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             The order you're looking for doesn't exist.
           </p>
-          <button
-            onClick={() => navigate('/')}
-            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-          >
-            Go Home
-          </button>
+          <div className="mt-6 flex gap-3 justify-center">
+            <button
+              onClick={() => navigate('/orders')}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+            >
+              View All Orders
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              Go Home
+            </button>
+          </div>
         </div>
       </div>
     );
