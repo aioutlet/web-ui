@@ -368,11 +368,28 @@ const CartPage = () => {
 
               {/* Payment Methods */}
               <div className="text-center text-xs text-gray-600 dark:text-gray-400 mb-4">
-                <p>Accepted payment methods</p>
-                <div className="flex justify-center gap-2 mt-2">
-                  <span className="text-blue-600">💳</span>
-                  <span className="text-blue-600">💳</span>
-                  <span className="text-blue-600">💳</span>
+                <p className="mb-3">Accepted payment methods</p>
+                <div className="flex justify-center gap-3 items-center">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
+                    alt="Visa"
+                    className="h-8 w-auto"
+                  />
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+                    alt="Mastercard"
+                    className="h-8 w-auto"
+                  />
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg"
+                    alt="American Express"
+                    className="h-8 w-auto"
+                  />
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                    alt="PayPal"
+                    className="h-8 w-auto"
+                  />
                 </div>
               </div>
             </div>
