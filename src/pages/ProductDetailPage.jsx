@@ -565,6 +565,14 @@ const ProductDetailPage = () => {
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                       Recent Reviews
                     </h3>
+                    <button
+                      onClick={() => navigate(`/products/${id}/write-review`)}
+                      className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+                    >
+                      Write a Review
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between mb-4">
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       Showing {Math.min(3, reviews.length)} of {reviews.length}{' '}
                       reviews

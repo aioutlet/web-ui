@@ -12,6 +12,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ProductListPage from './pages/ProductListPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ReviewListPage from './pages/ReviewListPage';
+import WriteReviewPage from './pages/WriteReviewPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
 import CartPage from './pages/CartPage';
@@ -39,6 +40,10 @@ function App() {
               <Route
                 path="/products/:id/reviews"
                 element={<ReviewListPage />}
+              />
+              <Route
+                path="/products/:productId/write-review"
+                element={<WriteReviewPage />}
               />
               <Route path="/orders" element={<OrdersPage />} />
               <Route path="/orders/:orderId" element={<OrderDetailsPage />} />
