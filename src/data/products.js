@@ -2,138 +2,13 @@
 // This file defines the complete product schema expected from the backend API
 
 export const products = [
-  // Trending/Featured Products
   {
     id: 1,
-    name: 'Wireless Bluetooth Headphones',
-    price: 299,
-    originalPrice: 399,
-    rating: 4.8,
-    reviews: 156,
-    category: 'Electronics',
-    color: 'Midnight Black',
-    badge: 'Bestseller',
-    inStock: true,
-    image:
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-    images: [
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
-      'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=600&h=600&fit=crop&crop=center',
-      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=600&h=600&fit=crop&crop=center',
-    ],
-    colors: [
-      { name: 'Midnight Black', value: '#1a1a1a' },
-      { name: 'Silver', value: '#e5e7eb' },
-      { name: 'Rose Gold', value: '#f59e0b' },
-    ],
-    link: '/products/wireless-headphones',
-    description:
-      'Premium wireless headphones with active noise cancellation and superior sound quality. Perfect for music lovers and professionals.',
-    highlights: [
-      'Active noise cancellation technology',
-      '30-hour battery life',
-      'Premium leather headband',
-      'Quick charge capability',
-    ],
-    specifications: {
-      Brand: 'AudioTech Pro',
-      'Battery Life': '30 hours',
-      'Charging Time': '2 hours',
-      Weight: '280g',
-      'Driver Size': '40mm',
-      'Frequency Response': '20Hz - 20kHz',
-    },
-  },
-  {
-    id: 2,
-    name: 'Smart Fitness Watch',
-    price: 249,
-    originalPrice: 329,
-    rating: 4.6,
-    reviews: 89,
-    category: 'Electronics',
-    color: 'Space Gray',
-    badge: 'New',
-    inStock: true,
-    image:
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-    images: [
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop&crop=center',
-      'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=600&h=600&fit=crop&crop=center',
-    ],
-    colors: [
-      { name: 'Space Gray', value: '#4b5563' },
-      { name: 'Gold', value: '#fbbf24' },
-      { name: 'Silver', value: '#e5e7eb' },
-    ],
-    link: '/products/fitness-watch',
-    description:
-      'Advanced fitness tracking with heart rate monitoring, GPS, and smart notifications.',
-    highlights: [
-      'Built-in GPS tracking',
-      'Heart rate monitoring',
-      'Water resistant to 50m',
-      '7-day battery life',
-    ],
-    specifications: {
-      Brand: 'FitTech',
-      'Display Size': '1.4 inch',
-      'Battery Life': '7 days',
-      'Water Resistance': '5ATM',
-      Sensors: 'Heart rate, GPS, Accelerometer',
-      Compatibility: 'iOS & Android',
-    },
-  },
-  {
-    id: 3,
-    name: 'Premium Coffee Machine',
-    price: 899,
-    originalPrice: 1199,
-    rating: 4.9,
-    reviews: 203,
-    category: 'Appliances',
-    color: 'Stainless Steel',
-    badge: 'Limited',
-    inStock: true,
-    image:
-      'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-    images: [
-      'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=600&fit=crop&crop=center',
-      'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&h=600&fit=crop&crop=center',
-    ],
-    colors: [
-      { name: 'Stainless Steel', value: '#9ca3af' },
-      { name: 'Matte Black', value: '#374151' },
-    ],
-    link: '/products/coffee-machine',
-    description:
-      'Professional-grade espresso machine with built-in grinder and milk frother for café-quality coffee at home.',
-    highlights: [
-      'Built-in ceramic grinder',
-      'Automatic milk frother',
-      'Programmable brewing settings',
-      'Premium stainless steel construction',
-    ],
-    specifications: {
-      Brand: 'BrewMaster Pro',
-      'Water Tank': '2.5L',
-      'Bean Hopper': '350g',
-      Pressure: '15 bars',
-      Power: '1450W',
-      Dimensions: '35 x 28 x 38 cm',
-    },
-  },
-  // Organization/Objects Products
-  {
-    id: 4,
     name: 'Organize Basic Set (Walnut)',
     price: 149,
-    originalPrice: 199,
     rating: 4.8,
     reviews: 38,
     category: 'Objects',
-    inStock: true,
-    badge: 'Bestseller',
     image:
       'https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -145,9 +20,13 @@ export const products = [
       { name: 'Black', value: '#000000' },
       { name: 'Navy', value: '#1e3a8a' },
     ],
+    inStock: true,
+    badge: 'Bestseller',
     link: '/products/1',
     description:
       'The perfect midpoint between shopping tote and comfy backpack. With convertible straps, you can hand carry, should sling, or backpack this convenient and spacious bag.',
+    details:
+      'The Organize Basic Set is made from premium solid walnut wood with a natural oil finish. Each piece is hand cut and sewn locally, ensuring the highest quality craftsmanship. The set includes everything you need to keep your workspace organized and stylish.',
     highlights: [
       'Hand cut and sewn locally',
       'Dyed with our proprietary colors',
@@ -166,21 +45,23 @@ export const products = [
     },
   },
   {
-    id: 5,
+    id: 2,
     name: 'Organize Pen Holder',
     price: 15,
     rating: 4.9,
     reviews: 18,
     category: 'Objects',
-    inStock: false,
     image:
       'https://images.unsplash.com/photo-1606662628430-d3d3b88824ad?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1606662628430-d3d3b88824ad?w=600&h=600&fit=crop&crop=center',
     ],
-    link: '/products/5',
+    inStock: false,
+    link: '/products/2',
     description:
       'Elegant wooden pen holder to keep your desk organized and stylish.',
+    details:
+      'This beautifully crafted pen holder features natural bamboo wood with multiple compartments for all your writing instruments.',
     highlights: [
       'Natural wood finish',
       'Multiple compartments',
@@ -193,26 +74,557 @@ export const products = [
     },
   },
   {
-    id: 6,
+    id: 3,
     name: 'Organize Sticky Note Holder',
     price: 15,
     rating: 4.7,
     reviews: 14,
     category: 'Objects',
-    inStock: true,
     image:
-      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=400&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=400&fit=crop&crop=center',
     images: [
-      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=600&fit=crop&crop=center',
     ],
-    link: '/products/6',
+    inStock: true,
+    badge: 'New',
+    link: '/products/3',
     description:
       'Keep your sticky notes organized and easily accessible with this modern holder.',
+    details:
+      'Sleek aluminum sticky note holder with magnetic mounting for easy placement on any metal surface.',
     highlights: ['Magnetic base', 'Sleek design', 'Perfect desk accessory'],
     specifications: {
       Material: 'Aluminum',
       Dimensions: '3" x 3" x 1"',
       Features: 'Magnetic mounting',
+    },
+  },
+  {
+    id: 4,
+    name: 'Organize Phone Holder',
+    price: 15,
+    rating: 4.6,
+    reviews: 21,
+    category: 'Objects',
+    image:
+      'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    link: '/products/4',
+    description:
+      'Modern phone holder that keeps your device within easy reach while you work.',
+    details:
+      'Adjustable phone holder with non-slip base, perfect for video calls, watching content, or following recipes.',
+    highlights: [
+      'Adjustable viewing angle',
+      'Non-slip rubber base',
+      'Compatible with all phones',
+    ],
+    specifications: {
+      Material: 'Aluminum and silicone',
+      Dimensions: '5" x 3" x 4"',
+      Compatibility: 'All smartphones',
+    },
+  },
+  {
+    id: 5,
+    name: 'Leather Key Ring (Black)',
+    price: 32,
+    rating: 4.8,
+    reviews: 24,
+    category: 'Objects',
+    image:
+      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    badge: 'Sale',
+    link: '/products/5',
+    description:
+      'Premium leather key ring with solid brass hardware for a timeless look.',
+    details:
+      'Handcrafted from full-grain leather, this key ring develops a beautiful patina over time.',
+    highlights: [
+      'Full-grain leather',
+      'Solid brass hardware',
+      'Develops patina over time',
+    ],
+    specifications: {
+      Material: 'Full-grain leather',
+      Hardware: 'Solid brass',
+      Dimensions: '3" x 1"',
+    },
+  },
+  {
+    id: 6,
+    name: 'Basic Cotton Tee (White)',
+    price: 25,
+    rating: 4.5,
+    reviews: 89,
+    category: 'Tees',
+    image:
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    link: '/products/6',
+    description:
+      'Classic white cotton tee made from premium 100% cotton for ultimate comfort.',
+    details:
+      'This essential basic tee is perfect for everyday wear. Made from soft, breathable cotton that gets better with every wash.',
+    highlights: [
+      '100% premium cotton',
+      'Pre-shrunk fabric',
+      'Reinforced seams',
+      'Machine washable',
+    ],
+    specifications: {
+      Material: '100% Cotton',
+      Weight: '180 GSM',
+      Fit: 'Regular fit',
+      Care: 'Machine wash cold',
+    },
+  },
+  {
+    id: 7,
+    name: 'Basic Cotton Tee (Black)',
+    price: 25,
+    rating: 4.6,
+    reviews: 72,
+    category: 'Tees',
+    image:
+      'https://images.unsplash.com/photo-1583743814966-8936f37f82db?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1583743814966-8936f37f82db?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    link: '/products/7',
+    description:
+      'Versatile black cotton tee that goes with everything in your wardrobe.',
+    details:
+      'A wardrobe staple made from high-quality cotton with a comfortable fit that maintains its shape wash after wash.',
+    highlights: [
+      '100% premium cotton',
+      'Fade-resistant black dye',
+      'Durable construction',
+      'Easy care',
+    ],
+    specifications: {
+      Material: '100% Cotton',
+      Weight: '180 GSM',
+      Fit: 'Regular fit',
+      Care: 'Machine wash cold',
+    },
+  },
+  {
+    id: 8,
+    name: 'Basic Cotton Tee (Gray)',
+    price: 25,
+    rating: 4.4,
+    reviews: 65,
+    category: 'Tees',
+    image:
+      'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    link: '/products/8',
+    description:
+      'Comfortable gray cotton tee perfect for casual everyday wear.',
+    details:
+      'Soft heather gray tee made from premium cotton blend for a relaxed, comfortable fit.',
+    highlights: [
+      'Cotton blend fabric',
+      'Heather gray color',
+      'Comfortable fit',
+      'Easy to style',
+    ],
+    specifications: {
+      Material: '90% Cotton, 10% Polyester',
+      Weight: '180 GSM',
+      Fit: 'Regular fit',
+      Care: 'Machine wash cold',
+    },
+  },
+  {
+    id: 9,
+    name: 'Cozy Pullover Sweatshirt',
+    price: 55,
+    rating: 4.7,
+    reviews: 43,
+    category: 'Sweatshirts',
+    image:
+      'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    link: '/products/9',
+    description:
+      'Warm and comfortable pullover sweatshirt perfect for cooler weather.',
+    details:
+      'Ultra-soft fleece sweatshirt with a relaxed fit. Features ribbed cuffs and hem for extra warmth.',
+    highlights: [
+      'Soft fleece interior',
+      'Relaxed fit',
+      'Ribbed cuffs and hem',
+      'Durable construction',
+    ],
+    specifications: {
+      Material: '80% Cotton, 20% Polyester',
+      Weight: '320 GSM',
+      Fit: 'Relaxed fit',
+      Care: 'Machine wash warm',
+    },
+  },
+  {
+    id: 10,
+    name: 'Zip-Up Hoodie',
+    price: 65,
+    rating: 4.8,
+    reviews: 56,
+    category: 'Sweatshirts',
+    image:
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    badge: 'Bestseller',
+    link: '/products/10',
+    description:
+      'Versatile zip-up hoodie with convenient front pockets and adjustable hood.',
+    details:
+      'Premium hoodie with full-length zipper, kangaroo pocket, and adjustable drawstring hood. Perfect for layering.',
+    highlights: [
+      'Full-length zipper',
+      'Kangaroo pocket',
+      'Adjustable hood',
+      'Premium cotton blend',
+    ],
+    specifications: {
+      Material: '80% Cotton, 20% Polyester',
+      Weight: '340 GSM',
+      Fit: 'Regular fit',
+      Care: 'Machine wash warm',
+    },
+  },
+  {
+    id: 11,
+    name: 'Classic Denim Jeans',
+    price: 79,
+    rating: 4.3,
+    reviews: 127,
+    category: 'Pants & Shorts',
+    image:
+      'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: false,
+    link: '/products/11',
+    description:
+      'Timeless denim jeans with a comfortable fit and classic styling.',
+    details:
+      'Made from premium denim with just the right amount of stretch for all-day comfort.',
+    highlights: [
+      'Premium denim fabric',
+      'Comfortable stretch',
+      'Classic five-pocket design',
+      'Reinforced stitching',
+    ],
+    specifications: {
+      Material: '98% Cotton, 2% Elastane',
+      Weight: '12 oz denim',
+      Fit: 'Regular fit',
+      Care: 'Machine wash cold, tumble dry low',
+    },
+  },
+  {
+    id: 12,
+    name: 'Casual Chino Shorts',
+    price: 35,
+    rating: 4.2,
+    reviews: 84,
+    category: 'Pants & Shorts',
+    image:
+      'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    badge: 'Sale',
+    link: '/products/12',
+    description:
+      'Comfortable chino shorts perfect for warm weather and casual occasions.',
+    details:
+      'Lightweight chino shorts with a modern fit. Features side pockets and a button closure.',
+    highlights: [
+      'Lightweight cotton',
+      'Modern fit',
+      'Side pockets',
+      'Versatile styling',
+    ],
+    specifications: {
+      Material: '100% Cotton',
+      Length: '9 inch inseam',
+      Fit: 'Modern fit',
+      Care: 'Machine wash warm',
+    },
+  },
+  {
+    id: 13,
+    name: 'Wooden Desk Organizer',
+    price: 75,
+    rating: 4.9,
+    reviews: 92,
+    category: 'Objects',
+    image:
+      'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    link: '/products/13',
+    description:
+      'Beautifully crafted wooden organizer with multiple compartments for all your desk essentials.',
+    details:
+      'Premium wooden desk organizer featuring natural wood grain and multiple storage sections.',
+    highlights: [
+      'Natural wood construction',
+      'Multiple compartments',
+      'Handcrafted quality',
+      'Eco-friendly materials',
+    ],
+    specifications: {
+      Material: 'Solid oak wood',
+      Dimensions: '12" x 6" x 4"',
+      Finish: 'Natural oil',
+      Compartments: '5 sections',
+    },
+  },
+  {
+    id: 14,
+    name: 'Modern Table Lamp',
+    price: 89,
+    rating: 4.7,
+    reviews: 38,
+    category: 'Objects',
+    image:
+      'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    link: '/products/14',
+    description:
+      'Sleek modern table lamp with adjustable brightness for the perfect ambiance.',
+    details:
+      'Contemporary table lamp with touch controls and multiple brightness levels.',
+    highlights: [
+      'Touch-sensitive controls',
+      'Adjustable brightness',
+      'Energy-efficient LED',
+      'Modern design',
+    ],
+    specifications: {
+      Type: 'LED table lamp',
+      Power: '12W',
+      'Light Temperature': '3000K - 6000K',
+      Dimensions: '8" x 8" x 16"',
+    },
+  },
+  {
+    id: 15,
+    name: 'Vintage Cotton Tee',
+    price: 29,
+    rating: 4.5,
+    reviews: 156,
+    category: 'Tees',
+    image:
+      'https://images.unsplash.com/photo-1503341960582-b45751874cf0?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1503341960582-b45751874cf0?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    badge: 'New',
+    link: '/products/15',
+    description:
+      'Vintage-inspired cotton tee with a worn-in feel and retro styling.',
+    details:
+      'Soft, pre-washed cotton tee with a vintage aesthetic and comfortable fit.',
+    highlights: [
+      'Pre-washed for softness',
+      'Vintage-inspired design',
+      'Comfortable fit',
+      'Durable fabric',
+    ],
+    specifications: {
+      Material: '100% Cotton',
+      Weight: '160 GSM',
+      Fit: 'Relaxed fit',
+      Care: 'Machine wash cold',
+    },
+  },
+  {
+    id: 16,
+    name: 'Casual Sweatpants',
+    price: 45,
+    rating: 4.4,
+    reviews: 78,
+    category: 'Pants & Shorts',
+    image:
+      'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: false,
+    link: '/products/16',
+    description:
+      'Comfortable sweatpants perfect for lounging or light exercise.',
+    details:
+      'Soft fleece sweatpants with elastic waistband and cuffed ankles for maximum comfort.',
+    highlights: [
+      'Soft fleece interior',
+      'Elastic waistband',
+      'Cuffed ankles',
+      'Side pockets',
+    ],
+    specifications: {
+      Material: '80% Cotton, 20% Polyester',
+      Weight: '300 GSM',
+      Fit: 'Relaxed fit',
+      Care: 'Machine wash warm',
+    },
+  },
+  {
+    id: 17,
+    name: 'Minimalist Notebook',
+    price: 18,
+    rating: 4.6,
+    reviews: 234,
+    category: 'Objects',
+    image:
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    badge: 'Bestseller',
+    link: '/products/17',
+    description:
+      'Clean, minimalist notebook with premium paper perfect for writing or sketching.',
+    details:
+      'High-quality notebook with smooth, acid-free paper and a durable cover.',
+    highlights: [
+      'Premium acid-free paper',
+      'Lay-flat binding',
+      'Durable cover',
+      'Multiple page counts',
+    ],
+    specifications: {
+      Pages: '192 pages',
+      'Paper Weight': '100 GSM',
+      Size: 'A5 (5.8" x 8.3")',
+      Binding: 'Lay-flat thread binding',
+    },
+  },
+  {
+    id: 18,
+    name: 'Crew Neck Sweatshirt',
+    price: 59,
+    rating: 4.7,
+    reviews: 67,
+    category: 'Sweatshirts',
+    image:
+      'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    link: '/products/18',
+    description:
+      'Classic crew neck sweatshirt with soft fleece interior for ultimate comfort.',
+    details:
+      'Timeless crew neck design with a premium cotton blend and soft brushed interior.',
+    highlights: [
+      'Brushed fleece interior',
+      'Ribbed collar and cuffs',
+      'Regular fit',
+      'Premium cotton blend',
+    ],
+    specifications: {
+      Material: '80% Cotton, 20% Polyester',
+      Weight: '320 GSM',
+      Fit: 'Regular fit',
+      Care: 'Machine wash warm',
+    },
+  },
+  {
+    id: 19,
+    name: 'Soft Cotton Shorts',
+    price: 28,
+    rating: 4.3,
+    reviews: 95,
+    category: 'Pants & Shorts',
+    image:
+      'https://images.unsplash.com/photo-1506629905962-4b91bb1ab297?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1506629905962-4b91bb1ab297?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    link: '/products/19',
+    description:
+      'Lightweight cotton shorts perfect for summer activities and lounging.',
+    details:
+      'Comfortable cotton shorts with an elastic waistband and relaxed fit.',
+    highlights: [
+      'Lightweight cotton',
+      'Elastic waistband',
+      'Side pockets',
+      'Relaxed fit',
+    ],
+    specifications: {
+      Material: '100% Cotton',
+      Length: '7 inch inseam',
+      Fit: 'Relaxed fit',
+      Care: 'Machine wash warm',
+    },
+  },
+  {
+    id: 20,
+    name: 'Graphic Print Tee',
+    price: 32,
+    rating: 4.4,
+    reviews: 112,
+    category: 'Tees',
+    image:
+      'https://images.unsplash.com/photo-1527719327259-0c9669ac8644?w=400&h=400&fit=crop&crop=center',
+    images: [
+      'https://images.unsplash.com/photo-1527719327259-0c9669ac8644?w=600&h=600&fit=crop&crop=center',
+    ],
+    inStock: true,
+    link: '/products/20',
+    description:
+      'Stylish graphic print tee made from soft cotton with unique design.',
+    details:
+      'Eye-catching graphic tee with high-quality screen printing on premium cotton.',
+    highlights: [
+      'Unique graphic design',
+      'High-quality screen print',
+      'Soft cotton fabric',
+      'Fade-resistant ink',
+    ],
+    specifications: {
+      Material: '100% Cotton',
+      Weight: '180 GSM',
+      Fit: 'Regular fit',
+      Care: 'Machine wash inside out',
     },
   },
 ];
@@ -290,7 +702,14 @@ export const getProductsByPriceRange = (min, max) => {
 };
 
 // Categories for filtering
-export const categories = ['All', 'Electronics', 'Objects', 'Appliances'];
+export const categories = [
+  'All',
+  'All New Arrivals',
+  'Tees',
+  'Objects',
+  'Sweatshirts',
+  'Pants & Shorts',
+];
 
 // Expected API response format for backend integration
 export const apiSchema = {
