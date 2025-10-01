@@ -4,51 +4,43 @@ import PropTypes from 'prop-types';
 /**
  * Paginator Component
  *
- * A reusable pagination component that supports different styles and layouts.
- * Supports both traditional and modern circular button styles.
+ * A reusable pagination component with traditional button styling.
  *
  * @param {number} currentPage - Current active page
  * @param {number} totalPages - Total number of pages
  * @param {function} onPageChange - Callback function when page changes
- * @param {string} variant - Style variant: 'traditional' | 'modern' (default: 'modern')
  * @param {string} size - Size variant: 'sm' | 'md' | 'lg' (default: 'md')
  * @param {string} color - Color theme: 'blue' | 'indigo' | 'gray' (default: 'indigo')
  * @param {boolean} showEllipsis - Whether to show ellipsis for large page counts (default: true)
- * @param {number} maxVisiblePages - Maximum visible page numbers (default: 10 for traditional, 5 for modern)
+ * @param {number} maxVisiblePages - Maximum visible page numbers (default: 10)
  * @param {string} className - Additional CSS classes for the container
  * @param {boolean} showPrevNext - Whether to show Previous/Next buttons (default: true)
- * @param {string} alignment - Alignment: 'left' | 'center' | 'right' (default: 'center')
  */
 const Paginator = ({
   currentPage,
   totalPages,
   onPageChange,
-  variant = 'modern',
   size = 'md',
   color = 'indigo',
   showEllipsis = true,
-  maxVisiblePages,
+  maxVisiblePages = 10,
   className = '',
   showPrevNext = true,
-  alignment = 'center',
 }) => {
-  // Set default maxVisiblePages based on variant
-  const defaultMaxVisible = variant === 'traditional' ? 10 : 5;
-  const visiblePages = maxVisiblePages || defaultMaxVisible;
+  const visiblePages = maxVisiblePages;
 
   // Size configurations
   const sizeConfig = {
     sm: {
-      button: variant === 'modern' ? 'w-8 h-8 text-xs' : 'px-3 py-1 text-xs',
+      button: 'px-3 py-1 text-xs',
       prevNext: 'px-3 py-1 text-xs',
     },
     md: {
-      button: variant === 'modern' ? 'w-10 h-10 text-sm' : 'w-8 h-8 text-sm',
+      button: 'w-8 h-8 text-sm',
       prevNext: 'px-4 py-2 text-sm',
     },
     lg: {
-      button:
-        variant === 'modern' ? 'w-12 h-12 text-base' : 'w-10 h-10 text-base',
+      button: 'w-10 h-10 text-base',
       prevNext: 'px-6 py-3 text-base',
     },
   };
@@ -73,13 +65,6 @@ const Paginator = ({
         'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
       border: 'border-gray-300 dark:border-gray-600',
     },
-  };
-
-  // Alignment configurations
-  const alignmentConfig = {
-    left: 'justify-start',
-    center: 'justify-center',
-    right: 'justify-end',
   };
 
   const { button: buttonSize, prevNext: prevNextSize } = sizeConfig[size];
@@ -160,10 +145,7 @@ const Paginator = ({
     }
 
     const isActive = page === currentPage;
-    const baseClass =
-      variant === 'modern'
-        ? `${buttonSize} rounded-full flex items-center justify-center font-medium transition-colors`
-        : `${buttonSize} rounded flex items-center justify-center font-medium transition-colors`;
+    const baseClass = `${buttonSize} rounded flex items-center justify-center font-medium transition-colors`;
 
     return (
       <button
@@ -171,7 +153,7 @@ const Paginator = ({
         onClick={() => handlePageClick(page)}
         className={`${baseClass} ${
           isActive ? active : `${inactive} hover:scale-105`
-        } ${variant === 'modern' && !isActive ? border : ''}`}
+        }`}
       >
         {page}
       </button>
@@ -183,63 +165,34 @@ const Paginator = ({
     const disabled = isNext ? currentPage === totalPages : currentPage === 1;
     const targetPage = isNext ? currentPage + 1 : currentPage - 1;
 
-    if (variant === 'modern') {
-      return (
-        <button
-          onClick={() => !disabled && handlePageClick(targetPage)}
-          disabled={disabled}
-          className={`${buttonSize} rounded-full flex items-center justify-center font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${border}`}
-        >
-          {isNext ? '→' : '←'}
-        </button>
-      );
-    } else {
-      return (
-        <button
-          onClick={() => !disabled && handlePageClick(targetPage)}
-          disabled={disabled}
-          className={`${prevNextSize} ${
-            disabled
-              ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
-              : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-          }`}
-        >
-          {isNext ? 'Next' : 'Previous'}
-        </button>
-      );
-    }
+    return (
+      <button
+        onClick={() => !disabled && handlePageClick(targetPage)}
+        disabled={disabled}
+        className={`${prevNextSize} ${
+          disabled
+            ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
+            : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+        }`}
+      >
+        {isNext ? 'Next' : 'Previous'}
+      </button>
+    );
   };
 
   if (totalPages <= 1) {
     return null;
   }
 
-  if (variant === 'traditional') {
-    return (
-      <div className={`flex items-center justify-between ${className}`}>
-        {showPrevNext && renderPrevNextButton('previous')}
-
-        <div className="flex items-center space-x-2">
-          {pageNumbers.map((page, index) => renderPageButton(page, index))}
-        </div>
-
-        {showPrevNext && renderPrevNextButton('next')}
-      </div>
-    );
-  }
-
-  // Modern variant (centered layout)
   return (
-    <div className={`flex ${alignmentConfig[alignment]} ${className}`}>
-      <div className="flex items-center gap-2">
-        {showPrevNext && renderPrevNextButton('previous')}
+    <div className={`flex items-center justify-between ${className}`}>
+      {showPrevNext && renderPrevNextButton('previous')}
 
-        <div className="flex items-center gap-1">
-          {pageNumbers.map((page, index) => renderPageButton(page, index))}
-        </div>
-
-        {showPrevNext && renderPrevNextButton('next')}
+      <div className="flex items-center space-x-2">
+        {pageNumbers.map((page, index) => renderPageButton(page, index))}
       </div>
+
+      {showPrevNext && renderPrevNextButton('next')}
     </div>
   );
 };
@@ -248,14 +201,12 @@ Paginator.propTypes = {
   currentPage: PropTypes.number.isRequired,
   totalPages: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
-  variant: PropTypes.oneOf(['traditional', 'modern']),
   size: PropTypes.oneOf(['sm', 'md', 'lg']),
   color: PropTypes.oneOf(['blue', 'indigo', 'gray']),
   showEllipsis: PropTypes.bool,
   maxVisiblePages: PropTypes.number,
   className: PropTypes.string,
   showPrevNext: PropTypes.bool,
-  alignment: PropTypes.oneOf(['left', 'center', 'right']),
 };
 
 export default Paginator;
