@@ -132,8 +132,10 @@ const ProductDetailPage = () => {
             : null,
         })
       );
-      // Open cart sidebar to show the added item
-      dispatch(openCart());
+      // Open cart sidebar only on desktop (lg and above)
+      if (window.innerWidth >= 1024) {
+        dispatch(openCart());
+      }
     }
   };
 

@@ -6,7 +6,7 @@ import {
   updateQuantity,
   clearCart,
 } from '../store/slices/cartSlice';
-import { TrashIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -47,14 +47,14 @@ const CartPage = () => {
 
   if (items.length === 0) {
     return (
-      <div className="relative min-h-screen bg-white dark:bg-gray-900">
+      <div className="relative bg-white dark:bg-gray-900">
         {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-purple-50/50 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20" />
-        <div className="absolute -inset-y-8 inset-x-0 bg-gradient-to-b from-indigo-50/20 via-transparent to-indigo-50/20 dark:from-indigo-900/5 dark:to-indigo-900/5" />
+        <div className="absolute inset-x-0 top-0 h-full bg-gradient-to-b from-indigo-50/20 via-transparent to-indigo-50/20 dark:from-indigo-900/5 dark:to-indigo-900/5" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <div className="mx-auto h-24 w-24 text-gray-400 mb-6">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 min-h-[calc(100vh-4rem)]">
+          <div className="text-center flex flex-col items-center justify-center h-full">
+            <div className="mx-auto h-20 w-20 sm:h-24 sm:w-24 text-gray-400 mb-6">
               <svg
                 fill="none"
                 viewBox="0 0 24 24"
@@ -69,10 +69,10 @@ const CartPage = () => {
                 />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
               Your shopping cart is empty
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 mb-8">
               Looks like you haven't added anything to your cart yet.
             </p>
             <Link
@@ -88,16 +88,16 @@ const CartPage = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-white dark:bg-gray-900">
+    <div className="relative bg-white dark:bg-gray-900">
       {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-purple-50/50 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20" />
-      <div className="absolute -inset-y-8 inset-x-0 bg-gradient-to-b from-indigo-50/20 via-transparent to-indigo-50/20 dark:from-indigo-900/5 dark:to-indigo-900/5" />
+      <div className="fixed inset-0 bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-purple-50/50 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20 -z-10" />
+      <div className="fixed inset-x-0 top-0 h-full bg-gradient-to-b from-indigo-50/20 via-transparent to-indigo-50/20 dark:from-indigo-900/5 dark:to-indigo-900/5 -z-10" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
         {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="mb-4 sm:mb-6">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               Shopping Basket
             </h1>
             {items.length > 0 && (
@@ -112,7 +112,7 @@ const CartPage = () => {
 
           {/* Free Delivery Banner */}
           {!isFreeDelivery && totalPrice > 0 && (
-            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
               <p className="text-sm text-green-800 dark:text-green-200">
                 <span className="font-semibold">
                   £{amountToFreeDelivery.toFixed(2)}
@@ -125,7 +125,7 @@ const CartPage = () => {
           )}
 
           {isFreeDelivery && (
-            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
               <p className="text-sm font-semibold text-green-800 dark:text-green-200">
                 You are getting FREE Delivery Today by 22:00!
               </p>
@@ -137,8 +137,8 @@ const CartPage = () => {
           {/* Cart Items */}
           <div className="lg:col-span-2">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-              {/* Items Header */}
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              {/* Items Header - Hidden on mobile */}
+              <div className="hidden sm:block px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Price
                 </p>
@@ -147,10 +147,10 @@ const CartPage = () => {
               {/* Cart Items List */}
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
                 {items.map(item => (
-                  <div key={item.id} className="p-6">
-                    <div className="flex gap-4">
-                      {/* Checkbox */}
-                      <div className="flex-shrink-0 pt-1">
+                  <div key={item.id} className="p-3 sm:p-6">
+                    <div className="flex gap-2 sm:gap-4">
+                      {/* Checkbox - Hidden on mobile */}
+                      <div className="hidden sm:block flex-shrink-0 pt-1">
                         <input
                           type="checkbox"
                           defaultChecked
@@ -158,13 +158,13 @@ const CartPage = () => {
                         />
                       </div>
 
-                      {/* Product Image */}
+                      {/* Product Image - Smaller on mobile */}
                       <div className="flex-shrink-0">
                         <Link to={`/products/${item.id}`}>
                           <img
                             src={item.image}
                             alt={item.name}
-                            className="w-32 h-32 object-cover rounded-lg bg-gray-100 dark:bg-gray-700 hover:opacity-75 transition-opacity"
+                            className="w-20 h-20 sm:w-32 sm:h-32 object-cover rounded-lg bg-gray-100 dark:bg-gray-700 hover:opacity-75 transition-opacity"
                           />
                         </Link>
                       </div>
@@ -175,7 +175,7 @@ const CartPage = () => {
                           to={`/products/${item.id}`}
                           className="block group"
                         >
-                          <h3 className="text-base font-medium text-gray-900 dark:text-white mb-1 hover:text-indigo-600 dark:hover:text-indigo-400 line-clamp-2">
+                          <h3 className="text-sm sm:text-base font-medium text-gray-900 dark:text-white mb-1 hover:text-indigo-600 dark:hover:text-indigo-400 line-clamp-2">
                             {item.name}
                           </h3>
                         </Link>
@@ -211,8 +211,8 @@ const CartPage = () => {
                           </span>
                         </p>
 
-                        {/* Gift Checkbox */}
-                        <div className="flex items-center gap-2 mb-3">
+                        {/* Gift Checkbox - Hidden on mobile */}
+                        <div className="hidden sm:flex items-center gap-2 mb-3">
                           <input
                             type="checkbox"
                             id={`gift-${item.id}`}
@@ -229,9 +229,9 @@ const CartPage = () => {
                           </label>
                         </div>
 
-                        {/* Category/Color if available */}
+                        {/* Category/Color if available - Hidden on mobile */}
                         {item.category && (
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                          <p className="hidden sm:block text-sm text-gray-600 dark:text-gray-400 mb-3">
                             <span className="font-medium">Category:</span>{' '}
                             {item.category}
                           </p>
@@ -265,37 +265,37 @@ const CartPage = () => {
                         </div>
 
                         {/* Action Links */}
-                        <div className="flex flex-wrap items-center gap-3 text-sm">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
                           <button
                             onClick={() => handleRemoveItem(item.id)}
                             className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium"
                           >
                             Delete
                           </button>
-                          <span className="text-gray-300 dark:text-gray-600">
+                          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">
                             |
                           </span>
-                          <button className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium">
+                          <button className="hidden sm:inline text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium">
                             Save for later
                           </button>
-                          <span className="text-gray-300 dark:text-gray-600">
+                          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">
                             |
                           </span>
-                          <button className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium">
+                          <button className="hidden sm:inline text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium">
                             See more like this
                           </button>
-                          <span className="text-gray-300 dark:text-gray-600">
+                          <span className="hidden lg:inline text-gray-300 dark:text-gray-600">
                             |
                           </span>
-                          <button className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium">
+                          <button className="hidden lg:inline text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium">
                             Share
                           </button>
                         </div>
                       </div>
 
-                      {/* Price */}
-                      <div className="flex-shrink-0 text-right">
-                        <p className="text-lg font-bold text-gray-900 dark:text-white">
+                      {/* Price - Right side on desktop, below on mobile */}
+                      <div className="hidden sm:block flex-shrink-0 text-right">
+                        <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
                           £{(item.price * item.quantity).toFixed(2)}
                         </p>
                         {item.originalPrice && (
@@ -305,16 +305,29 @@ const CartPage = () => {
                         )}
                       </div>
                     </div>
+
+                    {/* Price on mobile - Below content */}
+                    <div className="sm:hidden mt-2 text-right">
+                      <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
+                        £{(item.price * item.quantity).toFixed(2)}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
 
               {/* Subtotal at bottom */}
-              <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex justify-end">
-                  <p className="text-base text-gray-700 dark:text-gray-300">
+              <div className="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-3">
+                  <Link
+                    to="/products"
+                    className="sm:hidden w-full text-center py-2 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium"
+                  >
+                    Continue shopping
+                  </Link>
+                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
                     Subtotal ({totalItems} item{totalItems !== 1 ? 's' : ''}):{' '}
-                    <span className="font-bold text-gray-900 dark:text-white text-lg">
+                    <span className="font-bold text-gray-900 dark:text-white text-base sm:text-lg">
                       £{totalPrice.toFixed(2)}
                     </span>
                   </p>
