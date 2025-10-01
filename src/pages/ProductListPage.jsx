@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { addToCart, removeFromCart } from '../store/slices/cartSlice';
+import { addToCart, removeFromCart, openCart } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
 import Paginator from '../components/ui/Paginator';
 
@@ -274,6 +274,8 @@ const ProductListPage = () => {
           quantity: 1,
         })
       );
+      // Open cart sidebar to show the added item
+      dispatch(openCart());
     }
   };
 

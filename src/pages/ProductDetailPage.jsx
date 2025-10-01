@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { addToCart, removeFromCart } from '../store/slices/cartSlice';
+import { addToCart, removeFromCart, openCart } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
 
 const ProductDetailPage = () => {
@@ -132,6 +132,8 @@ const ProductDetailPage = () => {
             : null,
         })
       );
+      // Open cart sidebar to show the added item
+      dispatch(openCart());
     }
   };
 

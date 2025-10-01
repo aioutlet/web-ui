@@ -73,6 +73,9 @@ const cartSlice = createSlice({
     toggleCart: state => {
       state.isOpen = !state.isOpen;
     },
+    openCart: state => {
+      state.isOpen = true;
+    },
     closeCart: state => {
       state.isOpen = false;
     },
@@ -85,6 +88,7 @@ export const {
   updateQuantity,
   clearCart,
   toggleCart,
+  openCart,
   closeCart,
 } = cartSlice.actions;
 

@@ -14,6 +14,7 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import ReviewListPage from './pages/ReviewListPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
+import CartPage from './pages/CartPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
               />
               <Route path="/orders" element={<OrdersPage />} />
               <Route path="/orders/:orderId" element={<OrderDetailsPage />} />
+              <Route path="/cart" element={<CartPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Layout>
