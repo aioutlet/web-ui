@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart, removeFromCart, openCart } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
+import { getProductById } from '../data/products';
+import { getProductReviews } from '../data/reviews';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -56,59 +58,15 @@ const ProductDetailPage = () => {
     // Example: dispatch(toggleFavorite(product.id));
   };
 
-  // Mock product data based on the ID
+  // Fetch product data from centralized products.js
   useEffect(() => {
     // Simulate API call
     const fetchProduct = async () => {
       setLoading(true);
-      // Mock delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Mock delay to simulate network request
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      const mockProducts = {
-        1: {
-          id: 1,
-          name: 'Organize Basic Set (Walnut)',
-          price: 149,
-          originalPrice: 199,
-          rating: 4.8,
-          reviews: 38,
-          category: 'Objects',
-          inStock: true,
-          description:
-            'The Zip Tote Basket is the perfect midpoint between shopping tote and comfy backpack. With convertible straps, you can hand carry, should sling, or backpack this convenient and spacious bag. The zip top and durable canvas construction keeps your goods protected for all-day use.',
-          images: [
-            'https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=600&h=600&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1594736797933-d0eac2451a9a?w=600&h=600&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1503602642458-232111445657?w=600&h=600&fit=crop&crop=center',
-          ],
-          colors: [
-            { name: 'Black', value: '#000000' },
-            { name: 'Navy', value: '#1e3a8a' },
-          ],
-          highlights: [
-            'Hand cut and sewn locally',
-            'Dyed with our proprietary colors',
-            'Pre-washed & pre-shrunk',
-            'Ultra-soft 100% cotton',
-          ],
-          details:
-            'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
-          specifications: {
-            Origin: 'Designed by Good Goods, Inc.',
-            Material:
-              'Solid walnut base with rare earth magnets and powder-coated steel tips.',
-            Dimensions: '15" x 3.25" x .75"',
-            Finish: 'Hand sanded and finished with natural oil',
-            Includes: 'Wood card, Leather strap, Desk tray, Sticky notes',
-            Considerations:
-              'Made from natural materials. Grain and color vary with each item.',
-          },
-        },
-        // Add more mock products as needed
-      };
-
-      const productData = mockProducts[id] || mockProducts[1];
+      const productData = getProductById(id);
       setProduct(productData);
       setLoading(false);
     };
@@ -145,36 +103,8 @@ const ProductDetailPage = () => {
     }
   };
 
-  // Mock reviews data
-  const reviews = [
-    {
-      id: 1,
-      author: 'Emily Johnson',
-      rating: 5,
-      date: '2 days ago',
-      comment:
-        'This is the bag of my dreams. I took it on my last vacation and was able to fit an obscene amount of snacks for the many long and hungry flights.',
-      verified: true,
-    },
-    {
-      id: 2,
-      author: 'Hector Gibbons',
-      rating: 5,
-      date: '3 days ago',
-      comment:
-        'Before getting the Ruck Snack, I struggled my whole life with pulverized snacks, endless crumbs, and other heartbreaking snack catastrophes. Now, I can share my snacks with confidence and style!',
-      verified: true,
-    },
-    {
-      id: 3,
-      author: 'Mark Edwards',
-      rating: 4,
-      date: '1 week ago',
-      comment:
-        'I love how versatile this bag is. It can hold anything ranging from cookies that come in trays to cookies that come in tins!',
-      verified: false,
-    },
-  ];
+  // Get reviews for current product from centralized data
+  const reviews = product ? getProductReviews(product.id) : [];
 
   if (loading) {
     return (
@@ -419,37 +349,39 @@ const ProductDetailPage = () => {
             </div>
 
             {/* Highlights */}
-            <section aria-labelledby="details-heading" className="mt-12">
-              <h2
-                id="details-heading"
-                className="text-lg font-medium text-gray-900 dark:text-white"
-              >
-                Highlights
-              </h2>
+            {product.highlights && product.highlights.length > 0 && (
+              <section aria-labelledby="details-heading" className="mt-12">
+                <h2
+                  id="details-heading"
+                  className="text-lg font-medium text-gray-900 dark:text-white"
+                >
+                  Highlights
+                </h2>
 
-              <div className="mt-4 space-y-6">
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  <ul className="space-y-2">
-                    {product.highlights.map((highlight, index) => (
-                      <li key={index} className="flex items-start">
-                        <svg
-                          className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mr-2 mt-0.5 flex-shrink-0"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        {highlight}
-                      </li>
-                    ))}
-                  </ul>
+                <div className="mt-4 space-y-6">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <ul className="space-y-2">
+                      {product.highlights.map((highlight, index) => (
+                        <li key={index} className="flex items-start">
+                          <svg
+                            className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mr-2 mt-0.5 flex-shrink-0"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          {highlight}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            )}
           </div>
         </div>
       </div>
@@ -473,7 +405,11 @@ const ProductDetailPage = () => {
           {/* Description Content */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 space-y-4">
-              <p className="text-base leading-relaxed">{product.details}</p>
+              <p className="text-base leading-relaxed">
+                {product.details ||
+                  product.description ||
+                  'No detailed description available for this product.'}
+              </p>
               <p className="text-base leading-relaxed">
                 This carefully curated collection represents the perfect balance
                 of style, comfort, and versatility. Each piece has been
@@ -509,21 +445,28 @@ const ProductDetailPage = () => {
 
           {/* Specifications Content */}
           <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-8 shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {Object.entries(product.specifications).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0"
-                >
-                  <dt className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    {key}
-                  </dt>
-                  <dd className="text-sm text-gray-700 dark:text-gray-300">
-                    {value}
-                  </dd>
-                </div>
-              ))}
-            </div>
+            {product.specifications &&
+            Object.keys(product.specifications).length > 0 ? (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {Object.entries(product.specifications).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0"
+                  >
+                    <dt className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                      {key}
+                    </dt>
+                    <dd className="text-sm text-gray-700 dark:text-gray-300">
+                      {value}
+                    </dd>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-500 dark:text-gray-400">
+                No specifications available for this product.
+              </p>
+            )}
           </div>
         </div>
       </section>

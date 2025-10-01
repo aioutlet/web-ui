@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import StarRating from '../components/ui/StarRating';
 import Paginator from '../components/ui/Paginator';
+import { getProductById } from '../data/products';
+import { getProductReviews } from '../data/reviews';
 
 const ReviewListPage = () => {
   const { id } = useParams();
@@ -19,155 +21,34 @@ const ReviewListPage = () => {
 
   const reviewsPerPage = 10;
 
-  // Sample reviews data (expanded for pagination testing)
-  const sampleReviews = React.useMemo(
-    () => [
-      {
-        id: 1,
-        user: 'Sarah M.',
-        rating: 5,
-        date: '2024-01-15',
-        comment:
-          'Absolutely love this product! The quality is outstanding and it fits perfectly. Highly recommend to anyone looking for something reliable and stylish.',
-        verified: true,
-      },
-      {
-        id: 2,
-        user: 'James K.',
-        rating: 4,
-        date: '2024-01-10',
-        comment:
-          'Good quality product, although it took a bit longer to arrive than expected. Overall satisfied with the purchase.',
-        verified: true,
-      },
-      {
-        id: 3,
-        user: 'Maria L.',
-        rating: 5,
-        date: '2024-01-08',
-        comment:
-          'Exceeded my expectations! The craftsmanship is excellent and it looks even better in person.',
-        verified: false,
-      },
-      {
-        id: 4,
-        user: 'David R.',
-        rating: 3,
-        date: '2024-01-05',
-        comment:
-          "It's okay. The product works as described but the quality could be better for the price point.",
-        verified: true,
-      },
-      {
-        id: 5,
-        user: 'Lisa Chen',
-        rating: 5,
-        date: '2024-01-03',
-        comment:
-          'Perfect addition to my collection. Fast shipping and excellent customer service.',
-        verified: true,
-      },
-      {
-        id: 6,
-        user: 'Michael B.',
-        rating: 4,
-        date: '2024-01-01',
-        comment:
-          'Great product overall. Minor issue with packaging but the item itself is fantastic.',
-        verified: true,
-      },
-      {
-        id: 7,
-        user: 'Emma W.',
-        rating: 5,
-        date: '2023-12-28',
-        comment:
-          'This has become one of my favorite purchases. Highly durable and looks amazing.',
-        verified: true,
-      },
-      {
-        id: 8,
-        user: 'Robert T.',
-        rating: 2,
-        date: '2023-12-25',
-        comment:
-          "Unfortunately didn't meet my expectations. The color was different from the photos.",
-        verified: false,
-      },
-      {
-        id: 9,
-        user: 'Anna S.',
-        rating: 4,
-        date: '2023-12-22',
-        comment:
-          'Good value for money. The product is solid and works well for my needs.',
-        verified: true,
-      },
-      {
-        id: 10,
-        user: 'Thomas H.',
-        rating: 5,
-        date: '2023-12-20',
-        comment:
-          'Outstanding quality and design. Will definitely be purchasing more items from this brand.',
-        verified: true,
-      },
-      {
-        id: 11,
-        user: 'Sophie M.',
-        rating: 4,
-        date: '2023-12-18',
-        comment:
-          "Really happy with this purchase. The material feels premium and it's very well made.",
-        verified: true,
-      },
-      {
-        id: 12,
-        user: 'Alex P.',
-        rating: 3,
-        date: '2023-12-15',
-        comment:
-          "Average product. Does what it's supposed to do but nothing extraordinary.",
-        verified: false,
-      },
-    ],
-    []
-  );
-
-  // Mock product data
+  // Fetch product and reviews data
   useEffect(() => {
     const fetchProductAndReviews = async () => {
       setLoading(true);
 
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Mock product data
-      const mockProduct = {
-        id: parseInt(id),
-        name: 'Organize Basic Set (Walnut)',
-        price: 149,
-        originalPrice: 199,
-        rating: 4.8,
-        reviews: sampleReviews.length,
-        category: 'Objects',
-        inStock: true,
-        description:
-          'The Zip Tote Basket is the perfect midpoint between shopping tote and comfy backpack. With convertible straps, you can hand carry, should sling, or backpack this convenient and spacious bag.',
-        images: [
-          'https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=600&h=600&fit=crop&crop=center',
-          'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop&crop=center',
-          'https://images.unsplash.com/photo-1594736797933-d0eac2451a9a?w=600&h=600&fit=crop&crop=center',
-        ],
-      };
+      // Get product data from products.js
+      const productData = getProductById(id);
 
-      setProduct(mockProduct);
-      setReviews(sampleReviews);
+      if (productData) {
+        // Get reviews for this product from reviews.js
+        const productReviews = getProductReviews(id);
+
+        setProduct(productData);
+        setReviews(productReviews);
+      } else {
+        // Handle product not found
+        setProduct(null);
+        setReviews([]);
+      }
+
       setLoading(false);
     };
 
     fetchProductAndReviews();
-  }, [id, sampleReviews]);
+  }, [id]);
 
   // Filter and sort reviews
   useEffect(() => {
@@ -185,7 +66,7 @@ const ReviewListPage = () => {
       filtered = filtered.filter(
         review =>
           review.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          review.user.toLowerCase().includes(searchTerm.toLowerCase())
+          review.author.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -193,9 +74,11 @@ const ReviewListPage = () => {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'newest':
-          return new Date(b.date) - new Date(a.date);
+          // For relative dates like '2 days ago', keep the original order as reviews.js is already sorted
+          return 0;
         case 'oldest':
-          return new Date(a.date) - new Date(b.date);
+          // Reverse the order for oldest first
+          return reviews.indexOf(b) - reviews.indexOf(a);
         case 'highest':
           return b.rating - a.rating;
         case 'lowest':
@@ -473,12 +356,12 @@ const ReviewListPage = () => {
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                          {review.user.charAt(0)}
+                          {review.author.charAt(0)}
                         </div>
                         <div className="ml-3">
                           <div className="flex items-center">
                             <span className="font-medium text-gray-900 dark:text-white">
-                              {review.user}
+                              {review.author}
                             </span>
                             {review.verified && (
                               <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
@@ -500,7 +383,7 @@ const ReviewListPage = () => {
                           <div className="flex items-center mt-1">
                             <StarRating rating={review.rating} size="w-4 h-4" />
                             <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                              {new Date(review.date).toLocaleDateString()}
+                              {review.date}
                             </span>
                           </div>
                         </div>

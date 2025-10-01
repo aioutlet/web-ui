@@ -7,7 +7,7 @@ export const products = [
     name: 'Organize Basic Set (Walnut)',
     price: 149,
     rating: 4.8,
-    reviews: 38,
+    reviews: 3,
     category: 'Objects',
     image:
       'https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=400&h=400&fit=crop&crop=center',
@@ -15,6 +15,7 @@ export const products = [
       'https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=600&h=600&fit=crop&crop=center',
       'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop&crop=center',
       'https://images.unsplash.com/photo-1594736797933-d0eac2451a9a?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=600&fit=crop&crop=center',
     ],
     colors: [
       { name: 'Black', value: '#000000' },
@@ -49,12 +50,15 @@ export const products = [
     name: 'Organize Pen Holder',
     price: 15,
     rating: 4.9,
-    reviews: 18,
+    reviews: 1,
     category: 'Objects',
     image:
       'https://images.unsplash.com/photo-1606662628430-d3d3b88824ad?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1606662628430-d3d3b88824ad?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1594736797933-d0eac2451a9a?w=600&h=600&fit=crop&crop=center',
     ],
     inStock: false,
     link: '/products/2',
@@ -78,12 +82,15 @@ export const products = [
     name: 'Organize Sticky Note Holder',
     price: 15,
     rating: 4.7,
-    reviews: 14,
+    reviews: 1,
     category: 'Objects',
     image:
       'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1606662628430-d3d3b88824ad?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1594736797933-d0eac2451a9a?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop&crop=center',
     ],
     inStock: true,
     badge: 'New',
@@ -104,12 +111,15 @@ export const products = [
     name: 'Organize Phone Holder',
     price: 15,
     rating: 4.6,
-    reviews: 21,
+    reviews: 0,
     category: 'Objects',
     image:
       'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1594736797933-d0eac2451a9a?w=600&h=600&fit=crop&crop=center',
     ],
     inStock: true,
     link: '/products/4',
@@ -133,12 +143,15 @@ export const products = [
     name: 'Leather Key Ring (Black)',
     price: 32,
     rating: 4.8,
-    reviews: 24,
+    reviews: 0,
     category: 'Objects',
     image:
       'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=600&fit=crop&crop=center',
     ],
     inStock: true,
     badge: 'Sale',
@@ -163,12 +176,15 @@ export const products = [
     name: 'Basic Cotton Tee (White)',
     price: 25,
     rating: 4.5,
-    reviews: 89,
+    reviews: 2,
     category: 'Tees',
     image:
       'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1583743814966-8936f37f82db?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1503341960582-b45751874cf0?w=600&h=600&fit=crop&crop=center',
     ],
     inStock: true,
     link: '/products/6',
@@ -194,12 +210,15 @@ export const products = [
     name: 'Basic Cotton Tee (Black)',
     price: 25,
     rating: 4.6,
-    reviews: 72,
+    reviews: 0,
     category: 'Tees',
     image:
       'https://images.unsplash.com/photo-1583743814966-8936f37f82db?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1583743814966-8936f37f82db?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1527719327259-0c9669ac8644?w=600&h=600&fit=crop&crop=center',
     ],
     inStock: true,
     link: '/products/7',
@@ -225,12 +244,15 @@ export const products = [
     name: 'Basic Cotton Tee (Gray)',
     price: 25,
     rating: 4.4,
-    reviews: 65,
+    reviews: 0,
     category: 'Tees',
     image:
       'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1583743814966-8936f37f82db?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1503341960582-b45751874cf0?w=600&h=600&fit=crop&crop=center',
     ],
     inStock: true,
     link: '/products/8',
@@ -256,12 +278,15 @@ export const products = [
     name: 'Cozy Pullover Sweatshirt',
     price: 55,
     rating: 4.7,
-    reviews: 43,
+    reviews: 0,
     category: 'Sweatshirts',
     image:
       'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=600&fit=crop&crop=focalpoint&fp-x=0.7&fp-y=0.5',
     ],
     inStock: true,
     link: '/products/9',
@@ -287,12 +312,15 @@ export const products = [
     name: 'Zip-Up Hoodie',
     price: 65,
     rating: 4.8,
-    reviews: 56,
+    reviews: 1,
     category: 'Sweatshirts',
     image:
       'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=600&fit=crop&crop=focalpoint&fp-x=0.3&fp-y=0.5',
     ],
     inStock: true,
     badge: 'Bestseller',
@@ -319,12 +347,15 @@ export const products = [
     name: 'Classic Denim Jeans',
     price: 79,
     rating: 4.3,
-    reviews: 127,
+    reviews: 0,
     category: 'Pants & Shorts',
     image:
       'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1506629905962-4b91bb1ab297?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&h=600&fit=crop&crop=focalpoint&fp-x=0.7&fp-y=0.5',
     ],
     inStock: false,
     link: '/products/11',
@@ -350,12 +381,15 @@ export const products = [
     name: 'Casual Chino Shorts',
     price: 35,
     rating: 4.2,
-    reviews: 84,
+    reviews: 0,
     category: 'Pants & Shorts',
     image:
       'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1506629905962-4b91bb1ab297?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&h=600&fit=crop&crop=focalpoint&fp-x=0.6&fp-y=0.4',
     ],
     inStock: true,
     badge: 'Sale',
@@ -382,12 +416,15 @@ export const products = [
     name: 'Wooden Desk Organizer',
     price: 75,
     rating: 4.9,
-    reviews: 92,
+    reviews: 0,
     category: 'Objects',
     image:
       'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1594736797933-d0eac2451a9a?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1606662628430-d3d3b88824ad?w=600&h=600&fit=crop&crop=center',
     ],
     inStock: true,
     link: '/products/13',
@@ -413,12 +450,15 @@ export const products = [
     name: 'Modern Table Lamp',
     price: 89,
     rating: 4.7,
-    reviews: 38,
+    reviews: 0,
     category: 'Objects',
     image:
       'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&h=600&fit=crop&crop=focalpoint&fp-x=0.6&fp-y=0.4',
     ],
     inStock: true,
     link: '/products/14',
@@ -444,12 +484,15 @@ export const products = [
     name: 'Vintage Cotton Tee',
     price: 29,
     rating: 4.5,
-    reviews: 156,
+    reviews: 0,
     category: 'Tees',
     image:
       'https://images.unsplash.com/photo-1503341960582-b45751874cf0?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1503341960582-b45751874cf0?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1583743814966-8936f37f82db?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1527719327259-0c9669ac8644?w=600&h=600&fit=crop&crop=center',
     ],
     inStock: true,
     badge: 'New',
@@ -476,12 +519,15 @@ export const products = [
     name: 'Casual Sweatpants',
     price: 45,
     rating: 4.4,
-    reviews: 78,
+    reviews: 0,
     category: 'Pants & Shorts',
     image:
       'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1506629905962-4b91bb1ab297?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=600&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.6',
     ],
     inStock: false,
     link: '/products/16',
@@ -507,12 +553,15 @@ export const products = [
     name: 'Minimalist Notebook',
     price: 18,
     rating: 4.6,
-    reviews: 234,
+    reviews: 0,
     category: 'Objects',
     image:
       'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&h=600&fit=crop&crop=focalpoint&fp-x=0.6&fp-y=0.5',
     ],
     inStock: true,
     badge: 'Bestseller',
@@ -539,12 +588,15 @@ export const products = [
     name: 'Crew Neck Sweatshirt',
     price: 59,
     rating: 4.7,
-    reviews: 67,
+    reviews: 0,
     category: 'Sweatshirts',
     image:
       'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=600&h=600&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.4',
     ],
     inStock: true,
     link: '/products/18',
@@ -570,12 +622,15 @@ export const products = [
     name: 'Soft Cotton Shorts',
     price: 28,
     rating: 4.3,
-    reviews: 95,
+    reviews: 0,
     category: 'Pants & Shorts',
     image:
       'https://images.unsplash.com/photo-1506629905962-4b91bb1ab297?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1506629905962-4b91bb1ab297?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1506629905962-4b91bb1ab297?w=600&h=600&fit=crop&crop=focalpoint&fp-x=0.4&fp-y=0.5',
     ],
     inStock: true,
     link: '/products/19',
@@ -601,12 +656,15 @@ export const products = [
     name: 'Graphic Print Tee',
     price: 32,
     rating: 4.4,
-    reviews: 112,
+    reviews: 0,
     category: 'Tees',
     image:
       'https://images.unsplash.com/photo-1527719327259-0c9669ac8644?w=400&h=400&fit=crop&crop=center',
     images: [
       'https://images.unsplash.com/photo-1527719327259-0c9669ac8644?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1583743814966-8936f37f82db?w=600&h=600&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1527719327259-0c9669ac8644?w=600&h=600&fit=crop&crop=focalpoint&fp-x=0.6&fp-y=0.5',
     ],
     inStock: true,
     link: '/products/20',
@@ -629,46 +687,6 @@ export const products = [
   },
 ];
 
-// Sample reviews data
-export const reviews = [
-  {
-    id: 1,
-    productId: 1,
-    author: 'Sarah Johnson',
-    rating: 5,
-    title: 'Excellent sound quality!',
-    content:
-      'These headphones exceeded my expectations. The noise cancellation is fantastic and the battery life is incredible.',
-    date: '2024-03-15',
-    verified: true,
-    helpful: 23,
-  },
-  {
-    id: 2,
-    productId: 1,
-    author: 'Mike Chen',
-    rating: 4,
-    title: 'Great value for money',
-    content:
-      'Really happy with this purchase. The build quality is solid and they are very comfortable for long listening sessions.',
-    date: '2024-03-10',
-    verified: true,
-    helpful: 18,
-  },
-  {
-    id: 3,
-    productId: 2,
-    author: 'Emily Rodriguez',
-    rating: 5,
-    title: 'Perfect fitness companion',
-    content:
-      'Love tracking my workouts with this watch. The GPS is accurate and the health metrics are very detailed.',
-    date: '2024-03-12',
-    verified: true,
-    helpful: 15,
-  },
-];
-
 // Helper functions for easy data access
 export const getFeaturedProducts = () => {
   return products.filter(
@@ -685,10 +703,6 @@ export const getProductById = id => {
 
 export const getProductsByCategory = category => {
   return products.filter(product => product.category === category);
-};
-
-export const getProductReviews = productId => {
-  return reviews.filter(review => review.productId === parseInt(productId));
 };
 
 export const getInStockProducts = () => {
@@ -713,34 +727,24 @@ export const categories = [
 
 // Expected API response format for backend integration
 export const apiSchema = {
-  products: {
+  product: {
     id: 'number',
     name: 'string',
     price: 'number',
     originalPrice: 'number (optional)',
-    rating: 'number',
-    reviews: 'number',
+    rating: 'number (1-5)',
+    reviews: 'number (count of reviews)',
     category: 'string',
     color: 'string (optional)',
-    badge: 'string (optional: Bestseller, New, Limited)',
+    badge: 'string (optional: Bestseller, New, Limited, Sale)',
     inStock: 'boolean',
-    image: 'string (URL)',
-    images: 'array of strings (URLs)',
-    colors: 'array of objects: {name: string, value: string}',
-    link: 'string',
-    description: 'string',
-    highlights: 'array of strings',
-    specifications: 'object with key-value pairs',
-  },
-  reviews: {
-    id: 'number',
-    productId: 'number',
-    author: 'string',
-    rating: 'number',
-    title: 'string',
-    content: 'string',
-    date: 'string (ISO date)',
-    verified: 'boolean',
-    helpful: 'number',
+    image: 'string (URL - main thumbnail)',
+    images: 'array of strings (URLs - minimum 4 images for detail page)',
+    colors: 'array of objects: {name: string, value: string} (optional)',
+    link: 'string (product detail URL)',
+    description: 'string (short description)',
+    details: 'string (long description - optional)',
+    highlights: 'array of strings (optional)',
+    specifications: 'object with key-value pairs (optional)',
   },
 };
