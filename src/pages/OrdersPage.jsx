@@ -338,14 +338,14 @@ function OrdersPage() {
   ];
 
   const timeFilters = [
-    { value: 'past-3-months', label: 'past three months' },
+    { value: 'past-3-months', label: 'Past Three Months' },
     { value: '2025', label: '2025' },
     { value: '2024', label: '2024' },
     { value: '2023', label: '2023' },
-    { value: 'all-time', label: 'all orders' },
+    { value: 'all-time', label: 'All Orders' },
   ];
 
-  // Filter orders based on search term and status filter
+  // Filter orders based on search term, status filter, and time filter
   const filteredOrders = mockOrders.filter(order => {
     const matchesSearch =
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -358,7 +358,25 @@ function OrdersPage() {
     const matchesStatus =
       statusFilter === 'all' || order.status.toLowerCase() === statusFilter;
 
-    return matchesSearch && matchesStatus;
+    // Time filter logic
+    let matchesTime = true;
+    if (timeFilter !== 'all-time') {
+      const orderYear = order.placedDate.match(/\d{4}$/)?.[0];
+
+      if (timeFilter === 'past-3-months') {
+        // Parse the order date
+        const orderDate = new Date(order.placedDate);
+        const currentDate = new Date();
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
+        matchesTime = orderDate >= threeMonthsAgo;
+      } else {
+        // Filter by year
+        matchesTime = orderYear === timeFilter;
+      }
+    }
+
+    return matchesSearch && matchesStatus && matchesTime;
   });
 
   // Calculate pagination
@@ -465,20 +483,20 @@ function OrdersPage() {
 
         {/* Filters and Sort Bar */}
         <div className="mb-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
             {/* Status Filter - Left Side */}
-            <div className="relative status-filter-dropdown">
+            <div className="relative status-filter-dropdown w-full sm:w-auto">
               <button
                 onClick={() => setStatusFilterOpen(!statusFilterOpen)}
-                className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                className="flex items-center justify-between sm:justify-start space-x-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors w-full sm:w-auto"
               >
-                <span>
+                <span className="text-left">
                   Status:{' '}
                   {statusOptions.find(option => option.value === statusFilter)
                     ?.label || 'All Orders'}
                 </span>
                 <ChevronDownIcon
-                  className={`h-4 w-4 transition-transform ${
+                  className={`h-4 w-4 flex-shrink-0 transition-transform ${
                     statusFilterOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -511,24 +529,24 @@ function OrdersPage() {
             </div>
 
             {/* Time Sort - Right Side */}
-            <div className="relative time-filter-dropdown">
+            <div className="relative time-filter-dropdown w-full sm:w-auto">
               <button
                 onClick={() => setTimeFilterOpen(!timeFilterOpen)}
-                className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                className="flex items-center justify-between sm:justify-start space-x-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors w-full sm:w-auto"
               >
-                <span>
+                <span className="text-left">
                   Time:{' '}
                   {timeFilters.find(filter => filter.value === timeFilter)
                     ?.label || 'past three months'}
                 </span>
                 <ChevronDownIcon
-                  className={`h-4 w-4 transition-transform ${timeFilterOpen ? 'rotate-180' : ''}`}
+                  className={`h-4 w-4 flex-shrink-0 transition-transform ${timeFilterOpen ? 'rotate-180' : ''}`}
                 />
               </button>
 
               {/* Time Filter Dropdown Menu */}
               {timeFilterOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
+                <div className="absolute left-0 sm:right-0 sm:left-auto mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
                   <div className="py-2">
                     {timeFilters.map(filter => (
                       <button
