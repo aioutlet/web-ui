@@ -13,11 +13,12 @@ const OrderDetailsPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading order data
+    // Simulate loading order data from backend API
     const fetchOrder = async () => {
       await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Get order from orders.js via Redux store
+      // Get complete order data from orders.js via Redux store
+      // In production, this would fetch from the orders microservice API
       const foundOrder = getOrderById(allOrders, orderId);
 
       if (!foundOrder) {
@@ -26,117 +27,16 @@ const OrderDetailsPage = () => {
         return;
       }
 
-      // Calculate order summary from items
-      const subtotal = foundOrder.items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      );
-      const shippingCost = 5.0;
-      const tax = subtotal * 0.13; // 13% tax
-      const total = subtotal + shippingCost + tax;
-
-      // Generate tracking steps based on order status
-      const getTrackingSteps = status => {
-        const statusLower = status.toLowerCase();
-        return [
-          {
-            name: 'Order placed',
-            status:
-              statusLower === 'processing' ||
-              statusLower === 'shipped' ||
-              statusLower === 'delivered'
-                ? 'completed'
-                : 'current',
-            date: foundOrder.placedDate,
-          },
-          {
-            name: 'Processing',
-            status:
-              statusLower === 'processing'
-                ? 'current'
-                : statusLower === 'shipped' || statusLower === 'delivered'
-                  ? 'completed'
-                  : 'pending',
-            date: statusLower !== 'processing' ? null : foundOrder.placedDate,
-          },
-          {
-            name: 'Shipped',
-            status:
-              statusLower === 'shipped'
-                ? 'current'
-                : statusLower === 'delivered'
-                  ? 'completed'
-                  : 'pending',
-            date: null,
-          },
-          {
-            name: 'Delivered',
-            status: statusLower === 'delivered' ? 'completed' : 'pending',
-            date: statusLower === 'delivered' ? foundOrder.placedDate : null,
-          },
-        ];
-      };
-
-      // Transform order data to include all details needed for OrderDetailsPage
-      // Note: In production, shipping/billing/payment would come from separate microservices
-      const enhancedOrder = {
-        id: foundOrder.id,
-        orderNumber: `#${foundOrder.id}`,
-        status: foundOrder.status,
-        placedDate: foundOrder.placedDate,
-        preparingToShipDate: foundOrder.placedDate, // In real app, this would be calculated
+      // Transform items.title to items.name for display consistency
+      const orderWithTransformedItems = {
+        ...foundOrder,
         items: foundOrder.items.map(item => ({
-          id: item.id,
-          name: item.title,
-          price: item.price,
-          quantity: item.quantity,
-          image: item.image,
-          description: item.description,
+          ...item,
+          name: item.title, // Map title to name for UI
         })),
-        // Mock shipping data (would come from shipping microservice)
-        shipping: {
-          address: {
-            name: 'John Doe',
-            street: '123 Main Street',
-            city: 'Toronto',
-            state: 'ON',
-            zip: 'M5V 3A8',
-          },
-          method: 'Standard Shipping',
-          cost: shippingCost,
-          updates: {
-            email: 'j••••@example.com',
-            phone: '1••••••••00',
-          },
-        },
-        // Mock billing data (would come from billing microservice)
-        billing: {
-          address: {
-            name: 'John Doe',
-            street: '123 Main Street',
-            city: 'Toronto',
-            state: 'ON',
-            zip: 'M5V 3A8',
-          },
-        },
-        // Mock payment data (would come from payment microservice)
-        payment: {
-          method: 'Visa',
-          last4: '4242',
-          expires: '12 / 25',
-        },
-        summary: {
-          subtotal: parseFloat(subtotal.toFixed(2)),
-          shipping: shippingCost,
-          tax: parseFloat(tax.toFixed(2)),
-          total: parseFloat(total.toFixed(2)),
-        },
-        tracking: {
-          steps: getTrackingSteps(foundOrder.status),
-        },
       };
 
-      setOrder(enhancedOrder);
+      setOrder(orderWithTransformedItems);
       setLoading(false);
     };
 
