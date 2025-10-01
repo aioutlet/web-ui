@@ -427,11 +427,21 @@ function OrdersPage() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Order history
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200 uppercase tracking-wide">
+              Your Orders
+            </span>
+            <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl mb-4">
+            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+              Order
+            </span>{' '}
+            <span className="text-gray-900 dark:text-white">History</span>
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-lg leading-6 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Check the status of recent orders, manage returns, and download
             invoices.
           </p>
