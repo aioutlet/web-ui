@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import OrderProgressBar from '../components/ui/OrderProgressBar';
 
 const OrderDetailsPage = () => {
   const { orderId } = useParams();
@@ -190,38 +191,7 @@ const OrderDetailsPage = () => {
             </p>
 
             {/* Progress Bar */}
-            <div className="mb-6">
-              <div className="flex gap-1 mb-3">
-                {order.tracking.steps.map((step, index) => (
-                  <div key={step.name} className="flex-1">
-                    <div
-                      className={`h-2 rounded-full ${
-                        step.status === 'completed' || step.status === 'current'
-                          ? 'bg-indigo-600 dark:bg-indigo-500'
-                          : 'bg-gray-200 dark:bg-gray-700'
-                      }`}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Steps Labels */}
-              <div className="flex justify-between">
-                {order.tracking.steps.map(step => (
-                  <div key={step.name} className="text-center flex-1">
-                    <p
-                      className={`text-xs font-medium ${
-                        step.status === 'completed' || step.status === 'current'
-                          ? 'text-indigo-600 dark:text-indigo-400'
-                          : 'text-gray-500 dark:text-gray-400'
-                      }`}
-                    >
-                      {step.name}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <OrderProgressBar status={order.status} />
           </div>
 
           {/* Three Column Layout */}

@@ -6,37 +6,7 @@ import {
   ChevronDownIcon,
 } from '@heroicons/react/24/outline';
 import Paginator from '../components/ui/Paginator';
-
-const getOrderProgress = status => {
-  const steps = ['Processing', 'Shipped', 'Delivered'];
-  const currentIndex = steps.indexOf(status);
-
-  if (status === 'Cancelled') {
-    return { percentage: 0, currentStep: 'Cancelled', totalSteps: 3 };
-  }
-
-  return {
-    percentage:
-      currentIndex >= 0 ? ((currentIndex + 1) / steps.length) * 100 : 0,
-    currentStep: status,
-    totalSteps: steps.length,
-  };
-};
-
-const getProgressColor = status => {
-  switch (status) {
-    case 'Processing':
-      return 'bg-yellow-500';
-    case 'Shipped':
-      return 'bg-blue-500';
-    case 'Delivered':
-      return 'bg-green-500';
-    case 'Cancelled':
-      return 'bg-red-500';
-    default:
-      return 'bg-gray-500';
-  }
-};
+import OrderProgressBar from '../components/ui/OrderProgressBar';
 
 // Helper function to get the primary image for an order
 const getOrderPrimaryImage = order => {
@@ -581,7 +551,6 @@ function OrdersPage() {
         {/* Orders List */}
         <div className="space-y-6">
           {currentOrders.map((order, index) => {
-            const progress = getOrderProgress(order.status);
             return (
               <div
                 key={order.id}
@@ -676,22 +645,7 @@ function OrdersPage() {
 
                     {/* Order Status Progress Bar */}
                     <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {progress.currentStep}
-                        </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {order.status === 'Cancelled'
-                            ? 'Order cancelled'
-                            : `${Math.round(progress.percentage)}% complete`}
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(order.status)}`}
-                          style={{ width: `${progress.percentage}%` }}
-                        ></div>
-                      </div>
+                      <OrderProgressBar status={order.status} />
                     </div>
                   </div>
                 </div>
