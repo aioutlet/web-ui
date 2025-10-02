@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
-import { getProductById } from '../data/products';
+import { getProductById } from '../utils/productHelpers';
 
 const WriteReviewPage = () => {
   const { productId } = useParams();

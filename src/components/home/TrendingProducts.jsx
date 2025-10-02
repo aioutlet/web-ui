@@ -1,97 +1,19 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  getTrendingProducts,
+  getBadgeStyles,
+} from '../../utils/productHelpers';
 
 const TrendingProducts = () => {
   const navigate = useNavigate();
 
+  // Get trending products from centralized data
+  const products = getTrendingProducts(4);
+
   const handleViewDetails = productLink => {
     navigate(productLink);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const products = [
-    {
-      id: 1,
-      name: 'Wireless Bluetooth Headphones',
-      price: 299,
-      originalPrice: 399,
-      color: 'Midnight Black',
-      badge: 'Bestseller',
-      rating: 4.8,
-      image:
-        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-      colors: [
-        { name: 'Midnight Black', value: '#1a1a1a' },
-        { name: 'Silver', value: '#e5e7eb' },
-        { name: 'Rose Gold', value: '#f59e0b' },
-      ],
-      link: '/products/wireless-headphones',
-    },
-    {
-      id: 2,
-      name: 'Smart Fitness Watch',
-      price: 249,
-      originalPrice: 329,
-      color: 'Space Gray',
-      badge: 'New',
-      rating: 4.6,
-      image:
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-      colors: [
-        { name: 'Space Gray', value: '#4b5563' },
-        { name: 'Gold', value: '#fbbf24' },
-        { name: 'Silver', value: '#e5e7eb' },
-      ],
-      link: '/products/fitness-watch',
-    },
-    {
-      id: 3,
-      name: 'Premium Coffee Machine',
-      price: 899,
-      originalPrice: 1199,
-      color: 'Stainless Steel',
-      badge: 'Limited',
-      rating: 4.9,
-      image:
-        'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-      colors: [
-        { name: 'Stainless Steel', value: '#9ca3af' },
-        { name: 'Matte Black', value: '#374151' },
-      ],
-      link: '/products/coffee-machine',
-    },
-    {
-      id: 4,
-      name: 'Ergonomic Office Chair',
-      price: 599,
-      originalPrice: 799,
-      color: 'Charcoal',
-      badge: 'Sale',
-      rating: 4.7,
-      image:
-        'https://images.unsplash.com/photo-1586953208448-b95a79798f07?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-      colors: [
-        { name: 'Charcoal', value: '#374151' },
-        { name: 'Navy', value: '#1e3a8a' },
-        { name: 'Cream', value: '#f3f4f6' },
-      ],
-      link: '/products/office-chair',
-    },
-  ];
-
-  const getBadgeStyles = badge => {
-    const styles = {
-      Bestseller:
-        'bg-yellow-100 text-yellow-800 dark:bg-yellow-500/30 dark:text-yellow-200 border dark:border-yellow-400/50',
-      New: 'bg-green-100 text-green-800 dark:bg-green-500/30 dark:text-green-200 border dark:border-green-400/50',
-      Limited:
-        'bg-purple-100 text-purple-800 dark:bg-purple-500/30 dark:text-purple-200 border dark:border-purple-400/50',
-      Sale: 'bg-red-100 text-red-800 dark:bg-red-500/30 dark:text-red-200 border dark:border-red-400/50',
-    };
-    return (
-      styles[badge] ||
-      'bg-gray-100 text-gray-800 dark:bg-gray-600/30 dark:text-gray-200 border dark:border-gray-400/50'
-    );
   };
 
   return (
@@ -181,20 +103,24 @@ const TrendingProducts = () => {
 
               <div className="flex flex-1 flex-col p-6">
                 <div className="flex items-center gap-x-4 text-xs">
-                  <div className="text-gray-500 dark:text-gray-400">
-                    {product.color}
-                  </div>
-                  <div className="flex items-center gap-x-1">
-                    <svg
-                      className="h-3 w-3 fill-current text-yellow-400"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                    <span className="text-gray-600 dark:text-gray-300">
-                      {product.rating}
-                    </span>
-                  </div>
+                  {product.category && (
+                    <div className="text-gray-500 dark:text-gray-400">
+                      {product.category}
+                    </div>
+                  )}
+                  {product.rating && (
+                    <div className="flex items-center gap-x-1">
+                      <svg
+                        className="h-3 w-3 fill-current text-yellow-400"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span className="text-gray-600 dark:text-gray-300">
+                        {product.rating}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Product Title with fixed height */}
@@ -208,21 +134,19 @@ const TrendingProducts = () => {
                   </h3>
                 </div>
 
-                {/* Color Swatches */}
-                <div className="mt-4 flex gap-2">
-                  {product.colors.map(color => (
-                    <button
-                      key={color.name}
-                      className={`h-6 w-6 rounded-full border-2 transition-all hover:scale-110 ${
-                        color.name === product.color
-                          ? 'border-indigo-600 dark:border-indigo-400'
-                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
-                      }`}
-                      style={{ backgroundColor: color.value }}
-                      title={color.name}
-                    />
-                  ))}
-                </div>
+                {/* Color Swatches - only show if colors available */}
+                {product.colors && product.colors.length > 0 && (
+                  <div className="mt-4 flex gap-2">
+                    {product.colors.map(color => (
+                      <button
+                        key={color.name}
+                        className="h-6 w-6 rounded-full border-2 transition-all hover:scale-110 border-gray-300 dark:border-gray-600 hover:border-gray-400"
+                        style={{ backgroundColor: color.value }}
+                        title={color.name}
+                      />
+                    ))}
+                  </div>
+                )}
 
                 {/* Fixed position button */}
                 <div className="mt-6">

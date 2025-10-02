@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart, removeFromCart, openCart } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
-import { getProductById } from '../data/products';
+import { getProductById } from '../utils/productHelpers';
 import { getProductReviews } from '../data/reviews';
 
 const ProductDetailPage = () => {

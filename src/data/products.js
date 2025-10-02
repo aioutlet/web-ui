@@ -687,44 +687,6 @@ export const products = [
   },
 ];
 
-// Helper functions for easy data access
-export const getFeaturedProducts = () => {
-  return products.filter(
-    product =>
-      product.badge === 'Bestseller' ||
-      product.badge === 'New' ||
-      product.badge === 'Limited'
-  );
-};
-
-export const getProductById = id => {
-  return products.find(product => product.id === parseInt(id));
-};
-
-export const getProductsByCategory = category => {
-  return products.filter(product => product.category === category);
-};
-
-export const getInStockProducts = () => {
-  return products.filter(product => product.inStock);
-};
-
-export const getProductsByPriceRange = (min, max) => {
-  return products.filter(
-    product => product.price >= min && product.price <= max
-  );
-};
-
-// Categories for filtering
-export const categories = [
-  'All',
-  'All New Arrivals',
-  'Tees',
-  'Objects',
-  'Sweatshirts',
-  'Pants & Shorts',
-];
-
 // Expected API response format for backend integration
 export const apiSchema = {
   product: {

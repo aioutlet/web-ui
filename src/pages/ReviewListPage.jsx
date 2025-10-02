@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import StarRating from '../components/ui/StarRating';
 import Paginator from '../components/ui/Paginator';
-import { getProductById } from '../data/products';
+import { getProductById } from '../utils/productHelpers';
 import { getProductReviews } from '../data/reviews';
 
 const ReviewListPage = () => {
