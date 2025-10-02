@@ -8,7 +8,9 @@ export const products = [
     price: 149,
     rating: 4.8,
     reviews: 3,
-    category: 'Objects',
+    category: 'women',
+    subcategory: 'accessories',
+    productType: 'bags',
     image:
       'https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -51,7 +53,9 @@ export const products = [
     price: 15,
     rating: 4.9,
     reviews: 1,
-    category: 'Objects',
+    category: 'women',
+    subcategory: 'accessories',
+    productType: 'belts',
     image:
       'https://images.unsplash.com/photo-1606662628430-d3d3b88824ad?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -83,7 +87,9 @@ export const products = [
     price: 15,
     rating: 4.7,
     reviews: 1,
-    category: 'Objects',
+    category: 'men',
+    subcategory: 'accessories',
+    productType: 'wallets',
     image:
       'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -112,7 +118,9 @@ export const products = [
     price: 15,
     rating: 4.6,
     reviews: 0,
-    category: 'Objects',
+    category: 'electronics',
+    subcategory: 'mobile-audio',
+    productType: 'cases',
     image:
       'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -144,7 +152,9 @@ export const products = [
     price: 32,
     rating: 4.8,
     reviews: 0,
-    category: 'Objects',
+    category: 'women',
+    subcategory: 'accessories',
+    productType: 'bags',
     image:
       'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -177,7 +187,9 @@ export const products = [
     price: 25,
     rating: 4.5,
     reviews: 2,
-    category: 'Tees',
+    category: 'men',
+    subcategory: 'clothing',
+    productType: 't-shirts',
     image:
       'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -211,7 +223,9 @@ export const products = [
     price: 25,
     rating: 4.6,
     reviews: 0,
-    category: 'Tees',
+    category: 'men',
+    subcategory: 'clothing',
+    productType: 't-shirts',
     image:
       'https://images.unsplash.com/photo-1583743814966-8936f37f82db?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -245,7 +259,9 @@ export const products = [
     price: 25,
     rating: 4.4,
     reviews: 0,
-    category: 'Tees',
+    category: 'men',
+    subcategory: 'clothing',
+    productType: 't-shirts',
     image:
       'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -279,7 +295,9 @@ export const products = [
     price: 55,
     rating: 4.7,
     reviews: 0,
-    category: 'Sweatshirts',
+    category: 'women',
+    subcategory: 'clothing',
+    productType: 'sweaters',
     image:
       'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -313,7 +331,9 @@ export const products = [
     price: 65,
     rating: 4.8,
     reviews: 1,
-    category: 'Sweatshirts',
+    category: 'men',
+    subcategory: 'clothing',
+    productType: 'jackets',
     image:
       'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -348,7 +368,9 @@ export const products = [
     price: 79,
     rating: 4.3,
     reviews: 0,
-    category: 'Pants & Shorts',
+    category: 'men',
+    subcategory: 'clothing',
+    productType: 'denim',
     image:
       'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -382,7 +404,9 @@ export const products = [
     price: 35,
     rating: 4.2,
     reviews: 0,
-    category: 'Pants & Shorts',
+    category: 'men',
+    subcategory: 'clothing',
+    productType: 'pants',
     image:
       'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -417,7 +441,9 @@ export const products = [
     price: 75,
     rating: 4.9,
     reviews: 0,
-    category: 'Objects',
+    category: 'women',
+    subcategory: 'accessories',
+    productType: 'bags',
     image:
       'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -451,7 +477,9 @@ export const products = [
     price: 89,
     rating: 4.7,
     reviews: 0,
-    category: 'Objects',
+    category: 'electronics',
+    subcategory: 'computers',
+    productType: 'monitors',
     image:
       'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -485,7 +513,9 @@ export const products = [
     price: 29,
     rating: 4.5,
     reviews: 0,
-    category: 'Tees',
+    category: 'women',
+    subcategory: 'clothing',
+    productType: 'tops',
     image:
       'https://images.unsplash.com/photo-1503341960582-b45751874cf0?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -520,7 +550,9 @@ export const products = [
     price: 45,
     rating: 4.4,
     reviews: 0,
-    category: 'Pants & Shorts',
+    category: 'sports',
+    subcategory: 'athletic-wear',
+    productType: 'gym-wear',
     image:
       'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -554,7 +586,9 @@ export const products = [
     price: 18,
     rating: 4.6,
     reviews: 0,
-    category: 'Objects',
+    category: 'men',
+    subcategory: 'accessories',
+    productType: 'wallets',
     image:
       'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -589,7 +623,9 @@ export const products = [
     price: 59,
     rating: 4.7,
     reviews: 0,
-    category: 'Sweatshirts',
+    category: 'women',
+    subcategory: 'clothing',
+    productType: 'sweaters',
     image:
       'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -623,7 +659,9 @@ export const products = [
     price: 28,
     rating: 4.3,
     reviews: 0,
-    category: 'Pants & Shorts',
+    category: 'sports',
+    subcategory: 'athletic-wear',
+    productType: 'gym-wear',
     image:
       'https://images.unsplash.com/photo-1506629905962-4b91bb1ab297?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -657,7 +695,9 @@ export const products = [
     price: 32,
     rating: 4.4,
     reviews: 0,
-    category: 'Tees',
+    category: 'men',
+    subcategory: 'clothing',
+    productType: 't-shirts',
     image:
       'https://images.unsplash.com/photo-1527719327259-0c9669ac8644?w=400&h=400&fit=crop&crop=center',
     images: [
@@ -696,7 +736,11 @@ export const apiSchema = {
     originalPrice: 'number (optional)',
     rating: 'number (1-5)',
     reviews: 'number (count of reviews)',
-    category: 'string',
+    category: 'string (top-level: women, men, electronics, sports)',
+    subcategory:
+      'string (women: clothing/accessories; men: clothing/accessories; electronics: computers/mobile-audio/gaming; sports: athletic-wear/equipment)',
+    productType:
+      'string (based on navbar menu items - e.g., tops, dresses, t-shirts, laptops, headphones)',
     color: 'string (optional)',
     badge: 'string (optional: Bestseller, New, Limited, Sale)',
     inStock: 'boolean',

@@ -244,7 +244,205 @@ export const sortProducts = (productList, sortBy) => {
       return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     case 'name':
       return sorted.sort((a, b) => a.name.localeCompare(b.name));
+    case 'featured':
     default:
       return sorted;
   }
+};
+
+/**
+ * Filter products by category hierarchy
+ * @param {Object} options - Filter options
+ * @param {string} options.category - Top-level category
+ * @param {string} options.subcategory - Subcategory
+ * @param {string} options.productType - Product type
+ * @param {Object} options.filters - Additional filters (price, color, size, etc.)
+ * @returns {Array} Filtered products
+ */
+export const filterProductsByCategory = ({
+  category,
+  subcategory,
+  productType,
+  filters = {},
+}) => {
+  let filtered = [...products];
+
+  // Filter by category
+  if (category) {
+    filtered = filtered.filter(
+      p =>
+        p.category?.toLowerCase() === category.toLowerCase() ||
+        p.mainCategory?.toLowerCase() === category.toLowerCase()
+    );
+  }
+
+  // Filter by subcategory
+  if (subcategory) {
+    filtered = filtered.filter(
+      p => p.subcategory?.toLowerCase() === subcategory.toLowerCase()
+    );
+  }
+
+  // Filter by product type
+  if (productType) {
+    filtered = filtered.filter(
+      p => p.productType?.toLowerCase() === productType.toLowerCase()
+    );
+  }
+
+  // Apply additional filters
+  if (filters.minPrice !== undefined) {
+    filtered = filtered.filter(p => p.price >= filters.minPrice);
+  }
+
+  if (filters.maxPrice !== undefined) {
+    filtered = filtered.filter(p => p.price <= filters.maxPrice);
+  }
+
+  if (filters.color && filters.color !== 'All') {
+    filtered = filtered.filter(p =>
+      p.colors?.some(c => c.name?.toLowerCase() === filters.color.toLowerCase())
+    );
+  }
+
+  if (filters.size && filters.size !== 'All') {
+    filtered = filtered.filter(p => p.sizes?.includes(filters.size));
+  }
+
+  if (filters.inStock) {
+    filtered = filtered.filter(p => p.inStock);
+  }
+
+  return filtered;
+};
+
+/**
+ * Get category hierarchy structure
+ * @returns {Object} Complete category hierarchy
+ */
+export const getCategoryHierarchy = () => {
+  return {
+    women: {
+      clothing: [
+        'tops',
+        'dresses',
+        'pants',
+        'denim',
+        'sweaters',
+        'jackets',
+        'activewear',
+      ],
+      accessories: [
+        'necklaces',
+        'watches',
+        'bags',
+        'sunglasses',
+        'hats',
+        'belts',
+      ],
+      shoes: ['heels', 'flats', 'sneakers', 'boots'],
+    },
+    men: {
+      clothing: [
+        'shirts',
+        't-shirts',
+        'pants',
+        'denim',
+        'sweaters',
+        'jackets',
+        'activewear',
+      ],
+      accessories: ['watches', 'wallets', 'sunglasses', 'hats', 'belts'],
+      shoes: ['sneakers', 'dress-shoes', 'boots', 'casual'],
+    },
+    electronics: {
+      computers: ['laptops', 'desktops', 'tablets', 'monitors', 'peripherals'],
+      'mobile-audio': [
+        'smartphones',
+        'headphones',
+        'speakers',
+        'smartwatches',
+        'cases',
+      ],
+      gaming: ['consoles', 'games', 'gaming-accessories', 'tvs', 'vr'],
+    },
+    sports: {
+      'athletic-wear': [
+        'running-shoes',
+        'apparel',
+        'gym-wear',
+        'sports-bras',
+        'socks',
+      ],
+      equipment: ['fitness-equipment', 'balls', 'bottles', 'bags', 'yoga'],
+    },
+  };
+};
+
+/**
+ * Get breadcrumbs for category navigation
+ * @param {string} category - Main category
+ * @param {string} subcategory - Subcategory
+ * @param {string} productType - Product type
+ * @returns {Array} Breadcrumb array with label and path
+ */
+export const getCategoryBreadcrumbs = (category, subcategory, productType) => {
+  const breadcrumbs = [];
+
+  if (category) {
+    breadcrumbs.push({
+      label: formatCategoryName(category),
+      path: `/${category}`,
+    });
+  }
+
+  if (subcategory) {
+    breadcrumbs.push({
+      label: formatCategoryName(subcategory),
+      path: `/${category}/${subcategory}`,
+    });
+  }
+
+  if (productType) {
+    breadcrumbs.push({
+      label: formatCategoryName(productType),
+      path: `/${category}/${subcategory}/${productType}`,
+    });
+  }
+
+  return breadcrumbs;
+};
+
+/**
+ * Get formatted category title for page header
+ * @param {string} category - Main category
+ * @param {string} subcategory - Subcategory
+ * @param {string} productType - Product type
+ * @returns {string} Formatted title
+ */
+export const getCategoryTitle = (category, subcategory, productType) => {
+  if (productType) {
+    return formatCategoryName(productType);
+  }
+  if (subcategory) {
+    return formatCategoryName(subcategory);
+  }
+  if (category) {
+    return `${formatCategoryName(category)}`;
+  }
+  return 'All Products';
+};
+
+/**
+ * Format category name for display
+ * @param {string} name - Category name (kebab-case or lowercase)
+ * @returns {string} Formatted name (Title Case)
+ */
+export const formatCategoryName = name => {
+  if (!name) return '';
+
+  return name
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 };

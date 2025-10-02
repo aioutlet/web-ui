@@ -13,6 +13,7 @@ import ProductListPage from './pages/ProductListPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ReviewListPage from './pages/ReviewListPage';
 import WriteReviewPage from './pages/WriteReviewPage';
+import CategoryPage from './pages/CategoryPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
 import CartPage from './pages/CartPage';
@@ -45,6 +46,64 @@ function App() {
                 path="/products/:productId/write-review"
                 element={<WriteReviewPage />}
               />
+
+              {/* Top-level Category Pages */}
+              <Route
+                path="/women"
+                element={<CategoryPage category="women" />}
+              />
+              <Route path="/men" element={<CategoryPage category="men" />} />
+              <Route
+                path="/electronics"
+                element={<CategoryPage category="electronics" />}
+              />
+              <Route
+                path="/sports"
+                element={<CategoryPage category="sports" />}
+              />
+
+              {/* Subcategory and Product Type Pages - Dynamic */}
+              {/* 2-level URLs like /women/bags map to productType */}
+              {/* Browse All URLs like /women/accessories map to subcategory */}
+              <Route
+                path="/women/:subcategoryOrType"
+                element={<CategoryPage category="women" />}
+              />
+              <Route
+                path="/women/:subcategory/:productType"
+                element={<CategoryPage category="women" />}
+              />
+              <Route
+                path="/men/:subcategoryOrType"
+                element={<CategoryPage category="men" />}
+              />
+              <Route
+                path="/men/:subcategory/:productType"
+                element={<CategoryPage category="men" />}
+              />
+              <Route
+                path="/electronics/:subcategoryOrType"
+                element={<CategoryPage category="electronics" />}
+              />
+              <Route
+                path="/electronics/:subcategory/:productType"
+                element={<CategoryPage category="electronics" />}
+              />
+              <Route
+                path="/sports/:subcategoryOrType"
+                element={<CategoryPage category="sports" />}
+              />
+              <Route
+                path="/sports/:subcategory/:productType"
+                element={<CategoryPage category="sports" />}
+              />
+
+              {/* Collections (for backward compatibility) */}
+              <Route
+                path="/collections/:collection"
+                element={<CategoryPage />}
+              />
+
               <Route path="/orders" element={<OrdersPage />} />
               <Route path="/orders/:orderId" element={<OrderDetailsPage />} />
               <Route path="/cart" element={<CartPage />} />
