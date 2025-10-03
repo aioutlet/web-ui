@@ -13,7 +13,7 @@ const RegisterPage = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    country: '',
+    phoneNumber: '',
     agreeToTerms: false,
   });
 
@@ -52,7 +52,15 @@ const RegisterPage = () => {
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-    if (!formData.country) newErrors.country = 'Country is required';
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Phone number is required';
+    } else if (
+      !/^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/.test(
+        formData.phoneNumber
+      )
+    ) {
+      newErrors.phoneNumber = 'Phone number is invalid';
+    }
     if (!formData.agreeToTerms)
       newErrors.agreeToTerms = 'You must agree to the terms';
 
@@ -79,21 +87,6 @@ const RegisterPage = () => {
       setIsSubmitting(false);
     }
   };
-
-  const countries = [
-    'United States',
-    'Canada',
-    'United Kingdom',
-    'Germany',
-    'France',
-    'Australia',
-    'Japan',
-    'South Korea',
-    'India',
-    'Brazil',
-    'Mexico',
-    'Other',
-  ];
 
   return (
     <div className="relative min-h-screen bg-white dark:bg-gray-900">
@@ -207,35 +200,30 @@ const RegisterPage = () => {
               )}
             </div>
 
-            {/* Country */}
+            {/* Phone Number */}
             <div>
               <label
-                htmlFor="country"
+                htmlFor="phoneNumber"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
               >
-                Country
+                Phone Number
               </label>
-              <select
-                id="country"
-                name="country"
-                value={formData.country}
+              <input
+                type="tel"
+                id="phoneNumber"
+                name="phoneNumber"
+                value={formData.phoneNumber}
                 onChange={handleInputChange}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 ${
-                  errors.country
+                  errors.phoneNumber
                     ? 'border-red-300 dark:border-red-600'
                     : 'border-gray-300 dark:border-gray-600'
-                } bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
-              >
-                <option value="">Choose a country</option>
-                {countries.map(country => (
-                  <option key={country} value={country}>
-                    {country}
-                  </option>
-                ))}
-              </select>
-              {errors.country && (
+                } bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                placeholder="+1 (555) 123-4567"
+              />
+              {errors.phoneNumber && (
                 <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                  {errors.country}
+                  {errors.phoneNumber}
                 </p>
               )}
             </div>
