@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { addToCart, removeFromCart } from '../store/slices/cartSlice';
+import { addToCart, removeFromCart, openCart } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
 import Paginator from '../components/ui/Paginator';
 import {
@@ -131,6 +131,10 @@ const CategoryPage = ({ category: propCategory }) => {
       dispatch(removeFromCart(product.id));
     } else {
       dispatch(addToCart(product));
+      // Open cart sidebar only on desktop (lg and above)
+      if (window.innerWidth >= 1024) {
+        dispatch(openCart());
+      }
     }
   };
 
@@ -463,14 +467,66 @@ const CategoryPage = ({ category: propCategory }) => {
                           </svg>
                         </button>
 
+                        {/* Desktop: Full button with hover effect */}
                         <button
                           onClick={() => handleCartAction(product)}
-                          className={`absolute bottom-24 right-3 p-2 backdrop-blur-sm rounded-full transition-all duration-200 z-10 ${
+                          className={`hidden md:block absolute bottom-3 left-1/2 transform -translate-x-1/2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 ${
                             isInCart(product.id)
-                              ? 'bg-green-500/90 hover:bg-green-600 text-white'
-                              : 'bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
+                              ? 'bg-green-500 hover:bg-red-500 text-white'
+                              : 'bg-white/90 dark:bg-gray-800/90 text-gray-900 dark:text-white hover:bg-white dark:hover:bg-gray-800 shadow-md'
                           }`}
-                          aria-label={
+                          title={
+                            isInCart(product.id)
+                              ? 'Click to remove from cart'
+                              : 'Add to cart'
+                          }
+                        >
+                          {isInCart(product.id) ? (
+                            <div className="flex items-center space-x-1">
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                              <span>Remove</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center space-x-1">
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.293 2.293a1 1 0 00-.293.707V19a2 2 0 002 2h10a2 2 0 002-2v-2.586a1 1 0 00-.293-.707L16 13"
+                                />
+                              </svg>
+                              <span>Add to Cart</span>
+                            </div>
+                          )}
+                        </button>
+
+                        {/* Mobile: Compact cart icon button in bottom-right */}
+                        <button
+                          onClick={() => handleCartAction(product)}
+                          className={`md:hidden absolute bottom-2 right-2 p-2 rounded-full transition-all duration-200 shadow-lg ${
+                            isInCart(product.id)
+                              ? 'bg-green-500 hover:bg-red-500 text-white'
+                              : 'bg-white/95 dark:bg-gray-800/95 text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800'
+                          }`}
+                          title={
                             isInCart(product.id)
                               ? 'Remove from cart'
                               : 'Add to cart'

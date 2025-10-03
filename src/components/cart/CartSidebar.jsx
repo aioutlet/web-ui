@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import {
@@ -19,6 +19,13 @@ const CartSidebar = () => {
   const { items, totalItems, totalPrice, isOpen } = useSelector(
     state => state.cart
   );
+
+  // Automatically close sidebar when cart becomes empty
+  useEffect(() => {
+    if (isOpen && items.length === 0) {
+      dispatch(closeCart());
+    }
+  }, [items.length, isOpen, dispatch]);
 
   const handleQuantityChange = (id, currentQuantity, change) => {
     const newQuantity = currentQuantity + change;
