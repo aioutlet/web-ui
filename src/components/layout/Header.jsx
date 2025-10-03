@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toggleCart } from '../../store/slices/cartSlice';
 import ThemeToggle from '../ui/ThemeToggle';
 import PropTypes from 'prop-types';
@@ -92,8 +92,9 @@ const MenuIcon = () => (
 );
 
 const Header = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [mobileExpandedMenu, setMobileExpandedMenu] = useState(null);
@@ -101,6 +102,17 @@ const Header = () => {
   const dispatch = useDispatch();
   const { totalItems } = useSelector(state => state.cart);
   const { isAuthenticated, user } = useSelector(state => state.user);
+
+  // Sync search query with URL when on search page
+  useEffect(() => {
+    if (location.pathname === '/search') {
+      const params = new URLSearchParams(location.search);
+      const query = params.get('q');
+      if (query) {
+        setSearchQuery(query);
+      }
+    }
+  }, [location]);
 
   const navigationItems = [
     {
@@ -302,7 +314,10 @@ const Header = () => {
   const handleSearchSubmit = e => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      console.log('Searching for:', searchQuery);
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      // Keep search bar open and query visible for easy editing
+      // setIsSearchOpen(false);
+      // setSearchQuery('');
     }
   };
 
@@ -321,6 +336,7 @@ const Header = () => {
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Top Row: Logo, Navigation, and Icons */}
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
@@ -332,7 +348,7 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Center Navigation - Hidden on mobile */}
+          {/* Navigation Menu - Desktop */}
           <nav className="hidden md:flex items-center space-x-8 relative">
             {navigationItems.map(item => (
               <div
@@ -420,15 +436,6 @@ const Header = () => {
 
           {/* Right Side Icons */}
           <div className="flex items-center space-x-1 sm:space-x-2">
-            {/* Search */}
-            <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-all duration-200"
-              aria-label="Search"
-            >
-              <SearchIcon />
-            </button>
-
             {/* User Account */}
             <Link
               to="/login"
@@ -449,7 +456,7 @@ const Header = () => {
               <BasketIcon itemCount={totalItems} />
             </button>
 
-            {/* Theme Toggle - Now visible on all screen sizes */}
+            {/* Theme Toggle */}
             <ThemeToggle />
 
             {/* Mobile Menu Toggle */}
@@ -463,27 +470,23 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Search Bar - Expandable */}
-        {isSearchOpen && (
-          <div className="pb-4">
-            <form
-              onSubmit={handleSearchSubmit}
-              className="relative max-w-lg mx-auto"
-            >
+        {/* Search Bar - Full width, always visible */}
+        <div className="pb-3">
+          <form onSubmit={handleSearchSubmit} className="w-full">
+            <div className="relative">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search for products..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                autoFocus
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors duration-200"
               />
               <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <SearchIcon />
               </div>
-            </form>
-          </div>
-        )}
+            </div>
+          </form>
+        </div>
       </div>
 
       {/* Mobile Menu */}

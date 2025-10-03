@@ -20,6 +20,7 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import AccountPage from './pages/AccountPage';
+import SearchResultsPage from './pages/SearchResultsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -111,6 +112,7 @@ function App() {
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order-success" element={<OrderSuccessPage />} />
               <Route path="/account" element={<AccountPage />} />
+              <Route path="/search" element={<SearchResultsPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Layout>
