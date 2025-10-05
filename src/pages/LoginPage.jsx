@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isLoggingIn, loginError, isAuthenticated } = useAuth();
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -26,7 +26,6 @@ const LoginPage = () => {
     rememberMe: false,
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [errors, setErrors] = useState({});
 
@@ -63,28 +62,29 @@ const LoginPage = () => {
 
     if (!validateForm()) return;
 
-    setIsSubmitting(true);
     setSubmitMessage('');
     setErrors({});
 
-    try {
-      await login(formData.email, formData.password);
-      setSubmitMessage('Login successful! Welcome back to AIOutlet.');
-
-      // Redirect to the page they were trying to access, or home
-      const from = location.state?.from?.pathname || '/';
-      setTimeout(() => {
-        navigate(from, { replace: true });
-      }, 500);
-    } catch (error) {
-      console.error('Login error:', error);
-      const errorMessage =
-        error.message || 'Invalid credentials. Please try again.';
-      setSubmitMessage(errorMessage);
-      setErrors({ submit: errorMessage });
-    } finally {
-      setIsSubmitting(false);
-    }
+    login(
+      { email: formData.email, password: formData.password },
+      {
+        onSuccess: () => {
+          setSubmitMessage('Login successful! Welcome back to AIOutlet.');
+          // Redirect to the page they were trying to access, or home
+          const from = location.state?.from?.pathname || '/';
+          setTimeout(() => {
+            navigate(from, { replace: true });
+          }, 500);
+        },
+        onError: error => {
+          console.error('Login error:', error);
+          const errorMessage =
+            error.message || 'Invalid credentials. Please try again.';
+          setSubmitMessage(errorMessage);
+          setErrors({ submit: errorMessage });
+        },
+      }
+    );
   };
 
   return (
@@ -199,10 +199,10 @@ const LoginPage = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isLoggingIn}
               className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
-              {isSubmitting ? (
+              {isLoggingIn ? (
                 <div className="flex items-center">
                   <svg
                     className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"

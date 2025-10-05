@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 const ForgotPasswordPage = () => {
-  const { forgotPassword } = useAuth();
+  const { forgotPassword, isForgotPasswordLoading } = useAuth();
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -14,7 +14,6 @@ const ForgotPasswordPage = () => {
     email: '',
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [errors, setErrors] = useState({});
 
@@ -48,27 +47,29 @@ const ForgotPasswordPage = () => {
 
     if (!validateForm()) return;
 
-    setIsSubmitting(true);
     setSubmitMessage('');
     setErrors({});
 
-    try {
-      await forgotPassword(formData.email);
-      setSubmitMessage(
-        'Password reset instructions have been sent to your email address. Please check your inbox and follow the instructions to reset your password.'
-      );
-      // Clear form after successful submission
-      setFormData({ email: '' });
-    } catch (error) {
-      console.error('Forgot password error:', error);
-      const errorMessage =
-        error.message ||
-        'Unable to send reset instructions. Please try again later.';
-      setSubmitMessage(errorMessage);
-      setErrors({ submit: errorMessage });
-    } finally {
-      setIsSubmitting(false);
-    }
+    forgotPassword(
+      { email: formData.email },
+      {
+        onSuccess: () => {
+          setSubmitMessage(
+            'Password reset instructions have been sent to your email address. Please check your inbox and follow the instructions to reset your password.'
+          );
+          // Clear form after successful submission
+          setFormData({ email: '' });
+        },
+        onError: error => {
+          console.error('Forgot password error:', error);
+          const errorMessage =
+            error.message ||
+            'Unable to send reset instructions. Please try again later.';
+          setSubmitMessage(errorMessage);
+          setErrors({ submit: errorMessage });
+        },
+      }
+    );
   };
 
   return (
@@ -129,10 +130,10 @@ const ForgotPasswordPage = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isForgotPasswordLoading}
               className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
-              {isSubmitting ? (
+              {isForgotPasswordLoading ? (
                 <div className="flex items-center">
                   <svg
                     className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"

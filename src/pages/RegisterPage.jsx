@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import ErrorAlert from '../components/ErrorAlert';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const { register, isAuthenticated } = useAuth();
+  const {
+    register,
+    isAuthenticated,
+    isRegistering,
+    registerError,
+    registerSuccess,
+  } = useAuth();
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -29,7 +35,6 @@ const RegisterPage = () => {
     agreeToTerms: false,
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [errors, setErrors] = useState({});
   const [apiValidationErrors, setApiValidationErrors] = useState(null);
@@ -86,57 +91,61 @@ const RegisterPage = () => {
 
     if (!validateForm()) return;
 
-    setIsSubmitting(true);
     setSubmitMessage('');
     setErrors({});
+    setApiValidationErrors(null);
 
-    try {
-      const userData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        phoneNumber: formData.phoneNumber,
-      };
+    const userData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      phoneNumber: formData.phoneNumber,
+    };
 
-      const response = await register(userData);
+    register(userData, {
+      onSuccess: response => {
+        // Check if email verification is required
+        if (response.requiresVerification) {
+          setSubmitMessage(
+            'Account created! Please check your email to verify your account.'
+          );
+          setTimeout(() => {
+            navigate('/login', {
+              state: {
+                message:
+                  'Registration successful! Please verify your email before logging in.',
+              },
+            });
+          }, 2000);
+        } else {
+          setSubmitMessage(
+            'Account created successfully! Welcome to AIOutlet.'
+          );
+          setTimeout(() => {
+            navigate('/', { replace: true });
+          }, 1000);
+        }
+      },
+      onError: error => {
+        console.error('Registration error:', error);
 
-      // Check if email verification is required
-      if (response.requiresVerification) {
-        setSubmitMessage(
-          'Account created! Please check your email to verify your account.'
-        );
-        setTimeout(() => {
-          navigate('/login', {
-            state: {
-              message:
-                'Registration successful! Please verify your email before logging in.',
-            },
-          });
-        }, 2000);
-      } else {
-        setSubmitMessage('Account created successfully! Welcome to AIOutlet.');
-        setTimeout(() => {
-          navigate('/', { replace: true });
-        }, 1000);
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
+        // Extract error details from API response
+        const errorData = error.response?.data || {};
+        const errorMessage =
+          errorData.error ||
+          error.message ||
+          'Something went wrong. Please try again.';
 
-      // Extract error details
-      const errorMessage =
-        error.message || 'Something went wrong. Please try again.';
+        // Set API validation errors for display in ErrorAlert
+        if (errorData.validationErrors) {
+          setApiValidationErrors(errorData.validationErrors);
+        }
 
-      // Set API validation errors for display in ErrorAlert
-      if (error.validationErrors) {
-        setApiValidationErrors(error.validationErrors);
-      }
-
-      setSubmitMessage(errorMessage);
-      setErrors({ submit: errorMessage });
-    } finally {
-      setIsSubmitting(false);
-    }
+        setSubmitMessage(errorMessage);
+        setErrors({ submit: errorMessage });
+      },
+    });
   };
 
   return (
@@ -391,10 +400,10 @@ const RegisterPage = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isRegistering}
               className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
-              {isSubmitting ? (
+              {isRegistering ? (
                 <div className="flex items-center">
                   <svg
                     className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"

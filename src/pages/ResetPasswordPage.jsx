@@ -6,13 +6,13 @@ import {
   CheckCircleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
-  const { resetPassword } = useAuth();
+  const { resetPassword, isResetPasswordLoading } = useAuth();
 
   const [formData, setFormData] = useState({
     password: '',
@@ -21,7 +21,6 @@ const ResetPasswordPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
   const [tokenValid, setTokenValid] = useState(true);
   const [resetSuccess, setResetSuccess] = useState(false);
 
@@ -100,33 +99,35 @@ const ResetPasswordPage = () => {
       return;
     }
 
-    setIsLoading(true);
     setErrors({});
 
-    try {
-      await resetPassword(token, formData.password);
-
-      setResetSuccess(true);
-      // Redirect to login after 3 seconds
-      setTimeout(() => {
-        navigate('/login', {
-          state: {
-            message:
-              'Password reset successful! Please log in with your new password.',
-          },
-        });
-      }, 3000);
-    } catch (error) {
-      console.error('Reset password error:', error);
-      const errorMessage =
-        error.message || 'Failed to reset password. The link may have expired.';
-      setErrors({
-        submit: errorMessage,
-      });
-      setTokenValid(false);
-    } finally {
-      setIsLoading(false);
-    }
+    resetPassword(
+      { token, password: formData.password },
+      {
+        onSuccess: () => {
+          setResetSuccess(true);
+          // Redirect to login after 3 seconds
+          setTimeout(() => {
+            navigate('/login', {
+              state: {
+                message:
+                  'Password reset successful! Please log in with your new password.',
+              },
+            });
+          }, 3000);
+        },
+        onError: error => {
+          console.error('Reset password error:', error);
+          const errorMessage =
+            error.message ||
+            'Failed to reset password. The link may have expired.';
+          setErrors({
+            submit: errorMessage,
+          });
+          setTokenValid(false);
+        },
+      }
+    );
   };
 
   // Invalid token view
@@ -375,10 +376,10 @@ const ResetPasswordPage = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isResetPasswordLoading}
               className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
-              {isLoading ? (
+              {isResetPasswordLoading ? (
                 <div className="flex items-center">
                   <svg
                     className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"

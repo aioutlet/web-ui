@@ -5,65 +5,69 @@ import {
   XCircleIcon,
   EnvelopeIcon,
 } from '@heroicons/react/24/outline';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 const EmailVerificationPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
-  const { verifyEmail, resendVerificationEmail } = useAuth();
+  const {
+    verifyEmail,
+    isVerifyingEmail,
+    resendVerification,
+    isResendingVerification,
+  } = useAuth();
 
   const [status, setStatus] = useState('verifying'); // verifying, success, error, already-verified
   const [message, setMessage] = useState('');
-  const [isResending, setIsResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
   const [email, setEmail] = useState('');
 
   // Verify email on component mount
   useEffect(() => {
-    const handleVerification = async () => {
-      if (!token) {
-        setStatus('error');
-        setMessage('Invalid verification link. No token provided.');
-        return;
+    if (!token) {
+      setStatus('error');
+      setMessage('Invalid verification link. No token provided.');
+      return;
+    }
+
+    verifyEmail(
+      { token },
+      {
+        onSuccess: data => {
+          if (data.alreadyVerified) {
+            setStatus('already-verified');
+            setMessage('This email address has already been verified.');
+          } else {
+            setStatus('success');
+            setMessage('Your email has been successfully verified!');
+            // Redirect to login after 3 seconds
+            setTimeout(() => {
+              navigate('/login', {
+                state: {
+                  message: 'Email verified successfully! You can now log in.',
+                },
+              });
+            }, 3000);
+          }
+
+          if (data.email) {
+            setEmail(data.email);
+          }
+        },
+        onError: error => {
+          console.error('Email verification error:', error);
+          setStatus('error');
+          setMessage(
+            error.message ||
+              'Verification failed. The link may be invalid or expired.'
+          );
+          if (error.email) {
+            setEmail(error.email);
+          }
+        },
       }
-
-      try {
-        const data = await verifyEmail(token);
-
-        if (data.alreadyVerified) {
-          setStatus('already-verified');
-          setMessage('This email address has already been verified.');
-        } else {
-          setStatus('success');
-          setMessage('Your email has been successfully verified!');
-          // Redirect to login after 3 seconds
-          setTimeout(() => {
-            navigate('/login', {
-              state: {
-                message: 'Email verified successfully! You can now log in.',
-              },
-            });
-          }, 3000);
-        }
-
-        if (data.email) {
-          setEmail(data.email);
-        }
-      } catch (error) {
-        console.error('Email verification error:', error);
-        setStatus('error');
-        setMessage(
-          error.message ||
-            'Verification failed. The link may be invalid or expired.'
-        );
-        if (error.email) {
-          setEmail(error.email);
-        }
-      }
-    };
-
-    handleVerification();
+    );
   }, [token, navigate, verifyEmail]);
 
   // Handle resend verification email
@@ -73,21 +77,23 @@ const EmailVerificationPage = () => {
       return;
     }
 
-    setIsResending(true);
     setResendSuccess(false);
 
-    try {
-      await resendVerificationEmail(email);
-      setResendSuccess(true);
-      setMessage('Verification email sent! Please check your inbox.');
-    } catch (error) {
-      console.error('Resend email error:', error);
-      const errorMessage =
-        error.message || 'Failed to resend email. Please try again.';
-      setMessage(errorMessage);
-    } finally {
-      setIsResending(false);
-    }
+    resendVerification(
+      { email },
+      {
+        onSuccess: () => {
+          setResendSuccess(true);
+          setMessage('Verification email sent! Please check your inbox.');
+        },
+        onError: error => {
+          console.error('Resend email error:', error);
+          const errorMessage =
+            error.message || 'Failed to resend email. Please try again.';
+          setMessage(errorMessage);
+        },
+      }
+    );
   };
 
   // Verifying state
@@ -256,10 +262,10 @@ const EmailVerificationPage = () => {
           {(email || token) && !resendSuccess && (
             <button
               onClick={handleResendEmail}
-              disabled={isResending}
+              disabled={isResendingVerification}
               className="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
-              {isResending ? (
+              {isResendingVerification ? (
                 <>
                   <svg
                     className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
