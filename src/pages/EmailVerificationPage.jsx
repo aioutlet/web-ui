@@ -5,11 +5,13 @@ import {
   XCircleIcon,
   EnvelopeIcon,
 } from '@heroicons/react/24/outline';
+import { useAuth } from '../contexts/AuthContext';
 
 const EmailVerificationPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
+  const { verifyEmail, resendVerificationEmail } = useAuth();
 
   const [status, setStatus] = useState('verifying'); // verifying, success, error, already-verified
   const [message, setMessage] = useState('');
@@ -19,7 +21,7 @@ const EmailVerificationPage = () => {
 
   // Verify email on component mount
   useEffect(() => {
-    const verifyEmail = async () => {
+    const handleVerification = async () => {
       if (!token) {
         setStatus('error');
         setMessage('Invalid verification link. No token provided.');
@@ -27,58 +29,46 @@ const EmailVerificationPage = () => {
       }
 
       try {
-        // TODO: Replace with your actual API endpoint
-        const response = await fetch('/api/auth/verify-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token }),
-        });
+        const data = await verifyEmail(token);
 
-        const data = await response.json();
-
-        if (response.ok) {
-          if (data.alreadyVerified) {
-            setStatus('already-verified');
-            setMessage('This email address has already been verified.');
-          } else {
-            setStatus('success');
-            setMessage('Your email has been successfully verified!');
-            // Redirect to login after 3 seconds
-            setTimeout(() => {
-              navigate('/login', {
-                state: {
-                  message: 'Email verified successfully! You can now log in.',
-                },
-              });
-            }, 3000);
-          }
+        if (data.alreadyVerified) {
+          setStatus('already-verified');
+          setMessage('This email address has already been verified.');
         } else {
-          setStatus('error');
-          setMessage(
-            data.message ||
-              'Verification failed. The link may be invalid or expired.'
-          );
-          if (data.email) {
-            setEmail(data.email);
-          }
+          setStatus('success');
+          setMessage('Your email has been successfully verified!');
+          // Redirect to login after 3 seconds
+          setTimeout(() => {
+            navigate('/login', {
+              state: {
+                message: 'Email verified successfully! You can now log in.',
+              },
+            });
+          }, 3000);
+        }
+
+        if (data.email) {
+          setEmail(data.email);
         }
       } catch (error) {
         console.error('Email verification error:', error);
         setStatus('error');
         setMessage(
-          'An error occurred during verification. Please try again later.'
+          error.message ||
+            'Verification failed. The link may be invalid or expired.'
         );
+        if (error.email) {
+          setEmail(error.email);
+        }
       }
     };
 
-    verifyEmail();
-  }, [token, navigate]);
+    handleVerification();
+  }, [token, navigate, verifyEmail]);
 
   // Handle resend verification email
   const handleResendEmail = async () => {
-    if (!email && !token) {
+    if (!email) {
       setMessage('Unable to resend email. Please try registering again.');
       return;
     }
@@ -87,26 +77,14 @@ const EmailVerificationPage = () => {
     setResendSuccess(false);
 
     try {
-      // TODO: Replace with your actual API endpoint
-      const response = await fetch('/api/auth/resend-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: email, token: token }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setResendSuccess(true);
-        setMessage('Verification email sent! Please check your inbox.');
-      } else {
-        setMessage(data.message || 'Failed to resend email. Please try again.');
-      }
+      await resendVerificationEmail(email);
+      setResendSuccess(true);
+      setMessage('Verification email sent! Please check your inbox.');
     } catch (error) {
       console.error('Resend email error:', error);
-      setMessage('An error occurred. Please try again later.');
+      const errorMessage =
+        error.message || 'Failed to resend email. Please try again.';
+      setMessage(errorMessage);
     } finally {
       setIsResending(false);
     }

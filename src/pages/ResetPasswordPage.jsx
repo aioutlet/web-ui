@@ -6,11 +6,13 @@ import {
   CheckCircleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
+import { useAuth } from '../contexts/AuthContext';
 
 const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
+  const { resetPassword } = useAuth();
 
   const [formData, setFormData] = useState({
     password: '',
@@ -102,42 +104,24 @@ const ResetPasswordPage = () => {
     setErrors({});
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/auth/reset-password', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     token,
-      //     password: formData.password,
-      //   }),
-      // });
+      await resetPassword(token, formData.password);
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Simulate success
-      const mockSuccess = true;
-
-      if (mockSuccess) {
-        setResetSuccess(true);
-        // Redirect to login after 3 seconds
-        setTimeout(() => {
-          navigate('/login', {
-            state: {
-              message:
-                'Password reset successful! Please log in with your new password.',
-            },
-          });
-        }, 3000);
-      } else {
-        throw new Error('Failed to reset password');
-      }
+      setResetSuccess(true);
+      // Redirect to login after 3 seconds
+      setTimeout(() => {
+        navigate('/login', {
+          state: {
+            message:
+              'Password reset successful! Please log in with your new password.',
+          },
+        });
+      }, 3000);
     } catch (error) {
       console.error('Reset password error:', error);
+      const errorMessage =
+        error.message || 'Failed to reset password. The link may have expired.';
       setErrors({
-        submit:
-          error.message ||
-          'Failed to reset password. The link may have expired.',
+        submit: errorMessage,
       });
       setTokenValid(false);
     } finally {

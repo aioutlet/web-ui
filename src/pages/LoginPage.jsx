@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
+
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -52,14 +65,23 @@ const LoginPage = () => {
 
     setIsSubmitting(true);
     setSubmitMessage('');
+    setErrors({});
 
-    // Simulate login
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await login(formData.email, formData.password);
       setSubmitMessage('Login successful! Welcome back to AIOutlet.');
-      // In a real app, you would redirect to dashboard
+
+      // Redirect to the page they were trying to access, or home
+      const from = location.state?.from?.pathname || '/';
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 500);
     } catch (error) {
-      setSubmitMessage('Invalid credentials. Please try again.');
+      console.error('Login error:', error);
+      const errorMessage =
+        error.message || 'Invalid credentials. Please try again.';
+      setSubmitMessage(errorMessage);
+      setErrors({ submit: errorMessage });
     } finally {
       setIsSubmitting(false);
     }

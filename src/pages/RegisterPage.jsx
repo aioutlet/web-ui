@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import ErrorAlert from '../components/ErrorAlert';
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { register, isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -20,6 +32,7 @@ const RegisterPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [errors, setErrors] = useState({});
+  const [apiValidationErrors, setApiValidationErrors] = useState(null);
 
   const handleInputChange = e => {
     const { name, value, type, checked } = e.target;
@@ -75,14 +88,52 @@ const RegisterPage = () => {
 
     setIsSubmitting(true);
     setSubmitMessage('');
+    setErrors({});
 
-    // Simulate account creation
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setSubmitMessage('Account created successfully! Welcome to AIOutlet.');
-      // In a real app, you would redirect to login or dashboard
+      const userData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        phoneNumber: formData.phoneNumber,
+      };
+
+      const response = await register(userData);
+
+      // Check if email verification is required
+      if (response.requiresVerification) {
+        setSubmitMessage(
+          'Account created! Please check your email to verify your account.'
+        );
+        setTimeout(() => {
+          navigate('/login', {
+            state: {
+              message:
+                'Registration successful! Please verify your email before logging in.',
+            },
+          });
+        }, 2000);
+      } else {
+        setSubmitMessage('Account created successfully! Welcome to AIOutlet.');
+        setTimeout(() => {
+          navigate('/', { replace: true });
+        }, 1000);
+      }
     } catch (error) {
-      setSubmitMessage('Something went wrong. Please try again.');
+      console.error('Registration error:', error);
+
+      // Extract error details
+      const errorMessage =
+        error.message || 'Something went wrong. Please try again.';
+
+      // Set API validation errors for display in ErrorAlert
+      if (error.validationErrors) {
+        setApiValidationErrors(error.validationErrors);
+      }
+
+      setSubmitMessage(errorMessage);
+      setErrors({ submit: errorMessage });
     } finally {
       setIsSubmitting(false);
     }
@@ -114,6 +165,19 @@ const RegisterPage = () => {
 
         {/* Registration Form */}
         <div className="max-w-md mx-auto">
+          {/* Error Alert */}
+          {errors.submit && (
+            <ErrorAlert
+              message={submitMessage}
+              validationErrors={apiValidationErrors}
+              onClose={() => {
+                setErrors({});
+                setSubmitMessage('');
+                setApiValidationErrors(null);
+              }}
+            />
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name Fields */}
             <div className="grid grid-cols-2 gap-4">
@@ -359,15 +423,9 @@ const RegisterPage = () => {
               )}
             </button>
 
-            {/* Success/Error Message */}
-            {submitMessage && (
-              <div
-                className={`p-4 rounded-lg text-center border ${
-                  submitMessage.includes('successfully')
-                    ? 'bg-green-50 dark:bg-green-500/30 text-green-800 dark:text-green-200 border-green-200 dark:border-green-400/50'
-                    : 'bg-red-50 dark:bg-red-500/30 text-red-800 dark:text-red-200 border-red-200 dark:border-red-400/50'
-                }`}
-              >
+            {/* Success Message Only */}
+            {submitMessage && submitMessage.includes('successfully') && (
+              <div className="p-4 rounded-lg text-center border bg-green-50 dark:bg-green-500/30 text-green-800 dark:text-green-200 border-green-200 dark:border-green-400/50">
                 {submitMessage}
               </div>
             )}

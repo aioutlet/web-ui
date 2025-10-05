@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const ForgotPasswordPage = () => {
+  const { forgotPassword } = useAuth();
+
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -47,19 +50,22 @@ const ForgotPasswordPage = () => {
 
     setIsSubmitting(true);
     setSubmitMessage('');
+    setErrors({});
 
-    // Simulate password reset email
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await forgotPassword(formData.email);
       setSubmitMessage(
         'Password reset instructions have been sent to your email address. Please check your inbox and follow the instructions to reset your password.'
       );
       // Clear form after successful submission
       setFormData({ email: '' });
     } catch (error) {
-      setSubmitMessage(
-        'Unable to send reset instructions. Please try again later.'
-      );
+      console.error('Forgot password error:', error);
+      const errorMessage =
+        error.message ||
+        'Unable to send reset instructions. Please try again later.';
+      setSubmitMessage(errorMessage);
+      setErrors({ submit: errorMessage });
     } finally {
       setIsSubmitting(false);
     }
