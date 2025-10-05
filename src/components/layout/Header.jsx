@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toggleCart } from '../../store/slices/cartSlice';
 import ThemeToggle from '../ui/ThemeToggle';
+import UserDropdown from '../UserDropdown';
+import { useAuthStore } from '../../store/authStore';
 import PropTypes from 'prop-types';
 
 // Icons matching the design
@@ -101,7 +103,8 @@ const Header = () => {
 
   const dispatch = useDispatch();
   const { totalItems } = useSelector(state => state.cart);
-  const { isAuthenticated, user } = useSelector(state => state.user);
+  // Use Zustand auth store instead of Redux
+  const { isAuthenticated } = useAuthStore();
 
   // Sync search query with URL when on search page
   useEffect(() => {
@@ -433,19 +436,20 @@ const Header = () => {
               </div>
             ))}
           </nav>
-
           {/* Right Side Icons */}
           <div className="flex items-center space-x-1 sm:space-x-2">
-            {/* User Account */}
-            <Link
-              to="/login"
-              className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-all duration-200"
-              aria-label={
-                isAuthenticated ? `Account for ${user?.name}` : 'Sign in'
-              }
-            >
-              <UserIcon />
-            </Link>
+            {/* User Account - Show dropdown if authenticated, otherwise login link */}
+            {isAuthenticated ? (
+              <UserDropdown />
+            ) : (
+              <Link
+                to="/login"
+                className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-all duration-200"
+                aria-label="Sign in"
+              >
+                <UserIcon />
+              </Link>
+            )}
 
             {/* Cart */}
             <button

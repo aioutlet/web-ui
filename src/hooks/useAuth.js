@@ -6,20 +6,25 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../api/auth.api';
 import { useAuthStore } from '../store/authStore';
-import { setToken, getRefreshToken, clearAuth } from '../utils/storage';
+import { setToken, getRefreshToken } from '../utils/storage';
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { user, isAuthenticated, setUser, clearUser, setLoading } =
-    useAuthStore();
+  const { user, isAuthenticated, setUser, clearUser } = useAuthStore();
 
   // Register mutation
   const registerMutation = useMutation({
     mutationFn: authAPI.register,
     onSuccess: data => {
-      if (data.user && data.accessToken) {
-        setToken(data.accessToken, data.refreshToken);
+      if (data.user) {
+        // Backend returns { jwt, user } - map to expected format
+        const accessToken = data.jwt || data.accessToken;
+        const refreshToken = data.refreshToken; // May be undefined if using cookies
+
+        if (accessToken) {
+          setToken(accessToken, refreshToken);
+        }
         setUser(data.user);
       }
     },
@@ -32,9 +37,17 @@ export const useAuth = () => {
   const loginMutation = useMutation({
     mutationFn: ({ email, password }) => authAPI.login(email, password),
     onSuccess: data => {
-      setToken(data.accessToken, data.refreshToken);
+      // Backend returns { jwt, user } - map to expected format
+      const accessToken = data.jwt || data.accessToken;
+      const refreshToken = data.refreshToken; // May be undefined if using cookies
+
+      if (accessToken) {
+        setToken(accessToken, refreshToken);
+      }
       setUser(data.user);
-      queryClient.invalidateQueries(['currentUser']);
+
+      // Don't invalidate - we already have fresh user data from login
+      // queryClient.invalidateQueries(['currentUser']);
     },
     onError: error => {
       console.error('Login failed:', error);
@@ -59,14 +72,13 @@ export const useAuth = () => {
   });
 
   // Get current user query
-  const {
-    data: currentUserData,
-    isLoading: isLoadingUser,
-    refetch: refetchUser,
-  } = useQuery({
+  // Only enable if authenticated AND we don't already have user data
+  // This prevents unnecessary refetch after login/register
+  const { isLoading: isLoadingUser, refetch: refetchUser } = useQuery({
     queryKey: ['currentUser'],
     queryFn: authAPI.getCurrentUser,
-    enabled: isAuthenticated, // Only fetch if authenticated
+    enabled: isAuthenticated && !user, // Only fetch if authenticated but no user data
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     onSuccess: data => {
       if (data.user) {
         setUser(data.user);
@@ -75,7 +87,7 @@ export const useAuth = () => {
     onError: error => {
       console.error('Failed to fetch current user:', error);
       // If fetching user fails, might be invalid token
-      if (error.response?.status === 401) {
+      if (error.statusCode === 401 || error.response?.status === 401) {
         clearUser();
         navigate('/login');
       }
