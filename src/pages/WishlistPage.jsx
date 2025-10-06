@@ -33,16 +33,31 @@ const WishlistPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="relative min-h-screen bg-white dark:bg-gray-900">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-purple-50/50 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20" />
+      {/* Connecting gradient for flow */}
+      <div className="absolute -inset-y-8 inset-x-0 bg-gradient-to-b from-indigo-50/20 via-transparent to-indigo-50/20 dark:from-indigo-900/5 dark:to-indigo-900/5" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            My Wishlist
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200 uppercase tracking-wide">
+              Your Favorites
+            </span>
+            <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl mb-4">
+            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+              My
+            </span>{' '}
+            <span className="text-gray-900 dark:text-white">Wishlist</span>
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <p className="text-lg leading-6 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             {wishlistItems.length} item{wishlistItems.length !== 1 ? 's' : ''}{' '}
-            saved
+            saved for later. Move to cart when you're ready.
           </p>
         </div>
 
@@ -98,11 +113,14 @@ const WishlistPage = () => {
                 className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden group hover:shadow-lg transition-shadow duration-200"
               >
                 {/* Product Image */}
-                <div className="relative aspect-square bg-gray-100 dark:bg-gray-700">
+                <div
+                  className="relative aspect-square bg-gray-100 dark:bg-gray-700 cursor-pointer"
+                  onClick={() => navigate(`/products/${item.id}`)}
+                >
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                   />
                   {!item.inStock && (
                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -115,7 +133,10 @@ const WishlistPage = () => {
 
                 {/* Product Details */}
                 <div className="p-4">
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2 line-clamp-2 min-h-[40px]">
+                  <h3
+                    className="text-sm font-medium text-gray-900 dark:text-white mb-2 line-clamp-2 min-h-[40px] cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200"
+                    onClick={() => navigate(`/products/${item.id}`)}
+                  >
                     {item.name}
                   </h3>
 
