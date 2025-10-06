@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { store } from './store';
 import { ThemeProvider } from './contexts/ThemeContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
@@ -25,6 +26,13 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import AccountPage from './pages/AccountPage';
+import AccountDashboard from './pages/AccountDashboard';
+import AddressesPage from './pages/AddressesPage';
+import AddAddressPage from './pages/AddAddressPage';
+import EditAddressPage from './pages/EditAddressPage';
+import PaymentsPage from './pages/PaymentsPage';
+import AddPaymentPage from './pages/AddPaymentPage';
+import EditPaymentPage from './pages/EditPaymentPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import WishlistPage from './pages/WishlistPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -43,158 +51,222 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <ThemeProvider>
-          <Router>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route
-                  path="/customer-service/contact"
-                  element={<ContactUsPage />}
-                />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route
-                  path="/forgot-password"
-                  element={<ForgotPasswordPage />}
-                />
-                <Route path="/reset-password" element={<ResetPasswordPage />} />
-                <Route
-                  path="/verify-email"
-                  element={<EmailVerificationPage />}
-                />
-                <Route path="/products" element={<ProductListPage />} />
-                <Route path="/products/:id" element={<ProductDetailPage />} />
-                <Route
-                  path="/products/:id/reviews"
-                  element={<ReviewListPage />}
-                />
-                <Route
-                  path="/products/:productId/write-review"
-                  element={
-                    <ProtectedRoute>
-                      <WriteReviewPage />
-                    </ProtectedRoute>
-                  }
-                />
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <ThemeProvider>
+            <Router>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route
+                    path="/customer-service/contact"
+                    element={<ContactUsPage />}
+                  />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route
+                    path="/forgot-password"
+                    element={<ForgotPasswordPage />}
+                  />
+                  <Route
+                    path="/reset-password"
+                    element={<ResetPasswordPage />}
+                  />
+                  <Route
+                    path="/verify-email"
+                    element={<EmailVerificationPage />}
+                  />
+                  <Route path="/products" element={<ProductListPage />} />
+                  <Route path="/products/:id" element={<ProductDetailPage />} />
+                  <Route
+                    path="/products/:id/reviews"
+                    element={<ReviewListPage />}
+                  />
+                  <Route
+                    path="/products/:productId/write-review"
+                    element={
+                      <ProtectedRoute>
+                        <WriteReviewPage />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                {/* Top-level Category Pages */}
-                <Route
-                  path="/women"
-                  element={<CategoryPage category="women" />}
-                />
-                <Route path="/men" element={<CategoryPage category="men" />} />
-                <Route
-                  path="/electronics"
-                  element={<CategoryPage category="electronics" />}
-                />
-                <Route
-                  path="/sports"
-                  element={<CategoryPage category="sports" />}
-                />
+                  {/* Top-level Category Pages */}
+                  <Route
+                    path="/women"
+                    element={<CategoryPage category="women" />}
+                  />
+                  <Route
+                    path="/men"
+                    element={<CategoryPage category="men" />}
+                  />
+                  <Route
+                    path="/electronics"
+                    element={<CategoryPage category="electronics" />}
+                  />
+                  <Route
+                    path="/sports"
+                    element={<CategoryPage category="sports" />}
+                  />
 
-                {/* Subcategory and Product Type Pages - Dynamic */}
-                {/* 2-level URLs like /women/bags map to productType */}
-                {/* Browse All URLs like /women/accessories map to subcategory */}
-                <Route
-                  path="/women/:subcategoryOrType"
-                  element={<CategoryPage category="women" />}
-                />
-                <Route
-                  path="/women/:subcategory/:productType"
-                  element={<CategoryPage category="women" />}
-                />
-                <Route
-                  path="/men/:subcategoryOrType"
-                  element={<CategoryPage category="men" />}
-                />
-                <Route
-                  path="/men/:subcategory/:productType"
-                  element={<CategoryPage category="men" />}
-                />
-                <Route
-                  path="/electronics/:subcategoryOrType"
-                  element={<CategoryPage category="electronics" />}
-                />
-                <Route
-                  path="/electronics/:subcategory/:productType"
-                  element={<CategoryPage category="electronics" />}
-                />
-                <Route
-                  path="/sports/:subcategoryOrType"
-                  element={<CategoryPage category="sports" />}
-                />
-                <Route
-                  path="/sports/:subcategory/:productType"
-                  element={<CategoryPage category="sports" />}
-                />
+                  {/* Subcategory and Product Type Pages - Dynamic */}
+                  {/* 2-level URLs like /women/bags map to productType */}
+                  {/* Browse All URLs like /women/accessories map to subcategory */}
+                  <Route
+                    path="/women/:subcategoryOrType"
+                    element={<CategoryPage category="women" />}
+                  />
+                  <Route
+                    path="/women/:subcategory/:productType"
+                    element={<CategoryPage category="women" />}
+                  />
+                  <Route
+                    path="/men/:subcategoryOrType"
+                    element={<CategoryPage category="men" />}
+                  />
+                  <Route
+                    path="/men/:subcategory/:productType"
+                    element={<CategoryPage category="men" />}
+                  />
+                  <Route
+                    path="/electronics/:subcategoryOrType"
+                    element={<CategoryPage category="electronics" />}
+                  />
+                  <Route
+                    path="/electronics/:subcategory/:productType"
+                    element={<CategoryPage category="electronics" />}
+                  />
+                  <Route
+                    path="/sports/:subcategoryOrType"
+                    element={<CategoryPage category="sports" />}
+                  />
+                  <Route
+                    path="/sports/:subcategory/:productType"
+                    element={<CategoryPage category="sports" />}
+                  />
 
-                {/* Collections (for backward compatibility) */}
-                <Route
-                  path="/collections/:collection"
-                  element={<CategoryPage />}
-                />
+                  {/* Collections (for backward compatibility) */}
+                  <Route
+                    path="/collections/:collection"
+                    element={<CategoryPage />}
+                  />
 
-                <Route
-                  path="/orders"
-                  element={
-                    <ProtectedRoute>
-                      <OrdersPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/orders/:orderId"
-                  element={
-                    <ProtectedRoute>
-                      <OrderDetailsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/cart" element={<CartPage />} />
-                <Route
-                  path="/checkout"
-                  element={
-                    <ProtectedRoute>
-                      <CheckoutPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/order-success"
-                  element={
-                    <ProtectedRoute>
-                      <OrderSuccessPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/account"
-                  element={
-                    <ProtectedRoute>
-                      <AccountPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/wishlist"
-                  element={
-                    <ProtectedRoute>
-                      <WishlistPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/search" element={<SearchResultsPage />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </Layout>
-          </Router>
-        </ThemeProvider>
-      </Provider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+                  <Route
+                    path="/orders"
+                    element={
+                      <ProtectedRoute>
+                        <OrdersPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/orders/:orderId"
+                    element={
+                      <ProtectedRoute>
+                        <OrderDetailsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route
+                    path="/checkout"
+                    element={
+                      <ProtectedRoute>
+                        <CheckoutPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/order-success"
+                    element={
+                      <ProtectedRoute>
+                        <OrderSuccessPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account"
+                    element={
+                      <ProtectedRoute>
+                        <AccountDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/profile"
+                    element={
+                      <ProtectedRoute>
+                        <AccountPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/addresses"
+                    element={
+                      <ProtectedRoute>
+                        <AddressesPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/addresses/add"
+                    element={
+                      <ProtectedRoute>
+                        <AddAddressPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/addresses/:id/edit"
+                    element={
+                      <ProtectedRoute>
+                        <EditAddressPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/payments"
+                    element={
+                      <ProtectedRoute>
+                        <PaymentsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/payments/add"
+                    element={
+                      <ProtectedRoute>
+                        <AddPaymentPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/payments/:id/edit"
+                    element={
+                      <ProtectedRoute>
+                        <EditPaymentPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/wishlist"
+                    element={
+                      <ProtectedRoute>
+                        <WishlistPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/search" element={<SearchResultsPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </Layout>
+            </Router>
+          </ThemeProvider>
+        </Provider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

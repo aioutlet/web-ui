@@ -1,10 +1,12 @@
 /**
  * useAuth Hook
  * Custom hook for authentication with React Query + Zustand
+ * Updated for React Query v5 best practices
  */
+import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { authAPI } from '../api/auth.api';
+import { authAPI } from '../api/clients/authClient';
 import { useAuthStore } from '../store/authStore';
 import { setToken, getRefreshToken } from '../utils/storage';
 
@@ -74,25 +76,40 @@ export const useAuth = () => {
   // Get current user query
   // Only enable if authenticated AND we don't already have user data
   // This prevents unnecessary refetch after login/register
-  const { isLoading: isLoadingUser, refetch: refetchUser } = useQuery({
+  const {
+    data: currentUserData,
+    isLoading: isLoadingUser,
+    error: currentUserError,
+    refetch: refetchUser,
+  } = useQuery({
     queryKey: ['currentUser'],
     queryFn: authAPI.getCurrentUser,
     enabled: isAuthenticated && !user, // Only fetch if authenticated but no user data
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    onSuccess: data => {
-      if (data.user) {
-        setUser(data.user);
-      }
-    },
-    onError: error => {
-      console.error('Failed to fetch current user:', error);
+    retry: 1, // Only retry once on failure
+  });
+
+  // Handle currentUser data changes (React Query v5 pattern)
+  React.useEffect(() => {
+    if (currentUserData?.user) {
+      setUser(currentUserData.user);
+    }
+  }, [currentUserData, setUser]);
+
+  // Handle currentUser error (React Query v5 pattern)
+  React.useEffect(() => {
+    if (currentUserError) {
+      console.error('Failed to fetch current user:', currentUserError);
       // If fetching user fails, might be invalid token
-      if (error.statusCode === 401 || error.response?.status === 401) {
+      if (
+        currentUserError.statusCode === 401 ||
+        currentUserError.response?.status === 401
+      ) {
         clearUser();
         navigate('/login');
       }
-    },
-  });
+    }
+  }, [currentUserError, clearUser, navigate]);
 
   // Forgot password mutation
   const forgotPasswordMutation = useMutation({
