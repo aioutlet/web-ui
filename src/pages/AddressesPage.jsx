@@ -50,8 +50,8 @@ const AddressesPage = () => {
     navigate('/account/addresses/add');
   };
 
-  const handleEdit = address => {
-    navigate(`/account/addresses/${address._id}/edit`);
+  const handleEdit = addressId => {
+    navigate(`/account/addresses/${addressId}/edit`);
   };
 
   const handleDelete = addressId => {

@@ -50,8 +50,8 @@ const PaymentsPage = () => {
     navigate('/account/payments/add');
   };
 
-  const handleEdit = payment => {
-    navigate(`/account/payments/${payment._id}/edit`);
+  const handleEdit = paymentId => {
+    navigate(`/account/payments/${paymentId}/edit`);
   };
 
   const handleDelete = paymentId => {
