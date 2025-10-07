@@ -55,10 +55,6 @@ const WishlistPage = () => {
             </span>{' '}
             <span className="text-gray-900 dark:text-white">Wishlist</span>
           </h1>
-          <p className="text-lg leading-6 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            {wishlistItems.length} item{wishlistItems.length !== 1 ? 's' : ''}{' '}
-            saved for later. Move to cart when you're ready.
-          </p>
         </div>
 
         {/* Wishlist Content */}

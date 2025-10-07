@@ -344,61 +344,6 @@ const AccountPage = () => {
             </div>
           )}
         </form>
-
-        <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
-                <svg
-                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Keep Your Information Updated
-              </h3>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 dark:text-blue-400 mt-1">
-                    •
-                  </span>
-                  <span>
-                    Keep your contact information up to date for order updates
-                    and important notifications
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 dark:text-blue-400 mt-1">
-                    •
-                  </span>
-                  <span>
-                    Your email address is used for account security and
-                    communication
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 dark:text-blue-400 mt-1">
-                    •
-                  </span>
-                  <span>
-                    We never share your personal information with third parties
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

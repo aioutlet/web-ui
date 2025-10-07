@@ -120,10 +120,6 @@ const AccountDashboard = () => {
             </span>{' '}
             <span className="text-gray-900 dark:text-white">Account</span>
           </h1>
-          <p className="text-lg leading-6 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Manage your account settings, orders, and preferences all in one
-            place
-          </p>
         </div>
 
         {/* Account Sections Grid */}
@@ -174,44 +170,6 @@ const AccountDashboard = () => {
               </button>
             );
           })}
-        </div>
-
-        {/* Quick Info Section */}
-        <div className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
-                <svg
-                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Need Help?
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                Find answers in our Help Center or contact our customer support
-                team
-              </p>
-              <button
-                onClick={() => navigate('/customer-service/contact')}
-                className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors duration-200"
-              >
-                Contact Customer Service →
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

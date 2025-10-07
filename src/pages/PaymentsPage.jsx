@@ -117,9 +117,6 @@ const PaymentsPage = () => {
             </span>{' '}
             <span className="text-gray-900 dark:text-white">Methods</span>
           </h1>
-          <p className="text-lg leading-6 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Manage your payment methods for faster and secure checkout
-          </p>
         </div>
 
         {/* Content */}
@@ -183,58 +180,6 @@ const PaymentsPage = () => {
               ))}
             </div>
           )}
-        </div>
-
-        {/* Info Section */}
-        <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
-                <svg
-                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Your Payment Information is Secure
-              </h3>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 dark:text-blue-400 mt-1">
-                    •
-                  </span>
-                  <span>
-                    All payment information is encrypted and stored securely
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 dark:text-blue-400 mt-1">
-                    •
-                  </span>
-                  <span>
-                    We never share your financial information with third parties
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 dark:text-blue-400 mt-1">
-                    •
-                  </span>
-                  <span>Set a default payment method for faster checkout</span>
-                </li>
-              </ul>
-            </div>
-          </div>
         </div>
       </div>
     </div>

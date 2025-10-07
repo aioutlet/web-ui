@@ -127,10 +127,6 @@ function OrdersPage() {
             </span>{' '}
             <span className="text-gray-900 dark:text-white">History</span>
           </h1>
-          <p className="text-lg leading-6 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Check the status of recent orders, manage returns, and download
-            invoices.
-          </p>
         </div>
 
         {/* Search Bar */}

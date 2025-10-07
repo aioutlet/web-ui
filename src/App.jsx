@@ -25,7 +25,7 @@ import OrderDetailsPage from './pages/OrderDetailsPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
-import AccountPage from './pages/AccountPage';
+import AccountPage from './pages/ProfilePage';
 import AccountDashboard from './pages/AccountDashboard';
 import AddressesPage from './pages/AddressesPage';
 import AddAddressPage from './pages/AddAddressPage';
