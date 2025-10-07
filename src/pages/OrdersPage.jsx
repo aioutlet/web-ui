@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   MagnifyingGlassIcon,
   ChevronDownIcon,
+  ArrowLeftIcon,
 } from '@heroicons/react/24/outline';
 import Paginator from '../components/ui/Paginator';
 import OrderProgressBar from '../components/ui/OrderProgressBar';
@@ -11,6 +12,7 @@ import { selectAllOrders } from '../store/slices/ordersSlice';
 import { filterOrders } from '../utils/orderHelpers';
 
 function OrdersPage() {
+  const navigate = useNavigate();
   // Get orders from Redux store
   const allOrders = useSelector(selectAllOrders);
 
@@ -112,6 +114,15 @@ function OrdersPage() {
       <div className="absolute -inset-y-8 inset-x-0 bg-gradient-to-b from-indigo-50/20 via-transparent to-indigo-50/20 dark:from-indigo-900/5 dark:to-indigo-900/5" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate('/account')}
+          className="mb-6 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors duration-200"
+        >
+          <ArrowLeftIcon className="h-5 w-5" />
+          <span className="font-medium">Back to Account</span>
+        </button>
+
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -284,7 +295,7 @@ function OrdersPage() {
                     {/* Order Actions */}
                     <div className="flex flex-wrap gap-2 sm:flex-shrink-0">
                       <Link
-                        to={`/orders/${order.id}`}
+                        to={`/account/orders/${order.id}`}
                         className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                       >
                         View Order

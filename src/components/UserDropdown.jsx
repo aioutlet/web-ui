@@ -173,13 +173,13 @@ const UserDropdown = ({ className = '' }) => {
     {
       label: 'My Orders',
       icon: <OrdersIcon />,
-      href: '/orders',
+      href: '/account/orders',
       description: 'Track and view your orders',
     },
     {
       label: 'Wishlist',
       icon: <HeartIcon />,
-      href: '/wishlist',
+      href: '/account/wishlist',
       description: 'View your saved items',
     },
     {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import OrderProgressBar from '../components/ui/OrderProgressBar';
 import { selectAllOrders } from '../store/slices/ordersSlice';
 import { getOrderById } from '../utils/orderHelpers';
@@ -63,7 +64,7 @@ const OrderDetailsPage = () => {
           </p>
           <div className="mt-6 flex gap-3 justify-center">
             <button
-              onClick={() => navigate('/orders')}
+              onClick={() => navigate('/account/orders')}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
             >
               View All Orders
@@ -88,6 +89,15 @@ const OrderDetailsPage = () => {
       <div className="absolute -inset-y-8 inset-x-0 bg-gradient-to-b from-indigo-50/20 via-transparent to-indigo-50/20 dark:from-indigo-900/5 dark:to-indigo-900/5" />
 
       <div className="relative max-w-5xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate('/account/orders')}
+          className="mb-6 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors duration-200"
+        >
+          <ArrowLeftIcon className="h-5 w-5" />
+          <span className="font-medium">Back to Orders</span>
+        </button>
+
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">

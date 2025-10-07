@@ -32,7 +32,7 @@ const AccountDashboard = () => {
       description:
         'Track, return, cancel an order, download invoice or buy again',
       icon: ShoppingBagIcon,
-      path: '/orders',
+      path: '/account/orders',
       color: 'indigo',
     },
     {
@@ -80,7 +80,7 @@ const AccountDashboard = () => {
       title: 'Your Wishlist',
       description: 'View and manage items saved for later',
       icon: HeartIcon,
-      path: '/wishlist',
+      path: '/account/wishlist',
       color: 'pink',
     },
     {

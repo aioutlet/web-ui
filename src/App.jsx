@@ -153,7 +153,7 @@ function App() {
                   />
 
                   <Route
-                    path="/orders"
+                    path="/account/orders"
                     element={
                       <ProtectedRoute>
                         <OrdersPage />
@@ -161,7 +161,7 @@ function App() {
                     }
                   />
                   <Route
-                    path="/orders/:orderId"
+                    path="/account/orders/:orderId"
                     element={
                       <ProtectedRoute>
                         <OrderDetailsPage />
@@ -250,7 +250,7 @@ function App() {
                     }
                   />
                   <Route
-                    path="/wishlist"
+                    path="/account/wishlist"
                     element={
                       <ProtectedRoute>
                         <WishlistPage />

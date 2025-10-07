@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToCart, openCart } from '../store/slices/cartSlice';
 import { userData } from '../data/user';
-import { HeartIcon } from '@heroicons/react/24/outline';
+import { HeartIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 const WishlistPage = () => {
   const navigate = useNavigate();
@@ -40,6 +40,15 @@ const WishlistPage = () => {
       <div className="absolute -inset-y-8 inset-x-0 bg-gradient-to-b from-indigo-50/20 via-transparent to-indigo-50/20 dark:from-indigo-900/5 dark:to-indigo-900/5" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate('/account')}
+          className="mb-6 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors duration-200"
+        >
+          <ArrowLeftIcon className="h-5 w-5" />
+          <span className="font-medium">Back to Account</span>
+        </button>
+
         {/* Page Header */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
