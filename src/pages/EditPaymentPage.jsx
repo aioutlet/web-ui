@@ -20,13 +20,6 @@ const EditPaymentPage = () => {
     cardType: 'visa',
     expiryMonth: '',
     expiryYear: '',
-    billingAddress: {
-      addressLine1: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      country: 'USA',
-    },
     isDefault: false,
   });
 
@@ -57,13 +50,6 @@ const EditPaymentPage = () => {
         cardType: payment.cardType || 'visa',
         expiryMonth: payment.expiryMonth || '',
         expiryYear: payment.expiryYear || '',
-        billingAddress: {
-          addressLine1: payment.billingAddress?.addressLine1 || '',
-          city: payment.billingAddress?.city || '',
-          state: payment.billingAddress?.state || '',
-          zipCode: payment.billingAddress?.zipCode || '',
-          country: payment.billingAddress?.country || 'USA',
-        },
         isDefault: payment.isDefault || false,
       });
     }
@@ -115,22 +101,6 @@ const EditPaymentPage = () => {
       }
     }
 
-    // Billing address validation
-    if (!formData.billingAddress.addressLine1.trim()) {
-      newErrors.billingAddressLine1 = 'Address is required';
-    }
-    if (!formData.billingAddress.city.trim()) {
-      newErrors.billingCity = 'City is required';
-    }
-    if (!formData.billingAddress.state.trim()) {
-      newErrors.billingState = 'State is required';
-    }
-    if (!formData.billingAddress.zipCode.trim()) {
-      newErrors.billingZipCode = 'ZIP code is required';
-    } else if (!/^\d{5}(-\d{4})?$/.test(formData.billingAddress.zipCode)) {
-      newErrors.billingZipCode = 'Invalid ZIP code format';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -145,23 +115,6 @@ const EditPaymentPage = () => {
     // Clear error for this field
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
-    }
-  };
-
-  const handleBillingChange = e => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      billingAddress: {
-        ...prev.billingAddress,
-        [name]: value,
-      },
-    }));
-
-    // Clear error for this field
-    const errorKey = `billing${name.charAt(0).toUpperCase() + name.slice(1)}`;
-    if (errors[errorKey]) {
-      setErrors(prev => ({ ...prev, [errorKey]: undefined }));
     }
   };
 
@@ -414,128 +367,6 @@ const EditPaymentPage = () => {
                     {errors.expiryYear}
                   </p>
                 )}
-              </div>
-            </div>
-          </div>
-
-          {/* Billing Address Section */}
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
-              Billing Address
-            </h2>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {/* Address Line 1 */}
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Address Line 1 *
-                </label>
-                <input
-                  type="text"
-                  name="addressLine1"
-                  value={formData.billingAddress.addressLine1}
-                  onChange={handleBillingChange}
-                  placeholder="123 Main Street"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white ${
-                    errors.billingAddressLine1
-                      ? 'border-red-500'
-                      : 'border-gray-300 dark:border-gray-600'
-                  }`}
-                />
-                {errors.billingAddressLine1 && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                    {errors.billingAddressLine1}
-                  </p>
-                )}
-              </div>
-
-              {/* City */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  City *
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.billingAddress.city}
-                  onChange={handleBillingChange}
-                  placeholder="San Francisco"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white ${
-                    errors.billingCity
-                      ? 'border-red-500'
-                      : 'border-gray-300 dark:border-gray-600'
-                  }`}
-                />
-                {errors.billingCity && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                    {errors.billingCity}
-                  </p>
-                )}
-              </div>
-
-              {/* State */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  State *
-                </label>
-                <input
-                  type="text"
-                  name="state"
-                  value={formData.billingAddress.state}
-                  onChange={handleBillingChange}
-                  placeholder="CA"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white ${
-                    errors.billingState
-                      ? 'border-red-500'
-                      : 'border-gray-300 dark:border-gray-600'
-                  }`}
-                />
-                {errors.billingState && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                    {errors.billingState}
-                  </p>
-                )}
-              </div>
-
-              {/* ZIP Code */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  ZIP Code *
-                </label>
-                <input
-                  type="text"
-                  name="zipCode"
-                  value={formData.billingAddress.zipCode}
-                  onChange={handleBillingChange}
-                  placeholder="94103"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white ${
-                    errors.billingZipCode
-                      ? 'border-red-500'
-                      : 'border-gray-300 dark:border-gray-600'
-                  }`}
-                />
-                {errors.billingZipCode && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                    {errors.billingZipCode}
-                  </p>
-                )}
-              </div>
-
-              {/* Country */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Country *
-                </label>
-                <select
-                  name="country"
-                  value={formData.billingAddress.country}
-                  onChange={handleBillingChange}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
-                >
-                  <option value="USA">United States</option>
-                  <option value="Canada">Canada</option>
-                  <option value="UK">United Kingdom</option>
-                  <option value="Australia">Australia</option>
-                </select>
               </div>
             </div>
           </div>
