@@ -13,7 +13,7 @@ import { useAuthStore } from '../store/authStore';
 const AccountPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
@@ -33,7 +33,8 @@ const AccountPage = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const profileData = profileResponse?.user || user || {};
+  // Backend returns user object directly, not wrapped in { user: ... }
+  const profileData = profileResponse || user || {};
 
   const [profileForm, setProfileForm] = useState({
     firstName: '',
@@ -43,6 +44,13 @@ const AccountPage = () => {
     dateOfBirth: '',
     gender: 'prefer-not-to-say',
   });
+
+  // Sync profile data from backend to Zustand store
+  useEffect(() => {
+    if (profileResponse) {
+      updateUser(profileResponse);
+    }
+  }, [profileResponse, updateUser]);
 
   useEffect(() => {
     if (profileData) {
@@ -59,8 +67,14 @@ const AccountPage = () => {
 
   const updateProfileMutation = useMutation({
     mutationFn: userAPI.updateProfile,
-    onSuccess: () => {
+    onSuccess: data => {
+      // Update both React Query cache and Zustand store
       queryClient.invalidateQueries(['userProfile']);
+
+      // Update the Zustand auth store with the new user data
+      // Backend returns user object directly
+      updateUser(data);
+
       setSaveMessage('Profile updated successfully!');
       setErrorMessage('');
       setIsEditing(false);
