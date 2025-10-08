@@ -8,7 +8,7 @@ import { getToken, clearAuth } from '../../utils/storage';
 
 const authClient = axios.create({
   baseURL: process.env.REACT_APP_AUTH_API_URL || 'http://localhost:3001',
-  timeout: 10000,
+  timeout: 0, // No timeout for debugging
   headers: {
     'Content-Type': 'application/json',
   },
