@@ -35,6 +35,15 @@
 }
 
 @layer utilities {
+  /* Theme transition animation */
+  .theme-transitioning,
+  .theme-transitioning * {
+    transition:
+      background-color 300ms ease-in-out,
+      border-color 300ms ease-in-out,
+      color 300ms ease-in-out !important;
+  }
+
   /* Hide scrollbar for webkit browsers */
   .scrollbar-hide {
     -ms-overflow-style: none; /* Internet Explorer 10+ */

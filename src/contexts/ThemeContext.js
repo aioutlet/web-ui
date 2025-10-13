@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 const ThemeContext = createContext();
 
@@ -22,6 +23,10 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     const root = window.document.documentElement;
+
+    // Add transitioning class
+    root.classList.add('theme-transitioning');
+
     if (isDarkMode) {
       root.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -29,6 +34,13 @@ export const ThemeProvider = ({ children }) => {
       root.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
+
+    // Remove transitioning class after animation completes
+    const timer = setTimeout(() => {
+      root.classList.remove('theme-transitioning');
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [isDarkMode]);
 
   const toggleTheme = () => {
@@ -40,4 +52,8 @@ export const ThemeProvider = ({ children }) => {
       {children}
     </ThemeContext.Provider>
   );
+};
+
+ThemeProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

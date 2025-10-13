@@ -194,14 +194,14 @@ const ProductListPage = () => {
 
   const handlePageChange = page => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Don't scroll - keep user's current position for better UX
   };
 
   // Badge component
   const ProductBadge = ({ badge, inStock }) => {
     if (!inStock) {
       return (
-        <div className="absolute top-3 left-3 bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded">
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded shadow-sm">
           Out of Stock
         </div>
       );
@@ -217,7 +217,7 @@ const ProductListPage = () => {
 
     return (
       <div
-        className={`absolute top-3 left-3 text-xs font-medium px-2 py-1 rounded ${badgeStyles[badge] || 'bg-blue-500 text-white'}`}
+        className={`absolute top-2 left-2 sm:top-3 sm:left-3 text-xs font-medium px-2 py-1 rounded shadow-sm ${badgeStyles[badge] || 'bg-blue-500 text-white'}`}
       >
         {badge}
       </div>
@@ -235,27 +235,27 @@ const ProductListPage = () => {
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-50/60 via-pink-50/40 to-blue-50/50 dark:from-purple-900/20 dark:via-pink-900/15 dark:to-blue-900/20" />
 
-      <div className="relative max-w-7xl mx-auto px-4 py-8">
+      <div className="relative w-full md:max-w-7xl md:mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           {/* Title and Subtitle */}
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center gap-3 mb-4">
-              <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
-              <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-full px-4 py-2">
-                <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">
+          <div className="text-center mb-4 sm:mb-6">
+            <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-8 sm:w-12"></div>
+              <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-full px-3 py-1.5 sm:px-4 sm:py-2">
+                <span className="text-xs sm:text-sm font-medium text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">
                   Featured
                 </span>
               </div>
-              <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
+              <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-8 sm:w-12"></div>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl mb-4">
+            <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl md:text-4xl mb-2 sm:mb-4">
               <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
                 New
               </span>{' '}
               <span className="text-gray-900 dark:text-white">Arrivals</span>
             </h1>
-            <p className="text-lg leading-6 text-gray-600 dark:text-gray-300 max-w-lg mx-auto">
+            <p className="text-xs sm:text-base md:text-lg leading-relaxed text-gray-600 dark:text-gray-300 max-w-lg mx-auto px-1 sm:px-2">
               Checkout out the latest release of Basic Tees, new and improved
               with four openings!
             </p>
@@ -267,10 +267,10 @@ const ProductListPage = () => {
               {/* Filter Toggle */}
               <button
                 onClick={() => setFiltersOpen(!filtersOpen)}
-                className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+                className="flex items-center space-x-1.5 sm:space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 text-sm sm:text-base"
               >
                 <svg
-                  className={`w-4 h-4 transition-transform duration-200 ${filtersOpen ? 'rotate-180' : ''}`}
+                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-200 ${filtersOpen ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -302,7 +302,7 @@ const ProductListPage = () => {
                       category: 'All',
                     })
                   }
-                  className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
+                  className="text-xs sm:text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200 font-medium"
                 >
                   Clear all
                 </button>
@@ -313,15 +313,15 @@ const ProductListPage = () => {
             <div className="relative sort-dropdown">
               <button
                 onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-                className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                className="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors whitespace-nowrap"
               >
-                <span>
-                  Sort:{' '}
+                <span className="hidden sm:inline">Sort: </span>
+                <span className="font-medium">
                   {sortOptions.find(option => option.value === sortBy)?.label ||
                     'Featured'}
                 </span>
                 <svg
-                  className={`w-4 h-4 transition-transform ${sortDropdownOpen ? 'rotate-180' : ''}`}
+                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform ${sortDropdownOpen ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -397,12 +397,12 @@ const ProductListPage = () => {
         )}
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+        <div className="products-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12">
           {paginatedProducts.map(product => (
             <div key={product.id} className="group">
               <div className="relative">
                 <div
-                  className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mb-4 relative cursor-pointer"
+                  className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-md sm:rounded-lg overflow-hidden mb-2 sm:mb-3 md:mb-4 relative cursor-pointer"
                   onClick={() => handleProductClick(product.id)}
                 >
                   <img
@@ -455,10 +455,10 @@ const ProductListPage = () => {
                   {product.inStock && (
                     <button
                       onClick={e => toggleFavorite(product.id, e)}
-                      className="absolute top-3 right-3 p-1.5 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-800 rounded-full transition-all duration-200"
+                      className="absolute top-2 right-2 sm:top-3 sm:right-3 p-1.5 bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 rounded-full transition-all duration-200 shadow-sm"
                     >
                       <svg
-                        className={`w-5 h-5 ${
+                        className={`w-4 h-4 sm:w-5 sm:h-5 ${
                           favorites.has(product.id)
                             ? 'text-red-500 fill-current'
                             : 'text-gray-400 hover:text-red-400 dark:text-gray-500 dark:hover:text-red-400'
@@ -582,7 +582,7 @@ const ProductListPage = () => {
                 </div>
 
                 <h3
-                  className={`text-sm font-medium mb-1 ${
+                  className={`text-sm sm:text-base font-medium mb-1.5 line-clamp-2 leading-tight ${
                     product.inStock
                       ? 'text-gray-900 dark:text-white'
                       : 'text-gray-500 dark:text-gray-400'
@@ -590,20 +590,22 @@ const ProductListPage = () => {
                 >
                   {product.name}
                   {!product.inStock && (
-                    <span className="text-xs text-red-500 ml-2">
+                    <span className="block text-xs text-red-500 mt-1">
                       (Out of Stock)
                     </span>
                   )}
                 </h3>
-                <StarRating
-                  rating={product.rating}
-                  reviews={product.reviews}
-                  showReviews={true}
-                  size="w-4 h-4"
-                  reviewsTextSize="text-sm"
-                />
+                <div className="mb-1.5">
+                  <StarRating
+                    rating={product.rating}
+                    reviews={product.reviews}
+                    showReviews={true}
+                    size="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                    reviewsTextSize="text-xs sm:text-sm"
+                  />
+                </div>
                 <p
-                  className={`text-lg font-medium mt-2 ${
+                  className={`text-base sm:text-lg font-semibold ${
                     product.inStock
                       ? 'text-gray-900 dark:text-white'
                       : 'text-gray-500 dark:text-gray-400'
@@ -617,16 +619,16 @@ const ProductListPage = () => {
         </div>
 
         {/* Pagination */}
-        <div className="mt-8 flex justify-center">
+        <div className="mt-6 sm:mt-8 flex justify-center overflow-x-auto px-2">
           <Paginator
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
             variant="traditional"
-            size="md"
+            size="sm"
             color="blue"
             showEllipsis={true}
-            maxVisiblePages={10}
+            maxVisiblePages={5}
           />
         </div>
       </div>
