@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,6 +9,85 @@ import axios from 'axios';
 
 const BFF_URL = process.env.REACT_APP_BFF_URL || 'http://localhost:3100';
 
+// Dynamic filter configuration based on category
+const getCategoryFilters = (department, category, subcategory) => {
+  // Normalize input to handle case-insensitivity and special characters
+  const normalizeName = name => {
+    if (!name) return null;
+    // Convert to title case and handle special cases
+    return name
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+  const deptKey = normalizeName(department);
+  const catKey = normalizeName(category);
+
+  // Define which filters are relevant for each category
+  const filterConfig = {
+    Women: {
+      Clothing: ['price', 'color', 'size'],
+      Accessories: ['price', 'color'],
+      Shoes: ['price', 'color', 'size'],
+    },
+    Men: {
+      Clothing: ['price', 'color', 'size'],
+      Accessories: ['price', 'color'],
+      Shoes: ['price', 'color', 'size'],
+    },
+    Kids: {
+      Clothing: ['price', 'color', 'size'],
+      Shoes: ['price', 'color', 'size'],
+    },
+    Electronics: {
+      Computers: ['price', 'color'],
+      Audio: ['price', 'color'],
+      Headphones: ['price', 'color'],
+      Mobile: ['price', 'color'],
+      Gaming: ['price', 'color'],
+      Cameras: ['price'],
+      Tablets: ['price', 'color'],
+    },
+    Sports: {
+      Apparel: ['price', 'color', 'size'],
+      Equipment: ['price'],
+      Footwear: ['price', 'color', 'size'],
+    },
+    Books: {
+      default: ['price'],
+    },
+  };
+
+  // If no department/category (e.g., /products home page), show all filters
+  if (!deptKey && !catKey) {
+    return ['price', 'color', 'size'];
+  }
+
+  // Get filters for specific department/category
+  if (filterConfig[deptKey]?.[catKey]) {
+    return filterConfig[deptKey][catKey];
+  }
+
+  // Fallback to department level
+  if (filterConfig[deptKey]) {
+    const deptCategories = filterConfig[deptKey];
+    // If department has 'default', use it
+    if (deptCategories.default) {
+      return deptCategories.default;
+    }
+    // Otherwise, return first category's filters as default
+    const firstCategoryFilters = Object.values(deptCategories)[0];
+    if (firstCategoryFilters) {
+      return firstCategoryFilters;
+    }
+  }
+
+  // Default to price filter only for unknown categories
+  // TODO: Add color/size when backend API supports these attributes
+  return ['price'];
+};
+
 const ProductListPage = ({ category: propCategory }) => {
   const { department, category, subcategory } = useParams();
   const navigate = useNavigate();
@@ -18,6 +97,14 @@ const ProductListPage = ({ category: propCategory }) => {
   // Determine hierarchy from URL params
   const dept = department || propCategory;
 
+  // Determine which filters to show based on category
+  const activeFilters = useMemo(() => {
+    console.log('Filter Debug - Original:', { dept, category, subcategory });
+    const filters = getCategoryFilters(dept, category, subcategory);
+    console.log('Filter Debug - Active Filters:', filters);
+    return filters;
+  }, [dept, category, subcategory]);
+
   // State management
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,9 +112,9 @@ const ProductListPage = ({ category: propCategory }) => {
   const [totalCount, setTotalCount] = useState(0);
   const [favorites, setFavorites] = useState(new Set());
   const [filters, setFilters] = useState({
-    price: 'All',
-    color: 'All',
-    size: 'All',
+    price: new Set(),
+    color: new Set(),
+    size: new Set(),
   });
   const [sortBy, setSortBy] = useState('featured');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
@@ -47,12 +134,25 @@ const ProductListPage = ({ category: propCategory }) => {
         if (category) params.append('category', category);
         if (subcategory) params.append('subcategory', subcategory);
 
-        // Add price filters
-        const priceRange = getPriceRangeFromFilter(filters.price);
-        if (priceRange?.min !== undefined)
-          params.append('min_price', priceRange.min.toString());
-        if (priceRange?.max !== undefined && priceRange.max !== Infinity) {
-          params.append('max_price', priceRange.max.toString());
+        // Add price filters - handle multiple price ranges
+        if (filters.price.size > 0) {
+          const priceRanges = Array.from(filters.price).map(p =>
+            getPriceRangeFromFilter(p)
+          );
+          const minPrice = Math.min(
+            ...priceRanges.map(r => r?.min || 0).filter(v => v !== undefined)
+          );
+          const maxPrice = Math.max(
+            ...priceRanges
+              .map(r => r?.max || Infinity)
+              .filter(v => v !== Infinity)
+          );
+
+          if (minPrice !== Infinity)
+            params.append('min_price', minPrice.toString());
+          if (maxPrice !== -Infinity && maxPrice !== Infinity) {
+            params.append('max_price', maxPrice.toString());
+          }
         }
 
         params.append('skip', ((currentPage - 1) * productsPerPage).toString());
@@ -64,6 +164,8 @@ const ProductListPage = ({ category: propCategory }) => {
 
         if (response.data.success) {
           const apiProducts = response.data.data.products || [];
+          console.log('API Products Sample:', apiProducts[0]);
+
           // Transform API products to match frontend format
           const transformedProducts = apiProducts.map(p => ({
             id: p.id,
@@ -85,7 +187,12 @@ const ProductListPage = ({ category: propCategory }) => {
             category: p.category,
             subcategory: p.subcategory,
             brand: p.brand,
+            // Product variations as arrays
+            colors: p.colors || [],
+            sizes: p.sizes || [],
           }));
+
+          console.log('Transformed Products Sample:', transformedProducts[0]);
 
           setProducts(transformedProducts);
           setTotalCount(
@@ -109,11 +216,56 @@ const ProductListPage = ({ category: propCategory }) => {
     window.scrollTo(0, 0);
   }, [dept, category, subcategory]);
 
-  // Sort products client-side
-  const sortedProducts = sortProductsLocal(products, sortBy);
+  // Apply client-side filtering for color and size
+  const filteredProducts = useMemo(() => {
+    let filtered = [...products];
 
-  // Pagination - server-side pagination already handled by API
-  const totalPages = Math.ceil(totalCount / productsPerPage);
+    // Apply color filter
+    if (filters.color.size > 0) {
+      filtered = filtered.filter(product => {
+        // Product colors: array of available colors
+        const productColors = product.colors || [];
+
+        if (productColors.length === 0) return false;
+
+        // Check if any product color matches any selected filter color
+        return Array.from(filters.color).some(selectedColor =>
+          productColors.some(
+            color => color.toLowerCase() === selectedColor.toLowerCase()
+          )
+        );
+      });
+    }
+
+    // Apply size filter
+    if (filters.size.size > 0) {
+      filtered = filtered.filter(product => {
+        // Product sizes: array of available sizes
+        const productSizes = product.sizes || [];
+
+        if (productSizes.length === 0) return false;
+
+        // Check if any product size matches any selected filter size
+        return Array.from(filters.size).some(selectedSize =>
+          productSizes.some(
+            size => size.toLowerCase() === selectedSize.toLowerCase()
+          )
+        );
+      });
+    }
+
+    return filtered;
+  }, [products, filters.color, filters.size]);
+
+  // Sort products client-side
+  const sortedProducts = sortProductsLocal(filteredProducts, sortBy);
+
+  // Pagination - use filtered products count for client-side filtering
+  const effectiveTotalCount =
+    filters.color.size > 0 || filters.size.size > 0
+      ? sortedProducts.length
+      : totalCount;
+  const totalPages = Math.ceil(effectiveTotalCount / productsPerPage);
 
   // Get breadcrumbs for navigation
   const breadcrumbs = getBreadcrumbs(dept, category, subcategory);
@@ -152,7 +304,25 @@ const ProductListPage = ({ category: propCategory }) => {
   };
 
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters(prev => {
+      const newFilters = { ...prev };
+      const filterSet = new Set(prev[key]);
+
+      if (value === 'All') {
+        // Clear all selections for this filter
+        newFilters[key] = new Set();
+      } else {
+        // Toggle the selection
+        if (filterSet.has(value)) {
+          filterSet.delete(value);
+        } else {
+          filterSet.add(value);
+        }
+        newFilters[key] = filterSet;
+      }
+
+      return newFilters;
+    });
     setCurrentPage(1);
   };
 
@@ -161,23 +331,105 @@ const ProductListPage = ({ category: propCategory }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Filter options
-  const filterOptions = {
-    price: ['All', '$0 - $25', '$25 - $50', '$50 - $75', '$75 - $100', '$100+'],
-    color: [
+  // Get only the relevant filter options based on category
+  const filterOptions = useMemo(() => {
+    // Price filter is always static
+    const priceOptions = [
       'All',
-      'White',
+      '$0 - $25',
+      '$25 - $50',
+      '$50 - $75',
+      '$75 - $100',
+      '$100+',
+    ];
+
+    // Use curated common color options for cleaner UX
+    // Individual products show all their specific colors on the detail page
+    const commonColorOptions = [
+      'All',
       'Black',
-      'Beige',
+      'White',
+      'Gray',
       'Blue',
-      'Brown',
-      'Green',
-      'Purple',
       'Red',
+      'Green',
       'Pink',
-    ],
-    size: ['All', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'],
-  };
+      'Brown',
+      'Navy',
+    ];
+
+    // Use curated common size options based on category
+    // Individual products show all their specific sizes on the detail page
+    let commonSizeOptions = ['All'];
+
+    // Determine size options based on category context
+    if (dept === 'Electronics' || category === 'Electronics') {
+      // No size filter for electronics
+      commonSizeOptions = ['All'];
+    } else if (
+      category === 'Footwear' ||
+      subcategory === 'Sneakers' ||
+      subcategory === 'Running'
+    ) {
+      // Shoe sizes
+      commonSizeOptions = [
+        'All',
+        '6',
+        '7',
+        '8',
+        '9',
+        '10',
+        '11',
+        '12',
+        '1Y',
+        '2Y',
+        '3Y',
+        '4Y',
+        '5Y',
+      ];
+    } else if (
+      subcategory === 'Pants' ||
+      subcategory === 'Jeans' ||
+      subcategory === 'Chinos'
+    ) {
+      // Waist sizes for pants
+      commonSizeOptions = [
+        'All',
+        '24',
+        '26',
+        '28',
+        '30',
+        '32',
+        '34',
+        '36',
+        '38',
+      ];
+    } else if (dept === 'Kids' || category === 'Kids') {
+      // Kids sizes
+      commonSizeOptions = ['All', '4', '6', '8', '10', '12', '14'];
+    } else {
+      // Standard clothing sizes (default)
+      commonSizeOptions = ['All', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    }
+
+    const colorOptions = commonColorOptions;
+    const sizeOptions = commonSizeOptions;
+
+    const allFilterOptions = {
+      price: priceOptions,
+      color: colorOptions,
+      size: sizeOptions,
+    };
+
+    const relevantOptions = {};
+    activeFilters.forEach(filterKey => {
+      if (allFilterOptions[filterKey]) {
+        relevantOptions[filterKey] = allFilterOptions[filterKey];
+      }
+    });
+    console.log('Filter Options:', relevantOptions);
+    return relevantOptions;
+  }, [activeFilters, category, dept, subcategory]);
 
   // Sort options
   const sortOptions = [
@@ -294,8 +546,8 @@ const ProductListPage = ({ category: propCategory }) => {
             </div>
           </div>
 
-          {/* Filter Controls - Only show when products exist */}
-          {!loading && !error && sortedProducts.length > 0 && (
+          {/* Filter Controls - Show when filters are available */}
+          {!loading && !error && Object.keys(filterOptions).length > 0 && (
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3 sm:space-x-4">
                 <button
@@ -317,18 +569,24 @@ const ProductListPage = ({ category: propCategory }) => {
                   </svg>
                   <span className="text-sm">
                     {filtersOpen ? 'Hide' : 'Show'} Filters
-                    {Object.values(filters).filter(f => f !== 'All').length >
-                      0 &&
-                      ` (${Object.values(filters).filter(f => f !== 'All').length})`}
+                    {Object.values(filters).reduce(
+                      (sum, set) => sum + set.size,
+                      0
+                    ) > 0 &&
+                      ` (${Object.values(filters).reduce((sum, set) => sum + set.size, 0)})`}
                   </span>
                 </button>
 
                 <div className="h-4 w-px bg-gray-300 dark:bg-gray-600"></div>
 
-                {Object.values(filters).some(f => f !== 'All') && (
+                {Object.values(filters).some(set => set.size > 0) && (
                   <button
                     onClick={() =>
-                      setFilters({ price: 'All', color: 'All', size: 'All' })
+                      setFilters({
+                        price: new Set(),
+                        color: new Set(),
+                        size: new Set(),
+                      })
                     }
                     className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
                   >
@@ -392,7 +650,7 @@ const ProductListPage = ({ category: propCategory }) => {
         </div>
 
         {/* Filters Panel */}
-        {filtersOpen && (
+        {filtersOpen && Object.keys(filterOptions).length > 0 && (
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6 mb-8 transition-all duration-300 ease-in-out">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {Object.entries(filterOptions).map(([filterKey, options]) => (
@@ -408,7 +666,11 @@ const ProductListPage = ({ category: propCategory }) => {
                       >
                         <input
                           type="checkbox"
-                          checked={filters[filterKey] === option}
+                          checked={
+                            option === 'All'
+                              ? filters[filterKey].size === 0
+                              : filters[filterKey].has(option)
+                          }
                           onChange={() => handleFilterChange(filterKey, option)}
                           className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:bg-gray-700 flex-shrink-0"
                         />
@@ -686,7 +948,11 @@ const ProductListPage = ({ category: propCategory }) => {
             <div className="mt-6">
               <button
                 onClick={() =>
-                  setFilters({ price: 'All', color: 'All', size: 'All' })
+                  setFilters({
+                    price: new Set(),
+                    color: new Set(),
+                    size: new Set(),
+                  })
                 }
                 className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
@@ -706,7 +972,7 @@ ProductListPage.propTypes = {
 
 // Helper function to parse price range
 function getPriceRangeFromFilter(priceFilter) {
-  if (priceFilter === 'All') return null;
+  if (!priceFilter || priceFilter === 'All') return null;
 
   const ranges = {
     '$0 - $25': { min: 0, max: 25 },
