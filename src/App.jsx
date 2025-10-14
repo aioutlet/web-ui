@@ -18,7 +18,7 @@ import EmailVerificationPage from './pages/EmailVerificationPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ReviewListPage from './pages/ReviewListPage';
 import WriteReviewPage from './pages/WriteReviewPage';
-import CategoryPage from './pages/CategoryPage';
+import ProductListPage from './pages/ProductListPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
 import CartPage from './pages/CartPage';
@@ -77,9 +77,9 @@ function App() {
                     element={<EmailVerificationPage />}
                   />
 
-                  {/* Products - All use CategoryPage with different levels of filtering */}
+                  {/* Products - All use ProductListPage with different levels of filtering */}
                   {/* All products page */}
-                  <Route path="/products" element={<CategoryPage />} />
+                  <Route path="/products" element={<ProductListPage />} />
                   <Route path="/products/:id" element={<ProductDetailPage />} />
                   <Route
                     path="/products/:id/reviews"
@@ -96,18 +96,18 @@ function App() {
 
                   {/* Hierarchical Category Pages */}
                   {/* Level 1: Department only (e.g., /women) */}
-                  <Route path="/:department" element={<CategoryPage />} />
+                  <Route path="/:department" element={<ProductListPage />} />
 
                   {/* Level 2: Department + Category (e.g., /women/clothing) */}
                   <Route
                     path="/:department/:category"
-                    element={<CategoryPage />}
+                    element={<ProductListPage />}
                   />
 
                   {/* Level 3: Department + Category + Subcategory (e.g., /women/clothing/tops) */}
                   <Route
                     path="/:department/:category/:subcategory"
-                    element={<CategoryPage />}
+                    element={<ProductListPage />}
                   />
 
                   <Route

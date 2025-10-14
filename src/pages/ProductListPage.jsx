@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const BFF_URL = process.env.REACT_APP_BFF_URL || 'http://localhost:3100';
 
-const CategoryPage = ({ category: propCategory }) => {
+const ProductListPage = ({ category: propCategory }) => {
   const { department, category, subcategory } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -700,7 +700,7 @@ const CategoryPage = ({ category: propCategory }) => {
   );
 };
 
-CategoryPage.propTypes = {
+ProductListPage.propTypes = {
   category: PropTypes.string,
 };
 
@@ -775,4 +775,4 @@ function formatName(name) {
     .join(' ');
 }
 
-export default CategoryPage;
+export default ProductListPage;
