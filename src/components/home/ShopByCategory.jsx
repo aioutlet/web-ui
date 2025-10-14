@@ -23,17 +23,82 @@ const ShopByCategory = () => {
         const data = await response.json();
 
         if (data.success && data.data) {
-          // Map BFF response to component format
-          const mappedCategories = data.data.map((category, index) => ({
-            id: index + 1,
-            title: category.name,
-            displayName: category.displayName,
-            link: `/products?category=${encodeURIComponent(category.name)}`,
-            image: category.image,
-            description: category.displayName,
-            productCount: category.product_count,
-            avgRating: category.avg_rating,
-          }));
+          // Map BFF response to component format with hierarchical URLs
+          const mappedCategories = data.data.map((category, index) => {
+            // Map category names to department/category paths with labels
+            const categoryRoutes = {
+              Clothing: {
+                path: '/women/clothing',
+                department: 'Women',
+                category: 'Clothing',
+              },
+              Accessories: {
+                path: '/women/accessories',
+                department: 'Women',
+                category: 'Accessories',
+              },
+              Apparel: {
+                path: '/sports/apparel',
+                department: 'Sports',
+                category: 'Apparel',
+              },
+              Footwear: {
+                path: '/sports/footwear',
+                department: 'Sports',
+                category: 'Footwear',
+              },
+              Mobile: {
+                path: '/electronics/mobile',
+                department: 'Electronics',
+                category: 'Mobile',
+              },
+              Audio: {
+                path: '/electronics/audio',
+                department: 'Electronics',
+                category: 'Audio',
+              },
+              Computers: {
+                path: '/electronics/computers',
+                department: 'Electronics',
+                category: 'Computers',
+              },
+              Gaming: {
+                path: '/electronics/gaming',
+                department: 'Electronics',
+                category: 'Gaming',
+              },
+              Fiction: {
+                path: '/books/fiction',
+                department: 'Books',
+                category: 'Fiction',
+              },
+              Nonfiction: {
+                path: '/books/nonfiction',
+                department: 'Books',
+                category: 'Nonfiction',
+              },
+            };
+
+            const route = categoryRoutes[category.name] || {
+              path: `/women/${category.name.toLowerCase()}`,
+              department: 'Women',
+              category: category.name,
+            };
+
+            return {
+              id: index + 1,
+              title: category.name,
+              displayName: category.displayName,
+              link: category.path || route.path,
+              department: category.department || route.department,
+              categoryName: category.categoryName || route.category,
+              image: category.image,
+              description: category.displayName,
+              productCount: category.accurateCount || category.product_count,
+              totalCount: category.accurateCount || category.product_count,
+              avgRating: category.avg_rating,
+            };
+          });
 
           setCategories(mappedCategories);
         }
@@ -168,24 +233,21 @@ const ShopByCategory = () => {
                 <div className="absolute inset-0 -z-10 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
 
                 {/* Product Count Badge */}
-                {category.productCount && (
+                {category.totalCount && (
                   <div className="absolute top-4 right-4">
-                    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-3 py-1">
+                    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-1.5">
                       <span className="text-xs font-semibold text-gray-900 dark:text-white">
-                        {category.productCount}{' '}
-                        {category.productCount === 1 ? 'product' : 'products'}
+                        {category.totalCount}{' '}
+                        {category.totalCount === 1 ? 'total' : 'total'}
                       </span>
                     </div>
                   </div>
                 )}
 
-                <div className="flex flex-wrap items-center gap-y-1 overflow-hidden text-sm leading-6 text-gray-300">
-                  <div className="mr-8">{category.description}</div>
-                </div>
                 <h3 className="mt-3 text-lg font-semibold leading-6 text-white">
                   <Link to={category.link}>
                     <span className="absolute inset-0" />
-                    {category.title}
+                    {category.department} • {category.categoryName}
                   </Link>
                 </h3>
               </article>
