@@ -15,7 +15,6 @@ import LoginPage from './pages/LoginPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import EmailVerificationPage from './pages/EmailVerificationPage';
-import ProductListPage from './pages/ProductListPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ReviewListPage from './pages/ReviewListPage';
 import WriteReviewPage from './pages/WriteReviewPage';
@@ -77,7 +76,10 @@ function App() {
                     path="/verify-email"
                     element={<EmailVerificationPage />}
                   />
-                  <Route path="/products" element={<ProductListPage />} />
+
+                  {/* Products - All use CategoryPage with different levels of filtering */}
+                  {/* All products page */}
+                  <Route path="/products" element={<CategoryPage />} />
                   <Route path="/products/:id" element={<ProductDetailPage />} />
                   <Route
                     path="/products/:id/reviews"
