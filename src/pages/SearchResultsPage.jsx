@@ -289,291 +289,299 @@ const SearchResultsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Page Header */}
-      <div className="border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm px-6 py-4">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              {/* Search Info */}
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {searchQuery ? (
-                    <>Search results for &quot;{searchQuery}&quot;</>
-                  ) : (
-                    'All Products'
-                  )}
-                </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {totalCount} {totalCount === 1 ? 'product' : 'products'} found
-                </p>
-              </div>
-
-              <div className="flex items-center gap-4 flex-wrap">
-                {/* Sort Dropdown */}
-                <div className="flex items-center gap-2">
-                  <label
-                    htmlFor="sort"
-                    className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap"
-                  >
-                    Sort by:
-                  </label>
-                  <select
-                    id="sort"
-                    value={sortBy}
-                    onChange={e => setSortBy(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="relevance">Relevance</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="rating">Highest Rated</option>
-                    <option value="name">Name: A to Z</option>
-                  </select>
+      {/* Page Header - Hide when there's an error or no products */}
+      {!error && !loading && totalCount > 0 && (
+        <div className="border-b border-gray-200 dark:border-gray-700">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm px-6 py-4">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                {/* Search Info */}
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {searchQuery ? (
+                      <>Search results for &quot;{searchQuery}&quot;</>
+                    ) : (
+                      'All Products'
+                    )}
+                  </h1>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {totalCount} {totalCount === 1 ? 'product' : 'products'}{' '}
+                    found
+                  </p>
                 </div>
 
-                {/* Filter Toggle (Mobile) */}
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600"
-                >
-                  <AdjustmentsHorizontalIcon className="h-5 w-5" />
-                  Filters
-                </button>
+                <div className="flex items-center gap-4 flex-wrap">
+                  {/* Sort Dropdown */}
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="sort"
+                      className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap"
+                    >
+                      Sort by:
+                    </label>
+                    <select
+                      id="sort"
+                      value={sortBy}
+                      onChange={e => setSortBy(e.target.value)}
+                      className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="relevance">Relevance</option>
+                      <option value="price-low">Price: Low to High</option>
+                      <option value="price-high">Price: High to Low</option>
+                      <option value="rating">Highest Rated</option>
+                      <option value="name">Name: A to Z</option>
+                    </select>
+                  </div>
+
+                  {/* Filter Toggle (Mobile) */}
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
+                    <AdjustmentsHorizontalIcon className="h-5 w-5" />
+                    Filters
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
-          {/* Filters Sidebar */}
-          <aside
-            className={`${
-              showFilters ? 'block' : 'hidden'
-            } lg:block w-full lg:w-64 flex-shrink-0`}
-          >
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 sticky top-4">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Filters
-                </h2>
-                {(selectedCategories.size > 0 ||
-                  priceRange.min > 0 ||
-                  priceRange.max < 10000 ||
-                  minRating > 0) && (
-                  <button
-                    onClick={clearFilters}
-                    className="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
-                  >
-                    Clear all
-                  </button>
-                )}
-              </div>
-
-              {/* Departments & Categories - Faceted Search */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
-                  Departments & Categories
-                </h3>
-                <div className="space-y-2">
-                  {Object.entries(facets.departments)
-                    .sort()
-                    .map(([dept, deptData]) => {
-                      const isExpanded = expandedDepts.has(dept);
-                      const hasCategories =
-                        Object.keys(deptData.categories).length > 0;
-
-                      return (
-                        <div key={dept} className="space-y-1">
-                          {/* Department Level */}
-                          <div className="flex items-center justify-between">
-                            <label className="flex items-center cursor-pointer flex-1">
-                              <input
-                                type="checkbox"
-                                checked={selectedDepartments.has(dept)}
-                                onChange={() => toggleDepartment(dept)}
-                                className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                              />
-                              <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                {dept}
-                                <span className="ml-1 text-xs text-gray-500">
-                                  ({deptData.total})
-                                </span>
-                              </span>
-                            </label>
-                            {hasCategories && (
-                              <button
-                                onClick={() => {
-                                  setExpandedDepts(prev => {
-                                    const newSet = new Set(prev);
-                                    if (newSet.has(dept)) {
-                                      newSet.delete(dept);
-                                    } else {
-                                      newSet.add(dept);
-                                    }
-                                    return newSet;
-                                  });
-                                }}
-                                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                              >
-                                <svg
-                                  className={`w-4 h-4 text-gray-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 9l-7 7-7-7"
-                                  />
-                                </svg>
-                              </button>
-                            )}
-                          </div>
-
-                          {/* Category Level - Collapsible */}
-                          {isExpanded && hasCategories && (
-                            <div className="ml-6 space-y-1 mt-1">
-                              {Object.entries(deptData.categories)
-                                .sort()
-                                .map(([cat, count]) => (
-                                  <label
-                                    key={`${dept}:${cat}`}
-                                    className="flex items-center cursor-pointer"
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      checked={selectedCategories.has(
-                                        `${dept}:${cat}`
-                                      )}
-                                      onChange={() => toggleCategory(dept, cat)}
-                                      className="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                                    />
-                                    <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
-                                      {cat}
-                                      <span className="ml-1 text-xs text-gray-500">
-                                        ({count})
-                                      </span>
-                                    </span>
-                                  </label>
-                                ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  {Object.keys(facets.departments).length === 0 && !loading && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      No filters available
-                    </p>
+          {/* Filters Sidebar - Only show after successful load */}
+          {!error && !loading && totalCount > 0 && (
+            <aside
+              className={`${
+                showFilters ? 'block' : 'hidden'
+              } lg:block w-full lg:w-64 flex-shrink-0`}
+            >
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 sticky top-4">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Filters
+                  </h2>
+                  {(selectedCategories.size > 0 ||
+                    priceRange.min > 0 ||
+                    priceRange.max < 10000 ||
+                    minRating > 0) && (
+                    <button
+                      onClick={clearFilters}
+                      className="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+                    >
+                      Clear all
+                    </button>
                   )}
                 </div>
-              </div>
 
-              {/* Price Range */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
-                  Price Range
-                </h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs text-gray-600 dark:text-gray-400">
-                      Min: ${priceRange.min}
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="5000"
-                      step="50"
-                      value={priceRange.min}
-                      onChange={e =>
-                        setPriceRange(prev => ({
-                          ...prev,
-                          min: Number(e.target.value),
-                        }))
-                      }
-                      className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-600 dark:text-gray-400">
-                      Max: ${priceRange.max}
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="10000"
-                      step="50"
-                      value={priceRange.max}
-                      onChange={e =>
-                        setPriceRange(prev => ({
-                          ...prev,
-                          max: Number(e.target.value),
-                        }))
-                      }
-                      className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-                    />
+                {/* Departments & Categories - Faceted Search */}
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                    Departments & Categories
+                  </h3>
+                  <div className="space-y-2">
+                    {Object.entries(facets.departments)
+                      .sort()
+                      .map(([dept, deptData]) => {
+                        const isExpanded = expandedDepts.has(dept);
+                        const hasCategories =
+                          Object.keys(deptData.categories).length > 0;
+
+                        return (
+                          <div key={dept} className="space-y-1">
+                            {/* Department Level */}
+                            <div className="flex items-center justify-between">
+                              <label className="flex items-center cursor-pointer flex-1">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedDepartments.has(dept)}
+                                  onChange={() => toggleDepartment(dept)}
+                                  className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                />
+                                <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                  {dept}
+                                  <span className="ml-1 text-xs text-gray-500">
+                                    ({deptData.total})
+                                  </span>
+                                </span>
+                              </label>
+                              {hasCategories && (
+                                <button
+                                  onClick={() => {
+                                    setExpandedDepts(prev => {
+                                      const newSet = new Set(prev);
+                                      if (newSet.has(dept)) {
+                                        newSet.delete(dept);
+                                      } else {
+                                        newSet.add(dept);
+                                      }
+                                      return newSet;
+                                    });
+                                  }}
+                                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                                >
+                                  <svg
+                                    className={`w-4 h-4 text-gray-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 9l-7 7-7-7"
+                                    />
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
+
+                            {/* Category Level - Collapsible */}
+                            {isExpanded && hasCategories && (
+                              <div className="ml-6 space-y-1 mt-1">
+                                {Object.entries(deptData.categories)
+                                  .sort()
+                                  .map(([cat, count]) => (
+                                    <label
+                                      key={`${dept}:${cat}`}
+                                      className="flex items-center cursor-pointer"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={selectedCategories.has(
+                                          `${dept}:${cat}`
+                                        )}
+                                        onChange={() =>
+                                          toggleCategory(dept, cat)
+                                        }
+                                        className="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                      />
+                                      <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+                                        {cat}
+                                        <span className="ml-1 text-xs text-gray-500">
+                                          ({count})
+                                        </span>
+                                      </span>
+                                    </label>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    {Object.keys(facets.departments).length === 0 &&
+                      !loading && (
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          No filters available
+                        </p>
+                      )}
                   </div>
                 </div>
-              </div>
 
-              {/* Rating Filter */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
-                  Minimum Rating
-                </h3>
-                <div className="space-y-2">
-                  {[4, 3, 2, 1].map(rating => (
-                    <label
-                      key={rating}
-                      className="flex items-center cursor-pointer"
-                    >
+                {/* Price Range */}
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                    Price Range
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs text-gray-600 dark:text-gray-400">
+                        Min: ${priceRange.min}
+                      </label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="5000"
+                        step="50"
+                        value={priceRange.min}
+                        onChange={e =>
+                          setPriceRange(prev => ({
+                            ...prev,
+                            min: Number(e.target.value),
+                          }))
+                        }
+                        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-600 dark:text-gray-400">
+                        Max: ${priceRange.max}
+                      </label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="10000"
+                        step="50"
+                        value={priceRange.max}
+                        onChange={e =>
+                          setPriceRange(prev => ({
+                            ...prev,
+                            max: Number(e.target.value),
+                          }))
+                        }
+                        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Rating Filter */}
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                    Minimum Rating
+                  </h3>
+                  <div className="space-y-2">
+                    {[4, 3, 2, 1].map(rating => (
+                      <label
+                        key={rating}
+                        className="flex items-center cursor-pointer"
+                      >
+                        <input
+                          type="radio"
+                          name="rating"
+                          checked={minRating === rating}
+                          onChange={() => setMinRating(rating)}
+                          className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                        />
+                        <span className="ml-2 flex items-center">
+                          <StarRating rating={rating} />
+                          <span className="ml-1 text-sm text-gray-600 dark:text-gray-400">
+                            & up
+                          </span>
+                        </span>
+                      </label>
+                    ))}
+                    <label className="flex items-center cursor-pointer">
                       <input
                         type="radio"
                         name="rating"
-                        checked={minRating === rating}
-                        onChange={() => setMinRating(rating)}
+                        checked={minRating === 0}
+                        onChange={() => setMinRating(0)}
                         className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                       />
-                      <span className="ml-2 flex items-center">
-                        <StarRating rating={rating} />
-                        <span className="ml-1 text-sm text-gray-600 dark:text-gray-400">
-                          & up
-                        </span>
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                        All ratings
                       </span>
                     </label>
-                  ))}
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name="rating"
-                      checked={minRating === 0}
-                      onChange={() => setMinRating(0)}
-                      className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
-                    />
-                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                      All ratings
-                    </span>
-                  </label>
+                  </div>
                 </div>
-              </div>
 
-              {/* Close button for mobile */}
-              <button
-                onClick={() => setShowFilters(false)}
-                className="lg:hidden w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200"
-              >
-                Apply Filters
-              </button>
-            </div>
-          </aside>
+                {/* Close button for mobile */}
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="lg:hidden w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+                >
+                  Apply Filters
+                </button>
+              </div>
+            </aside>
+          )}
 
           {/* Product Grid */}
-          <div className="flex-1">
+          <div className={`flex-1 ${error ? 'max-w-none' : ''}`}>
             {loading ? (
               // Loading State
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-12">
