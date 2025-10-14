@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart, removeFromCart, openCart } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
-import { getProductById } from '../utils/productHelpers';
-import { getProductReviews } from '../data/reviews';
+import axios from 'axios';
+
+const BFF_URL = process.env.REACT_APP_BFF_URL || 'http://localhost:3100';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -58,17 +59,47 @@ const ProductDetailPage = () => {
     // Example: dispatch(toggleFavorite(product.id));
   };
 
-  // Fetch product data from centralized products.js
+  // Fetch product data from API
   useEffect(() => {
-    // Simulate API call
     const fetchProduct = async () => {
       setLoading(true);
-      // Mock delay to simulate network request
-      await new Promise(resolve => setTimeout(resolve, 300));
+      try {
+        const response = await axios.get(`${BFF_URL}/api/products/${id}`);
 
-      const productData = getProductById(id);
-      setProduct(productData);
-      setLoading(false);
+        if (response.data.success) {
+          const p = response.data.data;
+          // Transform API product to match frontend format
+          const productData = {
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            price: p.price,
+            brand: p.brand,
+            images:
+              p.images && p.images.length > 0
+                ? p.images
+                : ['https://via.placeholder.com/800'],
+            rating: p.average_rating || 0,
+            reviewCount: p.num_reviews || 0,
+            reviewsData: Array.isArray(p.reviews) ? p.reviews : [],
+            department: p.department,
+            category: p.category,
+            subcategory: p.subcategory,
+            colors: p.variants?.filter(v => v.type === 'color') || [],
+            sizes: p.variants?.filter(v => v.type === 'size') || [],
+            attributes: p.attributes || {},
+            inStock: true,
+          };
+          setProduct(productData);
+        } else {
+          setProduct(null);
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProduct();
@@ -103,8 +134,8 @@ const ProductDetailPage = () => {
     }
   };
 
-  // Get reviews for current product from centralized data
-  const reviews = product ? getProductReviews(product.id) : [];
+  // Get reviews from product data (reviews are now embedded in the product)
+  const reviews = product?.reviewsData || [];
 
   if (loading) {
     return (
@@ -500,7 +531,7 @@ const ProductDetailPage = () => {
                   </div>
 
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                    {product.reviews.toLocaleString()} global ratings
+                    {product.reviewCount?.toLocaleString() || 0} global ratings
                   </p>
 
                   {/* Rating Distribution */}
