@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { userAPI } from '../api/clients/userClient';
+import bffClient from '../api/bffClient';
 
 /**
  * AddAddressPage Component
@@ -35,7 +35,10 @@ const AddAddressPage = () => {
 
   // Create address mutation
   const createAddressMutation = useMutation({
-    mutationFn: userAPI.createAddress,
+    mutationFn: async addressData => {
+      const response = await bffClient.post('/api/user/addresses', addressData);
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['addresses']);
       navigate('/account/addresses');

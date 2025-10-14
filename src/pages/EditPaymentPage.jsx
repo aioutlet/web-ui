@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { userAPI } from '../api/clients/userClient';
+import bffClient from '../api/bffClient';
 
 /**
  * EditPaymentPage Component
@@ -37,7 +37,10 @@ const EditPaymentPage = () => {
     error: fetchError,
   } = useQuery({
     queryKey: ['paymentMethods'],
-    queryFn: userAPI.getPaymentMethods,
+    queryFn: async () => {
+      const response = await bffClient.get('/api/user/payment-methods');
+      return response.data;
+    },
   });
 
   const payment = payments.find(p => p._id === id);
@@ -57,7 +60,13 @@ const EditPaymentPage = () => {
 
   // Update payment mutation
   const updatePaymentMutation = useMutation({
-    mutationFn: ({ id, data }) => userAPI.updatePaymentMethod(id, data),
+    mutationFn: async ({ id, data }) => {
+      const response = await bffClient.put(
+        `/api/user/payment-methods/${id}`,
+        data
+      );
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['paymentMethods']);
       navigate('/account/payments');

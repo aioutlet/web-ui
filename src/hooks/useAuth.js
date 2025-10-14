@@ -2,11 +2,12 @@
  * useAuth Hook
  * Custom hook for authentication with React Query + Zustand
  * Updated for React Query v5 best practices
+ * Now uses BFF client for all auth operations
  */
 import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { authAPI } from '../api/clients/authClient';
+import bffClient from '../api/bffClient';
 import { useAuthStore } from '../store/authStore';
 import { setToken, getRefreshToken } from '../utils/storage';
 
@@ -17,7 +18,10 @@ export const useAuth = () => {
 
   // Register mutation
   const registerMutation = useMutation({
-    mutationFn: authAPI.register,
+    mutationFn: async userData => {
+      const response = await bffClient.post('/api/auth/register', userData);
+      return response.data;
+    },
     onSuccess: data => {
       if (data.user) {
         // Backend returns { jwt, user } - map to expected format
@@ -37,7 +41,13 @@ export const useAuth = () => {
 
   // Login mutation
   const loginMutation = useMutation({
-    mutationFn: ({ email, password }) => authAPI.login(email, password),
+    mutationFn: async ({ email, password }) => {
+      const response = await bffClient.post('/api/auth/login', {
+        email,
+        password,
+      });
+      return response.data;
+    },
     onSuccess: data => {
       // Backend returns { jwt, user } - map to expected format
       const accessToken = data.jwt || data.accessToken;
@@ -58,7 +68,12 @@ export const useAuth = () => {
 
   // Logout mutation
   const logoutMutation = useMutation({
-    mutationFn: () => authAPI.logout(getRefreshToken()),
+    mutationFn: async () => {
+      const response = await bffClient.post('/api/auth/logout', {
+        refreshToken: getRefreshToken(),
+      });
+      return response.data;
+    },
     onSuccess: () => {
       clearUser();
       queryClient.clear(); // Clear all cached queries
@@ -83,7 +98,10 @@ export const useAuth = () => {
     refetch: refetchUser,
   } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: authAPI.getCurrentUser,
+    queryFn: async () => {
+      const response = await bffClient.get('/api/auth/me');
+      return response.data;
+    },
     enabled: isAuthenticated && !user, // Only fetch if authenticated but no user data
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     retry: 1, // Only retry once on failure
@@ -113,28 +131,54 @@ export const useAuth = () => {
 
   // Forgot password mutation
   const forgotPasswordMutation = useMutation({
-    mutationFn: authAPI.forgotPassword,
+    mutationFn: async email => {
+      const response = await bffClient.post('/api/auth/password/forgot', {
+        email,
+      });
+      return response.data;
+    },
   });
 
   // Reset password mutation
   const resetPasswordMutation = useMutation({
-    mutationFn: ({ token, password }) => authAPI.resetPassword(token, password),
+    mutationFn: async ({ token, password }) => {
+      const response = await bffClient.post('/api/auth/password/reset', {
+        token,
+        password,
+      });
+      return response.data;
+    },
   });
 
   // Change password mutation
   const changePasswordMutation = useMutation({
-    mutationFn: ({ currentPassword, newPassword }) =>
-      authAPI.changePassword(currentPassword, newPassword),
+    mutationFn: async ({ currentPassword, newPassword }) => {
+      const response = await bffClient.post('/api/auth/password/change', {
+        currentPassword,
+        newPassword,
+      });
+      return response.data;
+    },
   });
 
   // Verify email mutation
   const verifyEmailMutation = useMutation({
-    mutationFn: authAPI.verifyEmail,
+    mutationFn: async token => {
+      const response = await bffClient.get(
+        `/api/auth/email/verify?token=${token}`
+      );
+      return response.data;
+    },
   });
 
   // Resend verification email mutation
   const resendVerificationMutation = useMutation({
-    mutationFn: authAPI.resendVerificationEmail,
+    mutationFn: async email => {
+      const response = await bffClient.post('/api/auth/email/resend', {
+        email,
+      });
+      return response.data;
+    },
   });
 
   return {

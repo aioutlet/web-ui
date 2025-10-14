@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { userAPI } from '../api/clients/userClient';
+import bffClient from '../api/bffClient';
 import PaymentCard from '../components/account/PaymentCard';
 
 /**
@@ -27,12 +27,20 @@ const PaymentsPage = () => {
     error,
   } = useQuery({
     queryKey: ['paymentMethods'],
-    queryFn: userAPI.getPaymentMethods,
+    queryFn: async () => {
+      const response = await bffClient.get('/api/user/payment-methods');
+      return response.data;
+    },
   });
 
   // Delete payment mutation
   const deletePaymentMutation = useMutation({
-    mutationFn: userAPI.deletePaymentMethod,
+    mutationFn: async paymentId => {
+      const response = await bffClient.delete(
+        `/api/user/payment-methods/${paymentId}`
+      );
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['paymentMethods']);
     },
@@ -40,7 +48,12 @@ const PaymentsPage = () => {
 
   // Set default payment mutation
   const setDefaultPaymentMutation = useMutation({
-    mutationFn: userAPI.setDefaultPayment,
+    mutationFn: async paymentId => {
+      const response = await bffClient.put(
+        `/api/user/payment-methods/${paymentId}/default`
+      );
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['paymentMethods']);
     },

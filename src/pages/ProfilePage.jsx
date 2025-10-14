@@ -7,7 +7,7 @@ import {
   CheckIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { userAPI } from '../api/clients/userClient';
+import bffClient from '../api/bffClient';
 import { useAuthStore } from '../store/authStore';
 
 const AccountPage = () => {
@@ -29,7 +29,10 @@ const AccountPage = () => {
     error,
   } = useQuery({
     queryKey: ['userProfile'],
-    queryFn: userAPI.getProfile,
+    queryFn: async () => {
+      const response = await bffClient.get('/api/user/profile');
+      return response.data;
+    },
     staleTime: 5 * 60 * 1000,
   });
 
@@ -66,7 +69,10 @@ const AccountPage = () => {
   }, [profileData]);
 
   const updateProfileMutation = useMutation({
-    mutationFn: userAPI.updateProfile,
+    mutationFn: async profileData => {
+      const response = await bffClient.put('/api/user/profile', profileData);
+      return response.data;
+    },
     onSuccess: data => {
       // Update both React Query cache and Zustand store
       queryClient.invalidateQueries(['userProfile']);

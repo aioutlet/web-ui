@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { userAPI } from '../api/clients/userClient';
+import bffClient from '../api/bffClient';
 
 /**
  * AddPaymentPage Component
@@ -32,7 +32,13 @@ const AddPaymentPage = () => {
 
   // Create payment mutation
   const createPaymentMutation = useMutation({
-    mutationFn: userAPI.createPaymentMethod,
+    mutationFn: async paymentData => {
+      const response = await bffClient.post(
+        '/api/user/payment-methods',
+        paymentData
+      );
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['paymentMethods']);
       navigate('/account/payments');

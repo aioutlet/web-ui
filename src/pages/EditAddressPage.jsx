@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { userAPI } from '../api/clients/userClient';
+import bffClient from '../api/bffClient';
 
 /**
  * EditAddressPage Component
@@ -21,7 +21,8 @@ const EditAddressPage = () => {
   const { data: addressData, isLoading: isLoadingAddress } = useQuery({
     queryKey: ['address', id],
     queryFn: async () => {
-      const addresses = await userAPI.getAddresses();
+      const response = await bffClient.get('/api/user/addresses');
+      const addresses = response.data;
       return addresses.find(addr => addr._id === id);
     },
   });
@@ -62,7 +63,10 @@ const EditAddressPage = () => {
 
   // Update address mutation
   const updateAddressMutation = useMutation({
-    mutationFn: data => userAPI.updateAddress(id, data),
+    mutationFn: async data => {
+      const response = await bffClient.put(`/api/user/addresses/${id}`, data);
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['addresses']);
       queryClient.invalidateQueries(['address', id]);

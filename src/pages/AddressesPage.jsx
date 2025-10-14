@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { userAPI } from '../api/clients/userClient';
+import bffClient from '../api/bffClient';
 import AddressCard from '../components/account/AddressCard';
 
 /**
@@ -27,12 +27,20 @@ const AddressesPage = () => {
     error,
   } = useQuery({
     queryKey: ['addresses'],
-    queryFn: userAPI.getAddresses,
+    queryFn: async () => {
+      const response = await bffClient.get('/api/user/addresses');
+      return response.data;
+    },
   });
 
   // Delete address mutation
   const deleteAddressMutation = useMutation({
-    mutationFn: userAPI.deleteAddress,
+    mutationFn: async addressId => {
+      const response = await bffClient.delete(
+        `/api/user/addresses/${addressId}`
+      );
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['addresses']);
     },
@@ -40,7 +48,12 @@ const AddressesPage = () => {
 
   // Set default address mutation
   const setDefaultAddressMutation = useMutation({
-    mutationFn: userAPI.setDefaultAddress,
+    mutationFn: async addressId => {
+      const response = await bffClient.put(
+        `/api/user/addresses/${addressId}/default`
+      );
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['addresses']);
     },
