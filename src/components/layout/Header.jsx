@@ -129,7 +129,12 @@ const Header = () => {
       const query = params.get('q');
       if (query) {
         setSearchQuery(query);
+      } else {
+        setSearchQuery('');
       }
+    } else {
+      // Clear search query when navigating away from search page
+      setSearchQuery('');
     }
   }, [location]);
 
