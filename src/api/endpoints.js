@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
   // Home Page
   HOME: {
     TRENDING: `${BFF_BASE_URL}/api/home/trending`,
+    TRENDING_CATEGORIES: `${BFF_BASE_URL}/api/home/trending-categories`,
     CATEGORIES: `${BFF_BASE_URL}/api/home/categories`,
   },
 
