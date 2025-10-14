@@ -92,63 +92,19 @@ function App() {
                     }
                   />
 
-                  {/* Top-level Category Pages */}
+                  {/* Hierarchical Category Pages */}
+                  {/* Level 1: Department only (e.g., /women) */}
+                  <Route path="/:department" element={<CategoryPage />} />
+
+                  {/* Level 2: Department + Category (e.g., /women/clothing) */}
                   <Route
-                    path="/women"
-                    element={<CategoryPage category="women" />}
-                  />
-                  <Route
-                    path="/men"
-                    element={<CategoryPage category="men" />}
-                  />
-                  <Route
-                    path="/electronics"
-                    element={<CategoryPage category="electronics" />}
-                  />
-                  <Route
-                    path="/sports"
-                    element={<CategoryPage category="sports" />}
+                    path="/:department/:category"
+                    element={<CategoryPage />}
                   />
 
-                  {/* Subcategory and Product Type Pages - Dynamic */}
-                  {/* 2-level URLs like /women/bags map to productType */}
-                  {/* Browse All URLs like /women/accessories map to subcategory */}
+                  {/* Level 3: Department + Category + Subcategory (e.g., /women/clothing/tops) */}
                   <Route
-                    path="/women/:subcategoryOrType"
-                    element={<CategoryPage category="women" />}
-                  />
-                  <Route
-                    path="/women/:subcategory/:productType"
-                    element={<CategoryPage category="women" />}
-                  />
-                  <Route
-                    path="/men/:subcategoryOrType"
-                    element={<CategoryPage category="men" />}
-                  />
-                  <Route
-                    path="/men/:subcategory/:productType"
-                    element={<CategoryPage category="men" />}
-                  />
-                  <Route
-                    path="/electronics/:subcategoryOrType"
-                    element={<CategoryPage category="electronics" />}
-                  />
-                  <Route
-                    path="/electronics/:subcategory/:productType"
-                    element={<CategoryPage category="electronics" />}
-                  />
-                  <Route
-                    path="/sports/:subcategoryOrType"
-                    element={<CategoryPage category="sports" />}
-                  />
-                  <Route
-                    path="/sports/:subcategory/:productType"
-                    element={<CategoryPage category="sports" />}
-                  />
-
-                  {/* Collections (for backward compatibility) */}
-                  <Route
-                    path="/collections/:collection"
+                    path="/:department/:category/:subcategory"
                     element={<CategoryPage />}
                   />
 

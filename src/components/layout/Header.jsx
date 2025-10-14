@@ -126,13 +126,9 @@ const Header = () => {
           {
             title: 'Clothing',
             items: [
-              { name: 'Tops', href: '/women/tops' },
-              { name: 'Dresses', href: '/women/dresses' },
-              { name: 'Pants', href: '/women/pants' },
-              { name: 'Denim', href: '/women/denim' },
-              { name: 'Sweaters', href: '/women/sweaters' },
-              { name: 'Jackets', href: '/women/jackets' },
-              { name: 'Activewear', href: '/women/activewear' },
+              { name: 'Tops', href: '/women/clothing/tops' },
+              { name: 'Dresses', href: '/women/clothing/dresses' },
+              { name: 'Pants', href: '/women/clothing/pants' },
               {
                 name: 'Browse All',
                 href: '/women/clothing',
@@ -143,30 +139,11 @@ const Header = () => {
           {
             title: 'Accessories',
             items: [
-              { name: 'Necklaces', href: '/women/necklaces' },
-              { name: 'Watches', href: '/women/watches' },
-              { name: 'Bags', href: '/women/bags' },
-              { name: 'Sunglasses', href: '/women/sunglasses' },
-              { name: 'Hats', href: '/women/hats' },
-              { name: 'Belts', href: '/women/belts' },
+              { name: 'Jewelry', href: '/women/accessories/jewelry' },
+              { name: 'Bags', href: '/women/accessories/bags' },
               {
                 name: 'Browse All',
                 href: '/women/accessories',
-                isBrowseAll: true,
-              },
-            ],
-          },
-          {
-            title: 'Brands',
-            items: [
-              { name: 'Full Nelson', href: '/brands/full-nelson' },
-              { name: 'My Way', href: '/brands/my-way' },
-              { name: 'Re-Arranged', href: '/brands/re-arranged' },
-              { name: 'Counterfeit', href: '/brands/counterfeit' },
-              { name: 'Significant Other', href: '/brands/significant-other' },
-              {
-                name: 'Browse All',
-                href: '/women/brands',
                 isBrowseAll: true,
               },
             ],
@@ -182,13 +159,8 @@ const Header = () => {
           {
             title: 'Clothing',
             items: [
-              { name: 'Shirts', href: '/men/shirts' },
-              { name: 'T-Shirts', href: '/men/t-shirts' },
-              { name: 'Pants', href: '/men/pants' },
-              { name: 'Denim', href: '/men/denim' },
-              { name: 'Sweaters', href: '/men/sweaters' },
-              { name: 'Jackets', href: '/men/jackets' },
-              { name: 'Activewear', href: '/men/activewear' },
+              { name: 'Shirts', href: '/men/clothing/shirts' },
+              { name: 'Pants', href: '/men/clothing/pants' },
               {
                 name: 'Browse All',
                 href: '/men/clothing',
@@ -199,14 +171,42 @@ const Header = () => {
           {
             title: 'Accessories',
             items: [
-              { name: 'Watches', href: '/men/watches' },
-              { name: 'Wallets', href: '/men/wallets' },
-              { name: 'Sunglasses', href: '/men/sunglasses' },
-              { name: 'Hats', href: '/men/hats' },
-              { name: 'Belts', href: '/men/belts' },
+              { name: 'Belts', href: '/men/accessories/belts' },
+              { name: 'Watches', href: '/men/accessories/watches' },
               {
                 name: 'Browse All',
                 href: '/men/accessories',
+                isBrowseAll: true,
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      name: 'Kids',
+      href: '/kids',
+      dropdown: {
+        sections: [
+          {
+            title: 'Clothing',
+            items: [
+              { name: 'Tops', href: '/kids/clothing/tops' },
+              { name: 'Jackets', href: '/kids/clothing/jackets' },
+              {
+                name: 'Browse All',
+                href: '/kids/clothing',
+                isBrowseAll: true,
+              },
+            ],
+          },
+          {
+            title: 'Footwear',
+            items: [
+              { name: 'Sneakers', href: '/kids/footwear/sneakers' },
+              {
+                name: 'Browse All',
+                href: '/kids/footwear',
                 isBrowseAll: true,
               },
             ],
@@ -220,13 +220,32 @@ const Header = () => {
       dropdown: {
         sections: [
           {
-            title: 'Computers & Tablets',
+            title: 'Mobile',
             items: [
-              { name: 'Laptops', href: '/electronics/laptops' },
-              { name: 'Desktop Computers', href: '/electronics/desktops' },
-              { name: 'Tablets', href: '/electronics/tablets' },
-              { name: 'Monitors', href: '/electronics/monitors' },
-              { name: 'Keyboards & Mice', href: '/electronics/peripherals' },
+              { name: 'Smartphones', href: '/electronics/mobile/smartphones' },
+              {
+                name: 'Browse All',
+                href: '/electronics/mobile',
+                isBrowseAll: true,
+              },
+            ],
+          },
+          {
+            title: 'Audio',
+            items: [
+              { name: 'Headphones', href: '/electronics/audio/headphones' },
+              {
+                name: 'Browse All',
+                href: '/electronics/audio',
+                isBrowseAll: true,
+              },
+            ],
+          },
+          {
+            title: 'Computers',
+            items: [
+              { name: 'Laptops', href: '/electronics/computers/laptops' },
+              { name: 'Tablets', href: '/electronics/computers/tablets' },
               {
                 name: 'Browse All',
                 href: '/electronics/computers',
@@ -235,31 +254,9 @@ const Header = () => {
             ],
           },
           {
-            title: 'Mobile & Audio',
+            title: 'Gaming',
             items: [
-              { name: 'Smartphones', href: '/electronics/smartphones' },
-              { name: 'Headphones', href: '/electronics/headphones' },
-              { name: 'Speakers', href: '/electronics/speakers' },
-              { name: 'Smartwatches', href: '/electronics/smartwatches' },
-              { name: 'Phone Cases', href: '/electronics/cases' },
-              {
-                name: 'Browse All',
-                href: '/electronics/mobile-audio',
-                isBrowseAll: true,
-              },
-            ],
-          },
-          {
-            title: 'Gaming & Entertainment',
-            items: [
-              { name: 'Gaming Consoles', href: '/electronics/consoles' },
-              { name: 'Video Games', href: '/electronics/games' },
-              {
-                name: 'Gaming Accessories',
-                href: '/electronics/gaming-accessories',
-              },
-              { name: 'TVs & Streaming', href: '/electronics/tvs' },
-              { name: 'Virtual Reality', href: '/electronics/vr' },
+              { name: 'Consoles', href: '/electronics/gaming/consoles' },
               {
                 name: 'Browse All',
                 href: '/electronics/gaming',
@@ -276,31 +273,57 @@ const Header = () => {
       dropdown: {
         sections: [
           {
-            title: 'Athletic Wear',
+            title: 'Footwear',
             items: [
-              { name: 'Running Shoes', href: '/sports/running-shoes' },
-              { name: 'Athletic Apparel', href: '/sports/apparel' },
-              { name: 'Gym Wear', href: '/sports/gym-wear' },
-              { name: 'Sports Bras', href: '/sports/sports-bras' },
-              { name: 'Athletic Socks', href: '/sports/socks' },
+              { name: 'Running', href: '/sports/footwear/running' },
+              { name: 'Basketball', href: '/sports/footwear/basketball' },
               {
                 name: 'Browse All',
-                href: '/sports/athletic-wear',
+                href: '/sports/footwear',
                 isBrowseAll: true,
               },
             ],
           },
           {
-            title: 'Equipment & Gear',
+            title: 'Apparel',
             items: [
-              { name: 'Fitness Equipment', href: '/sports/fitness-equipment' },
-              { name: 'Sports Balls', href: '/sports/balls' },
-              { name: 'Water Bottles', href: '/sports/bottles' },
-              { name: 'Gym Bags', href: '/sports/bags' },
-              { name: 'Yoga Mats', href: '/sports/yoga' },
+              { name: 'Jackets', href: '/sports/apparel/jackets' },
+              { name: 'Shorts', href: '/sports/apparel/shorts' },
               {
                 name: 'Browse All',
-                href: '/sports/equipment',
+                href: '/sports/apparel',
+                isBrowseAll: true,
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      name: 'Books',
+      href: '/books',
+      dropdown: {
+        sections: [
+          {
+            title: 'Fiction',
+            items: [
+              { name: 'Contemporary', href: '/books/fiction/contemporary' },
+              { name: 'Fantasy', href: '/books/fiction/fantasy' },
+              {
+                name: 'Browse All',
+                href: '/books/fiction',
+                isBrowseAll: true,
+              },
+            ],
+          },
+          {
+            title: 'Nonfiction',
+            items: [
+              { name: 'SelfHelp', href: '/books/nonfiction/selfhelp' },
+              { name: 'Biography', href: '/books/nonfiction/biography' },
+              {
+                name: 'Browse All',
+                href: '/books/nonfiction',
                 isBrowseAll: true,
               },
             ],

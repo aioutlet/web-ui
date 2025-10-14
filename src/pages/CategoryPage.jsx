@@ -5,60 +5,24 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addToCart, removeFromCart, openCart } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
 import Paginator from '../components/ui/Paginator';
-import {
-  filterProductsByCategory,
-  sortProducts,
-  getCategoryBreadcrumbs,
-  getCategoryTitle,
-} from '../utils/productHelpers';
+import axios from 'axios';
+
+const BFF_URL = process.env.REACT_APP_BFF_URL || 'http://localhost:3100';
 
 const CategoryPage = ({ category: propCategory }) => {
-  const {
-    subcategory: rawSubcategory,
-    subcategoryOrType,
-    productType: rawProductType,
-    collection,
-  } = useParams();
+  const { department, category, subcategory } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.items);
 
-  // Determine category from props or params
-  const category = propCategory || collection;
-
-  // Smart detection: Determine if subcategoryOrType is a subcategory or productType
-  // Subcategories: clothing, accessories, computers, mobile-audio, gaming, athletic-wear, equipment
-  const knownSubcategories = [
-    'clothing',
-    'accessories',
-    'shoes',
-    'computers',
-    'mobile-audio',
-    'gaming',
-    'athletic-wear',
-    'equipment',
-  ];
-
-  let subcategory, productType;
-
-  if (rawSubcategory) {
-    // 3-level URL: /women/accessories/bags
-    subcategory = rawSubcategory;
-    productType = rawProductType;
-  } else if (subcategoryOrType) {
-    // 2-level URL: Could be /women/accessories (Browse All) or /women/bags (specific type)
-    if (knownSubcategories.includes(subcategoryOrType)) {
-      // It's a subcategory (Browse All)
-      subcategory = subcategoryOrType;
-      productType = null;
-    } else {
-      // It's a product type - need to infer subcategory from product data
-      productType = subcategoryOrType;
-      subcategory = null; // Will be filtered by productType only
-    }
-  }
+  // Determine hierarchy from URL params
+  const dept = department || propCategory;
 
   // State management
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
   const [favorites, setFavorites] = useState(new Set());
   const [filters, setFilters] = useState({
     price: 'All',
@@ -71,43 +35,88 @@ const CategoryPage = ({ category: propCategory }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
 
+  // Fetch products from BFF
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const params = new URLSearchParams();
+        if (dept) params.append('department', dept);
+        if (category) params.append('category', category);
+        if (subcategory) params.append('subcategory', subcategory);
+
+        // Add price filters
+        const priceRange = getPriceRangeFromFilter(filters.price);
+        if (priceRange?.min !== undefined)
+          params.append('min_price', priceRange.min.toString());
+        if (priceRange?.max !== undefined && priceRange.max !== Infinity) {
+          params.append('max_price', priceRange.max.toString());
+        }
+
+        params.append('skip', ((currentPage - 1) * productsPerPage).toString());
+        params.append('limit', productsPerPage.toString());
+
+        const response = await axios.get(
+          `${BFF_URL}/api/products?${params.toString()}`
+        );
+
+        if (response.data.success) {
+          const apiProducts = response.data.data.products || [];
+          // Transform API products to match frontend format
+          const transformedProducts = apiProducts.map(p => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            price: p.price,
+            image: p.images?.[0] || 'https://via.placeholder.com/400',
+            images: p.images || [],
+            rating: p.average_rating || 0,
+            reviews: p.num_reviews || 0,
+            inStock: true, // API doesn't have stock info yet
+            badge:
+              p.num_reviews > 100
+                ? 'Bestseller'
+                : p.num_reviews < 10
+                  ? 'New'
+                  : null,
+            department: p.department,
+            category: p.category,
+            subcategory: p.subcategory,
+            brand: p.brand,
+          }));
+
+          setProducts(transformedProducts);
+          setTotalCount(
+            response.data.data.total_count || transformedProducts.length
+          );
+        }
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products. Please try again.');
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [dept, category, subcategory, filters.price, currentPage]);
+
   // Scroll to top when component mounts or route changes
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [category, subcategory, productType]);
+  }, [dept, category, subcategory]);
 
-  // Get filtered products based on URL structure
-  const allProducts = filterProductsByCategory({
-    category,
-    subcategory,
-    productType,
-    filters: {
-      minPrice: getPriceRangeFromFilter(filters.price)?.min,
-      maxPrice: getPriceRangeFromFilter(filters.price)?.max,
-      color: filters.color !== 'All' ? filters.color : undefined,
-      size: filters.size !== 'All' ? filters.size : undefined,
-    },
-  });
+  // Sort products client-side
+  const sortedProducts = sortProductsLocal(products, sortBy);
 
-  // Sort products
-  const sortedProducts = sortProducts(allProducts, sortBy);
-
-  // Pagination
-  const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
-  const paginatedProducts = sortedProducts.slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
-  );
+  // Pagination - server-side pagination already handled by API
+  const totalPages = Math.ceil(totalCount / productsPerPage);
 
   // Get breadcrumbs for navigation
-  const breadcrumbs = getCategoryBreadcrumbs(
-    category,
-    subcategory,
-    productType
-  );
-
-  // Get category title
-  const categoryTitle = getCategoryTitle(category, subcategory, productType);
+  const breadcrumbs = getBreadcrumbs(dept, category, subcategory);
 
   // Helper functions
   const isInCart = productId => {
@@ -272,114 +281,114 @@ const CategoryPage = ({ category: propCategory }) => {
               <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
               <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-full px-4 py-2">
                 <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">
-                  {category
-                    ? category.charAt(0).toUpperCase() + category.slice(1)
-                    : 'Products'}
+                  {subcategory
+                    ? subcategory.charAt(0).toUpperCase() + subcategory.slice(1)
+                    : category
+                      ? category.charAt(0).toUpperCase() + category.slice(1)
+                      : dept
+                        ? dept.charAt(0).toUpperCase() + dept.slice(1)
+                        : 'Products'}
                 </span>
               </div>
               <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-12"></div>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl mb-4">
-              {categoryTitle}
-            </h1>
-            <p className="text-lg leading-6 text-gray-600 dark:text-gray-300 max-w-lg mx-auto">
-              Discover {sortedProducts.length} amazing products in this
-              collection
-            </p>
           </div>
 
-          {/* Filter Controls */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 sm:space-x-4">
-              <button
-                onClick={() => setFiltersOpen(!filtersOpen)}
-                className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
-              >
-                <svg
-                  className={`w-4 h-4 transition-transform duration-200 ${filtersOpen ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                  />
-                </svg>
-                <span className="text-sm">
-                  {filtersOpen ? 'Hide' : 'Show'} Filters
-                  {Object.values(filters).filter(f => f !== 'All').length > 0 &&
-                    ` (${Object.values(filters).filter(f => f !== 'All').length})`}
-                </span>
-              </button>
-
-              <div className="h-4 w-px bg-gray-300 dark:bg-gray-600"></div>
-
-              {Object.values(filters).some(f => f !== 'All') && (
+          {/* Filter Controls - Only show when products exist */}
+          {!loading && !error && sortedProducts.length > 0 && (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3 sm:space-x-4">
                 <button
-                  onClick={() =>
-                    setFilters({ price: 'All', color: 'All', size: 'All' })
-                  }
-                  className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
+                  onClick={() => setFiltersOpen(!filtersOpen)}
+                  className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
                 >
-                  Clear all
+                  <svg
+                    className={`w-4 h-4 transition-transform duration-200 ${filtersOpen ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                    />
+                  </svg>
+                  <span className="text-sm">
+                    {filtersOpen ? 'Hide' : 'Show'} Filters
+                    {Object.values(filters).filter(f => f !== 'All').length >
+                      0 &&
+                      ` (${Object.values(filters).filter(f => f !== 'All').length})`}
+                  </span>
                 </button>
-              )}
-            </div>
 
-            {/* Sort Dropdown */}
-            <div className="relative sort-dropdown">
-              <button
-                onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-                className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
-              >
-                <span>
-                  Sort:{' '}
-                  {sortOptions.find(option => option.value === sortBy)?.label ||
-                    'Featured'}
-                </span>
-                <svg
-                  className={`w-4 h-4 transition-transform ${sortDropdownOpen ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <div className="h-4 w-px bg-gray-300 dark:bg-gray-600"></div>
+
+                {Object.values(filters).some(f => f !== 'All') && (
+                  <button
+                    onClick={() =>
+                      setFilters({ price: 'All', color: 'All', size: 'All' })
+                    }
+                    className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+
+              {/* Sort Dropdown */}
+              <div className="relative sort-dropdown">
+                <button
+                  onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                  className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
+                  <span>
+                    Sort:{' '}
+                    {sortOptions.find(option => option.value === sortBy)
+                      ?.label || 'Featured'}
+                  </span>
+                  <svg
+                    className={`w-4 h-4 transition-transform ${sortDropdownOpen ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
 
-              {sortDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
-                  <div className="py-2">
-                    {sortOptions.map(option => (
-                      <button
-                        key={option.value}
-                        onClick={() => {
-                          setSortBy(option.value);
-                          setSortDropdownOpen(false);
-                          setCurrentPage(1);
-                        }}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                          sortBy === option.value
-                            ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                            : 'text-gray-700 dark:text-gray-300'
-                        }`}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
+                {sortDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
+                    <div className="py-2">
+                      {sortOptions.map(option => (
+                        <button
+                          key={option.value}
+                          onClick={() => {
+                            setSortBy(option.value);
+                            setSortDropdownOpen(false);
+                            setCurrentPage(1);
+                          }}
+                          className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                            sortBy === option.value
+                              ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                              : 'text-gray-700 dark:text-gray-300'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Filters Panel */}
@@ -415,11 +424,54 @@ const CategoryPage = ({ category: propCategory }) => {
           </div>
         )}
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">
+              Loading products...
+            </p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="text-center py-16">
+            <svg
+              className="mx-auto h-12 w-12 text-red-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+              Error loading products
+            </h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {error}
+            </p>
+            <div className="mt-6">
+              <button
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+              >
+                Try again
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Products Grid */}
-        {sortedProducts.length > 0 ? (
+        {!loading && !error && sortedProducts.length > 0 ? (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-              {paginatedProducts.map(product => (
+              {sortedProducts.map(product => (
                 <div key={product.id} className="group">
                   <div className="relative">
                     <div
@@ -610,7 +662,7 @@ const CategoryPage = ({ category: propCategory }) => {
               </div>
             )}
           </>
-        ) : (
+        ) : !loading && !error ? (
           <div className="text-center py-16">
             <svg
               className="mx-auto h-12 w-12 text-gray-400"
@@ -642,7 +694,7 @@ const CategoryPage = ({ category: propCategory }) => {
               </button>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -665,6 +717,62 @@ function getPriceRangeFromFilter(priceFilter) {
   };
 
   return ranges[priceFilter] || null;
+}
+
+// Helper function to sort products
+function sortProductsLocal(productList, sortBy) {
+  const sorted = [...productList];
+
+  switch (sortBy) {
+    case 'price-asc':
+      return sorted.sort((a, b) => a.price - b.price);
+    case 'price-desc':
+      return sorted.sort((a, b) => b.price - a.price);
+    case 'rating':
+      return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    case 'name':
+      return sorted.sort((a, b) => a.name.localeCompare(b.name));
+    case 'featured':
+    default:
+      return sorted;
+  }
+}
+
+// Helper function to get breadcrumbs
+function getBreadcrumbs(department, category, subcategory) {
+  const breadcrumbs = [];
+
+  if (department) {
+    breadcrumbs.push({
+      label: formatName(department),
+      path: `/${department}`,
+    });
+  }
+
+  if (category) {
+    breadcrumbs.push({
+      label: formatName(category),
+      path: `/${department}/${category}`,
+    });
+  }
+
+  if (subcategory) {
+    breadcrumbs.push({
+      label: formatName(subcategory),
+      path: `/${department}/${category}/${subcategory}`,
+    });
+  }
+
+  return breadcrumbs;
+}
+
+// Helper function to format names
+function formatName(name) {
+  if (!name) return '';
+  return name
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }
 
 export default CategoryPage;
