@@ -85,9 +85,9 @@ const ProductDetailPage = () => {
             department: p.department,
             category: p.category,
             subcategory: p.subcategory,
-            colors: p.variants?.filter(v => v.type === 'color') || [],
-            sizes: p.variants?.filter(v => v.type === 'size') || [],
-            attributes: p.attributes || {},
+            colors: p.colors || [],
+            sizes: p.sizes || [],
+            specifications: p.specifications || {},
             inStock: true,
           };
           setProduct(productData);
@@ -479,19 +479,25 @@ const ProductDetailPage = () => {
             {product.specifications &&
             Object.keys(product.specifications).length > 0 ? (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <div
-                    key={key}
-                    className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0"
-                  >
-                    <dt className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                      {key}
-                    </dt>
-                    <dd className="text-sm text-gray-700 dark:text-gray-300">
-                      {value}
-                    </dd>
-                  </div>
-                ))}
+                {Object.entries(product.specifications).map(
+                  ([key, value], index, array) => (
+                    <div
+                      key={key}
+                      className={`pb-4 ${
+                        index < array.length - 2
+                          ? 'border-b border-gray-200 dark:border-gray-700'
+                          : ''
+                      }`}
+                    >
+                      <dt className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        {key}
+                      </dt>
+                      <dd className="text-sm text-gray-700 dark:text-gray-300">
+                        {value}
+                      </dd>
+                    </div>
+                  )
+                )}
               </div>
             ) : (
               <p className="text-center text-gray-500 dark:text-gray-400">
