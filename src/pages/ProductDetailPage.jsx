@@ -34,15 +34,28 @@ const ProductDetailPage = () => {
 
   // Helper function to calculate star percentage for review summary
   const getStarPercentage = starRating => {
-    // Mock data for star distribution based on the reference image
-    const distribution = {
-      5: 81,
-      4: 14,
-      3: 4,
-      2: 0,
-      1: 1,
-    };
-    return distribution[starRating] || 0;
+    if (!product?.ratingDetails?.ratingDistribution) {
+      // Fallback to mock data if no real distribution available
+      const distribution = {
+        5: 81,
+        4: 14,
+        3: 4,
+        2: 0,
+        1: 1,
+      };
+      return distribution[starRating] || 0;
+    }
+
+    // Use real rating distribution data
+    const distribution = product.ratingDetails.ratingDistribution;
+    const totalReviews = product.ratingDetails.totalReviews || 0;
+
+    if (totalReviews === 0) {
+      return 0;
+    }
+
+    const countForRating = distribution[starRating] || 0;
+    return Math.round((countForRating / totalReviews) * 100);
   };
 
   // Handler for toggling favorite status
@@ -68,6 +81,20 @@ const ProductDetailPage = () => {
 
         if (response.data.success) {
           const p = response.data.data;
+          console.log('Product details response:', p);
+
+          // Extract rating information from the aggregated response
+          const ratingDetails = p.ratingDetails;
+          const rating = ratingDetails?.averageRating || p.average_rating || 0;
+          const reviewCount = ratingDetails?.totalReviews || p.num_reviews || 0;
+          const reviews = Array.isArray(p.reviews) ? p.reviews : [];
+
+          console.log('Extracted rating data:', {
+            rating,
+            reviewCount,
+            reviews: reviews.length,
+          });
+
           // Transform API product to match frontend format
           const productData = {
             id: p.id,
@@ -79,9 +106,10 @@ const ProductDetailPage = () => {
               p.images && p.images.length > 0
                 ? p.images
                 : ['https://via.placeholder.com/800'],
-            rating: p.average_rating || 0,
-            reviewCount: p.num_reviews || 0,
-            reviewsData: Array.isArray(p.reviews) ? p.reviews : [],
+            rating,
+            reviewCount,
+            reviewsData: reviews,
+            ratingDetails, // Keep detailed rating data for advanced display
             department: p.department,
             category: p.category,
             subcategory: p.subcategory,
@@ -136,6 +164,11 @@ const ProductDetailPage = () => {
 
   // Get reviews from product data (reviews are now embedded in the product)
   const reviews = product?.reviewsData || [];
+
+  // Debug logging
+  console.log('Product data:', product);
+  console.log('Reviews data:', reviews);
+  console.log('Rating details:', product?.ratingDetails);
 
   if (loading) {
     return (
@@ -239,7 +272,7 @@ const ProductDetailPage = () => {
                   href="#reviews"
                   className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
                 >
-                  {product.reviews} reviews
+                  {product.reviewCount} reviews
                 </a>
               </div>
             </div>
@@ -617,61 +650,105 @@ const ProductDetailPage = () => {
                   </div>
 
                   <div className="space-y-6 flex-1">
-                    {reviews.slice(0, 3).map(review => (
-                      <div
-                        key={review.id}
-                        className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
-                      >
-                        <div className="flex items-start space-x-4">
-                          <div className="flex-shrink-0">
-                            <div className="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                              <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
-                                {review.author[0]}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                                  {review.author}
-                                  {review.verified && (
-                                    <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">
-                                      ✓ Verified Purchase
-                                    </span>
-                                  )}
-                                </h4>
-                                <div className="flex items-center mt-1">
-                                  <StarRating
-                                    rating={review.rating}
-                                    size="w-4 h-4"
-                                  />
-                                  <p className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                                    {review.date}
-                                  </p>
-                                </div>
+                    {reviews.length > 0 ? (
+                      reviews.slice(0, 3).map(review => (
+                        <div
+                          key={review.id}
+                          className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
+                        >
+                          <div className="flex items-start space-x-4">
+                            <div className="flex-shrink-0">
+                              <div className="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+                                <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
+                                  {review.author?.[0] ||
+                                    review.username?.[0] ||
+                                    'U'}
+                                </span>
                               </div>
                             </div>
-                            <div className="mt-3">
-                              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                                {review.comment}
-                              </p>
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
+                                    {review.author ||
+                                      review.username ||
+                                      'Anonymous'}
+                                    {review.isVerifiedPurchase && (
+                                      <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">
+                                        ✓ Verified Purchase
+                                      </span>
+                                    )}
+                                  </h4>
+                                  <div className="flex items-center mt-1">
+                                    <StarRating
+                                      rating={review.rating}
+                                      size="w-4 h-4"
+                                    />
+                                    <p className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                                      {review.date ||
+                                        new Date(
+                                          review.createdAt
+                                        ).toLocaleDateString()}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="mt-3">
+                                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                                  {review.comment}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-8">
+                        <div className="text-gray-400 dark:text-gray-500 mb-4">
+                          <svg
+                            className="w-12 h-12 mx-auto"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-1l-4 4z"
+                            />
+                          </svg>
+                        </div>
+                        <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                          No reviews yet
+                        </h4>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                          Be the first to share your thoughts about this
+                          product.
+                        </p>
+                        <button
+                          onClick={() =>
+                            navigate(`/products/${id}/write-review`)
+                          }
+                          className="px-6 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+                        >
+                          Write the first review
+                        </button>
                       </div>
-                    ))}
+                    )}
                   </div>
 
                   {/* See more reviews link */}
-                  <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center">
-                    <button
-                      onClick={() => navigate(`/products/${id}/reviews`)}
-                      className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors duration-200 bg-transparent border-none cursor-pointer"
-                    >
-                      See all {reviews.length} reviews
-                    </button>
-                  </div>
+                  {reviews.length > 0 && (
+                    <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center">
+                      <button
+                        onClick={() => navigate(`/products/${id}/reviews`)}
+                        className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors duration-200 bg-transparent border-none cursor-pointer"
+                      >
+                        See all {reviews.length} reviews
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
