@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { addToCart, removeFromCart, openCart } from '../store/slices/cartSlice';
+import {
+  addToCartAsync,
+  removeFromCartAsync,
+  openCart,
+} from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
 import axios from 'axios';
 
@@ -137,16 +141,14 @@ const ProductDetailPage = () => {
   const handleAddToCart = () => {
     if (product) {
       dispatch(
-        addToCart({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.images[selectedImage],
-          category: product.category,
+        addToCartAsync({
+          product: {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.images[selectedImage],
+          },
           quantity: quantity,
-          selectedColor: product.colors
-            ? product.colors[selectedColor].name
-            : null,
         })
       );
       // Open cart sidebar only on desktop (lg and above)
@@ -158,7 +160,7 @@ const ProductDetailPage = () => {
 
   const handleRemoveFromCart = () => {
     if (product) {
-      dispatch(removeFromCart(product.id));
+      dispatch(removeFromCartAsync(product.id));
     }
   };
 

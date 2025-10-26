@@ -2,16 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import {
-  removeFromCart,
-  updateQuantity,
-  clearCart,
+  removeFromCartAsync,
+  updateQuantityAsync,
+  clearCartAsync,
 } from '../store/slices/cartSlice';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 const CartPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { items, totalItems, totalPrice } = useSelector(state => state.cart);
+  const { items, totalItems, totalPrice, loading } = useSelector(
+    state => state.cart
+  );
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Scroll to top when component mounts
@@ -27,16 +29,16 @@ const CartPage = () => {
   const handleQuantityChange = (id, currentQuantity, change) => {
     const newQuantity = currentQuantity + change;
     if (newQuantity > 0) {
-      dispatch(updateQuantity({ id, quantity: newQuantity }));
+      dispatch(updateQuantityAsync({ productId: id, quantity: newQuantity }));
     }
   };
 
   const handleRemoveItem = id => {
-    dispatch(removeFromCart(id));
+    dispatch(removeFromCartAsync(id));
   };
 
   const handleClearCart = () => {
-    dispatch(clearCart());
+    dispatch(clearCartAsync());
     setShowClearConfirm(false);
   };
 

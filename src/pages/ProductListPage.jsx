@@ -130,9 +130,12 @@ const ProductListPage = ({ category: propCategory }) => {
 
       try {
         const params = new URLSearchParams();
-        if (dept) params.append('department', dept);
-        if (category) params.append('category', category);
-        if (subcategory) params.append('subcategory', subcategory);
+
+        // Convert to lowercase to match API expectations
+        if (dept) params.append('department', dept.toLowerCase());
+        if (category) params.append('category', category.toLowerCase());
+        if (subcategory)
+          params.append('subcategory', subcategory.toLowerCase());
 
         // Add price filters - handle multiple price ranges
         if (filters.price.size > 0) {

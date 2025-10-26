@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useAuthStore } from '../../store/authStore';
+import { fetchCartAsync } from '../../store/slices/cartSlice';
 import Header from './Header';
 import Footer from './Footer';
 import CartSidebar from '../cart/CartSidebar';
 
 const Layout = ({ children }) => {
+  const dispatch = useDispatch();
   const isCartOpen = useSelector(state => state.cart.isOpen);
+  const { user, isAuthenticated } = useAuthStore();
+  const cartLoading = useSelector(state => state.cart.loading);
+
+  // Initialize cart on mount and when auth state changes
+  useEffect(() => {
+    // Only fetch cart once per auth state change
+    // This handles both authenticated users and guests
+    dispatch(fetchCartAsync());
+  }, [dispatch, isAuthenticated]); // Re-fetch when auth state changes
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-200">

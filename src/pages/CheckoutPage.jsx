@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { clearCart } from '../store/slices/cartSlice';
+import { clearCartAsync } from '../store/slices/cartSlice';
+import ordersAPI from '../api/ordersAPI';
+import { toast } from 'react-toastify';
 import {
   CreditCardIcon,
   TruckIcon,
@@ -114,20 +116,70 @@ const CheckoutPage = () => {
 
     setIsProcessing(true);
 
-    // Simulate payment processing
-    setTimeout(() => {
-      setIsProcessing(false);
-      // Navigate to success page with order data
-      // Note: Cart will be cleared by OrderSuccessPage after it loads
-      navigate('/order-success', {
-        state: {
-          orderNumber: `ORD-${Date.now()}`,
-          items: items,
-          total: finalTotal,
-          deliveryAddress: formData,
+    try {
+      const { user } = useSelector(state => state.auth);
+
+      if (!user) {
+        toast.error('Please log in to place an order');
+        navigate('/login', { state: { from: '/checkout' } });
+        return;
+      }
+
+      // Prepare order data to match backend CreateOrderDto
+      const orderData = {
+        customerId: user.id,
+        items: items.map(item => ({
+          productId: item.id,
+          productName: item.name,
+          unitPrice: item.price,
+          quantity: item.quantity,
+        })),
+        shippingAddress: {
+          addressLine1: formData.addressLine1,
+          addressLine2: formData.addressLine2 || '',
+          city: formData.city,
+          state: formData.country, // Using country as state for now
+          zipCode: formData.postcode,
+          country: formData.country === 'United Kingdom' ? 'UK' : 'US',
         },
-      });
-    }, 2000);
+        billingAddress: {
+          addressLine1: formData.addressLine1,
+          addressLine2: formData.addressLine2 || '',
+          city: formData.city,
+          state: formData.country,
+          zipCode: formData.postcode,
+          country: formData.country === 'United Kingdom' ? 'UK' : 'US',
+        },
+        notes: formData.giftOrder ? 'Gift order' : undefined,
+      };
+
+      // Create order via API
+      const response = await ordersAPI.createOrder(orderData);
+
+      if (response.success) {
+        toast.success('Order placed successfully!');
+        dispatch(clearCartAsync());
+
+        // Navigate to success page with order data
+        navigate('/order-success', {
+          state: {
+            orderNumber: response.data.orderNumber,
+            orderId: response.data.id,
+            items: items,
+            total: finalTotal,
+            deliveryAddress: formData,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Order creation failed:', error);
+      toast.error(
+        error.response?.data?.error?.message ||
+          'Failed to place order. Please try again.'
+      );
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (items.length === 0) {

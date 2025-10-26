@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   closeCart,
-  removeFromCart,
-  updateQuantity,
+  removeFromCartAsync,
+  updateQuantityAsync,
 } from '../../store/slices/cartSlice';
 import {
   XMarkIcon,
@@ -16,7 +16,7 @@ import {
 const CartSidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { items, totalItems, totalPrice, isOpen } = useSelector(
+  const { items, totalItems, totalPrice, isOpen, loading } = useSelector(
     state => state.cart
   );
 
@@ -30,14 +30,14 @@ const CartSidebar = () => {
   const handleQuantityChange = (id, currentQuantity, change) => {
     const newQuantity = currentQuantity + change;
     if (newQuantity > 0) {
-      dispatch(updateQuantity({ id, quantity: newQuantity }));
+      dispatch(updateQuantityAsync({ productId: id, quantity: newQuantity }));
     } else {
-      dispatch(removeFromCart(id));
+      dispatch(removeFromCartAsync(id));
     }
   };
 
   const handleRemoveItem = id => {
-    dispatch(removeFromCart(id));
+    dispatch(removeFromCartAsync(id));
   };
 
   const handleGoToCart = () => {

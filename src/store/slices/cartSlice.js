@@ -1,16 +1,249 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import cartAPI from '../../api/cartAPI';
+import { v4 as uuidv4 } from 'uuid';
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+const getGuestId = () => {
+  let guestId = localStorage.getItem('guestId');
+  if (!guestId) {
+    guestId = uuidv4();
+    localStorage.setItem('guestId', guestId);
+  }
+  return guestId;
+};
+
+const calculateTotals = items => {
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  return { totalItems, totalPrice };
+};
+
+const mapBackendCartToState = backendCart => {
+  if (!backendCart || !backendCart.items) {
+    return { items: [], totalItems: 0, totalPrice: 0 };
+  }
+
+  const items = backendCart.items.map(item => ({
+    id: item.productId,
+    name: item.productName,
+    price: item.price,
+    quantity: item.quantity,
+    image: item.image || '/placeholder.png',
+  }));
+
+  return {
+    items,
+    ...calculateTotals(items),
+  };
+};
+
+// ============================================================================
+// Async Thunks
+// ============================================================================
+
+/**
+ * Fetch cart from backend (authenticated or guest)
+ */
+export const fetchCartAsync = createAsyncThunk(
+  'cart/fetch',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState();
+
+      if (auth.user) {
+        // Authenticated user
+        const response = await cartAPI.getCart();
+        return { data: response.data, isGuest: false };
+      } else {
+        // Guest user
+        const guestId = getGuestId();
+        const response = await cartAPI.getGuestCart(guestId);
+        return { data: response.data, isGuest: true, guestId };
+      }
+    } catch (error) {
+      // If cart doesn't exist, return empty cart
+      if (error.response?.status === 404) {
+        return { data: { items: [] }, isGuest: !getState().auth.user };
+      }
+      return rejectWithValue(
+        error.response?.data?.error?.message || 'Failed to fetch cart'
+      );
+    }
+  }
+);
+
+/**
+ * Add item to cart (with optimistic update)
+ */
+export const addToCartAsync = createAsyncThunk(
+  'cart/addItem',
+  async ({ product, quantity = 1 }, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState();
+      const itemData = {
+        productId: product.id,
+        productName: product.name,
+        price: product.price,
+        quantity,
+      };
+
+      if (auth.user) {
+        // Authenticated user
+        const response = await cartAPI.addItem(itemData);
+        return { data: response.data, isGuest: false };
+      } else {
+        // Guest user
+        const guestId = getGuestId();
+        const response = await cartAPI.addGuestItem(guestId, itemData);
+        return { data: response.data, isGuest: true, guestId };
+      }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error?.message || 'Failed to add item to cart'
+      );
+    }
+  }
+);
+
+/**
+ * Update item quantity
+ */
+export const updateQuantityAsync = createAsyncThunk(
+  'cart/updateQuantity',
+  async ({ productId, quantity }, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState();
+
+      if (auth.user) {
+        // Authenticated user
+        const response = await cartAPI.updateItem(productId, quantity);
+        return { data: response.data, isGuest: false };
+      } else {
+        // Guest user
+        const guestId = getGuestId();
+        const response = await cartAPI.updateGuestItem(
+          guestId,
+          productId,
+          quantity
+        );
+        return { data: response.data, isGuest: true, guestId };
+      }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error?.message || 'Failed to update item quantity'
+      );
+    }
+  }
+);
+
+/**
+ * Remove item from cart
+ */
+export const removeFromCartAsync = createAsyncThunk(
+  'cart/removeItem',
+  async (productId, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState();
+
+      if (auth.user) {
+        // Authenticated user
+        const response = await cartAPI.removeItem(productId);
+        return { data: response.data, isGuest: false };
+      } else {
+        // Guest user
+        const guestId = getGuestId();
+        const response = await cartAPI.removeGuestItem(guestId, productId);
+        return { data: response.data, isGuest: true, guestId };
+      }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error?.message ||
+          'Failed to remove item from cart'
+      );
+    }
+  }
+);
+
+/**
+ * Clear entire cart
+ */
+export const clearCartAsync = createAsyncThunk(
+  'cart/clear',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState();
+
+      if (auth.user) {
+        // Authenticated user
+        await cartAPI.clearCart();
+      } else {
+        // Guest user
+        const guestId = getGuestId();
+        await cartAPI.clearGuestCart(guestId);
+      }
+
+      return { success: true };
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error?.message || 'Failed to clear cart'
+      );
+    }
+  }
+);
+
+/**
+ * Transfer guest cart to authenticated user (called after login)
+ */
+export const transferCartAsync = createAsyncThunk(
+  'cart/transfer',
+  async (_, { rejectWithValue }) => {
+    try {
+      const guestId = localStorage.getItem('guestId');
+
+      if (!guestId) {
+        // No guest cart to transfer
+        return { data: { items: [] }, transferred: false };
+      }
+
+      const response = await cartAPI.transferCart(guestId);
+
+      // Clear guest ID from localStorage after successful transfer
+      localStorage.removeItem('guestId');
+
+      return { data: response.data, transferred: true };
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error?.message || 'Failed to transfer cart'
+      );
+    }
+  }
+);
+
+// ============================================================================
+// Slice
+// ============================================================================
 
 const initialState = {
   items: [],
   totalItems: 0,
   totalPrice: 0,
   isOpen: false,
+  loading: false,
+  error: null,
+  guestId: null,
 };
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
+    // Synchronous actions for optimistic updates
     addToCart: (state, action) => {
       const existingItem = state.items.find(
         item => item.id === action.payload.id
@@ -25,25 +258,15 @@ const cartSlice = createSlice({
         });
       }
 
-      state.totalItems = state.items.reduce(
-        (total, item) => total + item.quantity,
-        0
-      );
-      state.totalPrice = state.items.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-      );
+      const totals = calculateTotals(state.items);
+      state.totalItems = totals.totalItems;
+      state.totalPrice = totals.totalPrice;
     },
     removeFromCart: (state, action) => {
       state.items = state.items.filter(item => item.id !== action.payload);
-      state.totalItems = state.items.reduce(
-        (total, item) => total + item.quantity,
-        0
-      );
-      state.totalPrice = state.items.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-      );
+      const totals = calculateTotals(state.items);
+      state.totalItems = totals.totalItems;
+      state.totalPrice = totals.totalPrice;
     },
     updateQuantity: (state, action) => {
       const { id, quantity } = action.payload;
@@ -56,14 +279,9 @@ const cartSlice = createSlice({
         }
       }
 
-      state.totalItems = state.items.reduce(
-        (total, item) => total + item.quantity,
-        0
-      );
-      state.totalPrice = state.items.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-      );
+      const totals = calculateTotals(state.items);
+      state.totalItems = totals.totalItems;
+      state.totalPrice = totals.totalPrice;
     },
     clearCart: state => {
       state.items = [];
@@ -79,6 +297,120 @@ const cartSlice = createSlice({
     closeCart: state => {
       state.isOpen = false;
     },
+    clearError: state => {
+      state.error = null;
+    },
+  },
+  extraReducers: builder => {
+    // Fetch Cart
+    builder
+      .addCase(fetchCartAsync.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCartAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        const cartData = mapBackendCartToState(action.payload.data);
+        state.items = cartData.items;
+        state.totalItems = cartData.totalItems;
+        state.totalPrice = cartData.totalPrice;
+        state.guestId = action.payload.guestId || null;
+      })
+      .addCase(fetchCartAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Add Item
+    builder
+      .addCase(addToCartAsync.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addToCartAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        const cartData = mapBackendCartToState(action.payload.data);
+        state.items = cartData.items;
+        state.totalItems = cartData.totalItems;
+        state.totalPrice = cartData.totalPrice;
+        state.guestId = action.payload.guestId || null;
+      })
+      .addCase(addToCartAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Update Quantity
+    builder
+      .addCase(updateQuantityAsync.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateQuantityAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        const cartData = mapBackendCartToState(action.payload.data);
+        state.items = cartData.items;
+        state.totalItems = cartData.totalItems;
+        state.totalPrice = cartData.totalPrice;
+      })
+      .addCase(updateQuantityAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Remove Item
+    builder
+      .addCase(removeFromCartAsync.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(removeFromCartAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        const cartData = mapBackendCartToState(action.payload.data);
+        state.items = cartData.items;
+        state.totalItems = cartData.totalItems;
+        state.totalPrice = cartData.totalPrice;
+      })
+      .addCase(removeFromCartAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Clear Cart
+    builder
+      .addCase(clearCartAsync.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(clearCartAsync.fulfilled, state => {
+        state.loading = false;
+        state.items = [];
+        state.totalItems = 0;
+        state.totalPrice = 0;
+      })
+      .addCase(clearCartAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Transfer Cart
+    builder
+      .addCase(transferCartAsync.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(transferCartAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        const cartData = mapBackendCartToState(action.payload.data);
+        state.items = cartData.items;
+        state.totalItems = cartData.totalItems;
+        state.totalPrice = cartData.totalPrice;
+        state.guestId = null; // Clear guest ID after transfer
+      })
+      .addCase(transferCartAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
@@ -90,6 +422,7 @@ export const {
   toggleCart,
   openCart,
   closeCart,
+  clearError,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

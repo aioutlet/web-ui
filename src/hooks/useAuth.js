@@ -1,19 +1,16 @@
-/**
- * useAuth Hook
- * Custom hook for authentication with React Query + Zustand
- * Updated for React Query v5 best practices
- * Now uses BFF client for all auth operations
- */
 import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import bffClient from '../api/bffClient';
 import { useAuthStore } from '../store/authStore';
 import { setToken, getRefreshToken } from '../utils/storage';
+import { transferCartAsync } from '../store/slices/cartSlice';
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { user, isAuthenticated, setUser, clearUser } = useAuthStore();
 
   // Register mutation
@@ -22,7 +19,7 @@ export const useAuth = () => {
       const response = await bffClient.post('/api/auth/register', userData);
       return response.data;
     },
-    onSuccess: data => {
+    onSuccess: async data => {
       if (data.user) {
         // Backend returns { jwt, user } - map to expected format
         const accessToken = data.jwt || data.accessToken;
@@ -32,6 +29,19 @@ export const useAuth = () => {
           setToken(accessToken, refreshToken);
         }
         setUser(data.user);
+
+        // Transfer guest cart to new user account if exists
+        try {
+          const guestId = localStorage.getItem('guestId');
+          if (guestId) {
+            console.log('Transferring guest cart to new user account...');
+            await dispatch(transferCartAsync()).unwrap();
+            console.log('Cart transfer completed successfully');
+          }
+        } catch (error) {
+          console.error('Cart transfer failed:', error);
+          // Don't fail registration if cart transfer fails
+        }
       }
     },
     onError: error => {
@@ -48,7 +58,7 @@ export const useAuth = () => {
       });
       return response.data;
     },
-    onSuccess: data => {
+    onSuccess: async data => {
       // Backend returns { jwt, user } - map to expected format
       const accessToken = data.jwt || data.accessToken;
       const refreshToken = data.refreshToken; // May be undefined if using cookies
@@ -57,6 +67,19 @@ export const useAuth = () => {
         setToken(accessToken, refreshToken);
       }
       setUser(data.user);
+
+      // Transfer guest cart to user account if exists
+      try {
+        const guestId = localStorage.getItem('guestId');
+        if (guestId) {
+          console.log('Transferring guest cart to user account...');
+          await dispatch(transferCartAsync()).unwrap();
+          console.log('Cart transfer completed successfully');
+        }
+      } catch (error) {
+        console.error('Cart transfer failed:', error);
+        // Don't fail login if cart transfer fails
+      }
 
       // Don't invalidate - we already have fresh user data from login
       // queryClient.invalidateQueries(['currentUser']);
