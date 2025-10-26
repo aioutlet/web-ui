@@ -8,47 +8,92 @@ const Hero = () => {
   const slides = [
     {
       id: 1,
-      title: 'New arrivals',
-      highlight: 'are here',
+      title: 'Women',
+      highlight: 'Collection',
       subtitle:
-        "The new arrivals have, well, newly arrived. Check out the latest options from our summer small-batch release while they're still in stock.",
+        "Discover the latest in women's fashion. From elegant dresses to everyday essentials, find your perfect style.",
       primaryCta: {
-        text: 'Shop New Arrivals',
-        link: '/products',
+        text: 'Shop Women',
+        link: '/women',
       },
       secondaryCta: {
-        text: 'Browse All Products',
-        link: '/products',
+        text: 'Browse Clothing',
+        link: '/women/clothing',
       },
     },
     {
       id: 2,
-      title: 'Summer collection',
-      highlight: 'now live',
+      title: 'Men',
+      highlight: 'Essentials',
       subtitle:
-        'Beat the heat with our curated summer collection. From lightweight fabrics to vibrant colors, find everything you need for the perfect summer look.',
+        "Elevate your wardrobe with our men's collection. Quality clothing and accessories for the modern gentleman.",
       primaryCta: {
-        text: 'Shop Summer',
-        link: '/collections/summer',
+        text: 'Shop Men',
+        link: '/men',
       },
       secondaryCta: {
-        text: 'View Lookbook',
-        link: '/lookbook/summer',
+        text: 'Browse Clothing',
+        link: '/men/clothing',
       },
     },
     {
       id: 3,
-      title: 'Tech essentials',
-      highlight: 'reimagined',
+      title: 'Kids',
+      highlight: 'Favorites',
       subtitle:
-        'Discover the latest in technology and innovation. From cutting-edge gadgets to everyday essentials, elevate your digital lifestyle.',
+        'Comfortable and stylish clothing for kids. From playful outfits to everyday wear, perfect for every adventure.',
       primaryCta: {
-        text: 'Shop Electronics',
-        link: '/collections/electronics',
+        text: 'Shop Kids',
+        link: '/kids',
       },
       secondaryCta: {
-        text: 'Tech Guide',
-        link: '/guides/tech',
+        text: 'Browse Clothing',
+        link: '/kids/clothing',
+      },
+    },
+    {
+      id: 4,
+      title: 'Electronics',
+      highlight: 'Reimagined',
+      subtitle:
+        'Discover the latest in technology and innovation. From cutting-edge gadgets to everyday essentials.',
+      primaryCta: {
+        text: 'Shop Electronics',
+        link: '/electronics',
+      },
+      secondaryCta: {
+        text: 'Browse Computers',
+        link: '/electronics/computers',
+      },
+    },
+    {
+      id: 5,
+      title: 'Sports',
+      highlight: 'Collection',
+      subtitle:
+        'Gear up for your active lifestyle. Quality sports apparel and equipment for every athlete.',
+      primaryCta: {
+        text: 'Shop Sports',
+        link: '/sports',
+      },
+      secondaryCta: {
+        text: 'Browse Apparel',
+        link: '/sports/apparel',
+      },
+    },
+    {
+      id: 6,
+      title: 'Books',
+      highlight: 'For Everyone',
+      subtitle:
+        'Explore our curated collection of books. From fiction to nonfiction, find your next great read.',
+      primaryCta: {
+        text: 'Shop Books',
+        link: '/books',
+      },
+      secondaryCta: {
+        text: 'Browse Fiction',
+        link: '/books/fiction',
       },
     },
   ];
@@ -97,54 +142,34 @@ const Hero = () => {
             }`}
           >
             {/* Fixed height container for all slides */}
-            <div className="h-[600px] sm:h-[700px] lg:h-[800px]">
+            <div className="h-[600px] sm:h-[700px] lg:h-[800px] flex items-center justify-center">
               <div className="mx-auto max-w-2xl text-center">
-                {/* Announcement banner - Fixed position at top */}
-                <div className="hidden sm:mb-8 sm:flex sm:justify-center pt-16">
-                  <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 dark:text-gray-300 ring-1 ring-gray-900/10 dark:ring-white/10 hover:ring-gray-900/20 dark:hover:ring-white/20 transition-all">
-                    Latest collection now available.{' '}
-                    <Link
-                      to="/collections/all"
-                      className="font-semibold text-indigo-600 dark:text-indigo-400"
-                    >
-                      <span className="absolute inset-0" aria-hidden="true" />
-                      Shop now <span aria-hidden="true">&rarr;</span>
-                    </Link>
-                  </div>
-                </div>
+                <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
+                  <span className="text-gray-900 dark:text-white">
+                    {slide.title}
+                  </span>{' '}
+                  <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+                    {slide.highlight}
+                  </span>
+                </h1>
+                <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                  {slide.subtitle}
+                </p>
 
-                {/* Main content - Centered in remaining space */}
-                <div className="flex items-center justify-center h-[calc(100%-120px)]">
-                  <div className="text-center">
-                    <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
-                      <span className="text-gray-900 dark:text-white">
-                        {slide.title}
-                      </span>{' '}
-                      <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
-                        {slide.highlight}
-                      </span>
-                    </h1>
-                    <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                      {slide.subtitle}
-                    </p>
-
-                    {/* CTA buttons */}
-                    <div className="mt-10 flex items-center justify-center gap-x-6">
-                      <Link
-                        to={slide.primaryCta.link}
-                        className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
-                      >
-                        {slide.primaryCta.text}
-                      </Link>
-                      <Link
-                        to={slide.secondaryCta.link}
-                        className="text-sm font-semibold leading-6 text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                      >
-                        {slide.secondaryCta.text}{' '}
-                        <span aria-hidden="true">→</span>
-                      </Link>
-                    </div>
-                  </div>
+                {/* CTA buttons */}
+                <div className="mt-10 flex items-center justify-center gap-x-6">
+                  <Link
+                    to={slide.primaryCta.link}
+                    className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
+                  >
+                    {slide.primaryCta.text}
+                  </Link>
+                  <Link
+                    to={slide.secondaryCta.link}
+                    className="text-sm font-semibold leading-6 text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  >
+                    {slide.secondaryCta.text} <span aria-hidden="true">→</span>
+                  </Link>
                 </div>
               </div>
             </div>
