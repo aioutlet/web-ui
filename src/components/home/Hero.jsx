@@ -142,7 +142,7 @@ const Hero = () => {
             }`}
           >
             {/* Fixed height container for all slides */}
-            <div className="h-[600px] sm:h-[700px] lg:h-[800px] flex items-center justify-center">
+            <div className="h-[500px] sm:h-[600px] lg:h-[650px] flex items-center justify-center">
               <div className="mx-auto max-w-2xl text-center">
                 <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
                   <span className="text-gray-900 dark:text-white">
@@ -177,7 +177,7 @@ const Hero = () => {
         ))}
 
         {/* Slide indicators - Fixed position at bottom */}
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 pb-8">
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
           <div className="flex space-x-3 items-center justify-center">
             {slides.map((_, index) => (
               <button
