@@ -2,7 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { addToCart, removeFromCart, openCart } from '../store/slices/cartSlice';
+import { toast } from 'react-toastify';
+import {
+  addToCartAsync,
+  removeFromCartAsync,
+  openCart,
+} from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
 import Paginator from '../components/ui/Paginator';
 import axios from 'axios';
@@ -292,13 +297,27 @@ const ProductListPage = ({ category: propCategory }) => {
 
   const handleCartAction = product => {
     if (isInCart(product.id)) {
-      dispatch(removeFromCart(product.id));
+      dispatch(removeFromCartAsync(product.id))
+        .unwrap()
+        .then(() => {
+          toast.info('Removed from cart');
+        })
+        .catch(error => {
+          toast.error(`Failed to remove from cart: ${error}`);
+        });
     } else {
-      dispatch(addToCart(product));
-      // Open cart sidebar only on desktop (lg and above)
-      if (window.innerWidth >= 1024) {
-        dispatch(openCart());
-      }
+      dispatch(addToCartAsync({ product, quantity: 1 }))
+        .unwrap()
+        .then(() => {
+          toast.success('Added to cart successfully!');
+          // Open cart sidebar only on desktop (lg and above)
+          if (window.innerWidth >= 1024) {
+            dispatch(openCart());
+          }
+        })
+        .catch(error => {
+          toast.error(`Failed to add to cart: ${error}`);
+        });
     }
   };
 

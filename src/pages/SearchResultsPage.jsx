@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { addToCart, removeFromCart, openCart } from '../store/slices/cartSlice';
+import {
+  addToCartAsync,
+  removeFromCartAsync,
+  openCart,
+} from '../store/slices/cartSlice';
 import {
   MagnifyingGlassIcon,
   AdjustmentsHorizontalIcon,
@@ -207,15 +211,17 @@ const SearchResultsPage = () => {
     e.stopPropagation();
 
     if (isInCart(product.id)) {
-      dispatch(removeFromCart(product.id));
+      dispatch(removeFromCartAsync(product.id));
     } else {
       dispatch(
-        addToCart({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.image,
-          category: product.category,
+        addToCartAsync({
+          product: {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            category: product.category,
+          },
           quantity: 1,
         })
       );

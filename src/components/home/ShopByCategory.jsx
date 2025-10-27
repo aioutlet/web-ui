@@ -1,117 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { API_ENDPOINTS } from '../../api/endpoints';
+import { useTrendingCategories } from '../../hooks/useHomeData';
 
 const ShopByCategory = () => {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Fetch trending categories from BFF
-  useEffect(() => {
-    const fetchTrendingCategories = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `${API_ENDPOINTS.HOME.TRENDING_CATEGORIES}?limit=5`
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch trending categories');
-        }
-
-        const data = await response.json();
-
-        if (data.success && data.data) {
-          // Map BFF response to component format with hierarchical URLs
-          const mappedCategories = data.data.map((category, index) => {
-            // Map category names to department/category paths with labels
-            const categoryRoutes = {
-              Clothing: {
-                path: '/women/clothing',
-                department: 'Women',
-                category: 'Clothing',
-              },
-              Accessories: {
-                path: '/women/accessories',
-                department: 'Women',
-                category: 'Accessories',
-              },
-              Apparel: {
-                path: '/sports/apparel',
-                department: 'Sports',
-                category: 'Apparel',
-              },
-              Footwear: {
-                path: '/sports/footwear',
-                department: 'Sports',
-                category: 'Footwear',
-              },
-              Mobile: {
-                path: '/electronics/mobile',
-                department: 'Electronics',
-                category: 'Mobile',
-              },
-              Audio: {
-                path: '/electronics/audio',
-                department: 'Electronics',
-                category: 'Audio',
-              },
-              Computers: {
-                path: '/electronics/computers',
-                department: 'Electronics',
-                category: 'Computers',
-              },
-              Gaming: {
-                path: '/electronics/gaming',
-                department: 'Electronics',
-                category: 'Gaming',
-              },
-              Fiction: {
-                path: '/books/fiction',
-                department: 'Books',
-                category: 'Fiction',
-              },
-              Nonfiction: {
-                path: '/books/nonfiction',
-                department: 'Books',
-                category: 'Nonfiction',
-              },
-            };
-
-            const route = categoryRoutes[category.name] || {
-              path: `/women/${category.name.toLowerCase()}`,
-              department: 'Women',
-              category: category.name,
-            };
-
-            return {
-              id: index + 1,
-              title: category.name,
-              displayName: category.displayName,
-              link: category.path || route.path,
-              department: category.department || route.department,
-              categoryName: category.categoryName || route.category,
-              image: category.image,
-              description: category.displayName,
-              productCount: category.accurateCount || category.product_count,
-              totalCount: category.accurateCount || category.product_count,
-              avgRating: category.avg_rating,
-            };
-          });
-
-          setCategories(mappedCategories);
-        }
-      } catch (err) {
-        console.error('Error fetching trending categories:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTrendingCategories();
-  }, []);
+  const {
+    data: categories = [],
+    isLoading: loading,
+    error,
+  } = useTrendingCategories(5);
 
   return (
     <section className="relative bg-gray-50 dark:bg-gray-800/50 py-16 sm:py-20">

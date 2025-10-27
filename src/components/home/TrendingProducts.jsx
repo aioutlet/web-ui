@@ -1,59 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getBadgeStyles } from '../../utils/productHelpers';
-import { API_ENDPOINTS } from '../../api/endpoints';
+import { useTrendingProducts } from '../../hooks/useHomeData';
 
 const TrendingProducts = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Fetch trending products from BFF
-  useEffect(() => {
-    const fetchTrendingProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${API_ENDPOINTS.HOME.TRENDING}?limit=4`);
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch trending products');
-        }
-
-        const data = await response.json();
-
-        if (data.success && data.data) {
-          // Map BFF response to component format
-          const mappedProducts = data.data.map(product => ({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            category: product.category,
-            image:
-              product.images && product.images.length > 0
-                ? product.images[0]
-                : 'https://via.placeholder.com/400x400',
-            rating: product.reviews?.averageRating || 0,
-            reviews: product.reviews?.reviewCount || 0,
-            inStock: product.inventory?.inStock || false,
-            link: `/products/${product.id}`,
-            badge:
-              product.badge ||
-              (product.inventory?.inStock ? null : 'Out of Stock'),
-          }));
-
-          setProducts(mappedProducts);
-        }
-      } catch (err) {
-        console.error('Error fetching trending products:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTrendingProducts();
-  }, []);
+  const {
+    data: products = [],
+    isLoading: loading,
+    error,
+  } = useTrendingProducts(4);
 
   const handleViewDetails = productLink => {
     navigate(productLink);

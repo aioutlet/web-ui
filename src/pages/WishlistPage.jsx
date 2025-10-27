@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { addToCart, openCart } from '../store/slices/cartSlice';
+import { addToCartAsync, openCart } from '../store/slices/cartSlice';
 import { userData } from '../data/user';
 import { HeartIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 
@@ -23,7 +23,7 @@ const WishlistPage = () => {
 
   const handleMoveToCart = item => {
     // Add item to cart
-    dispatch(addToCart(item));
+    dispatch(addToCartAsync({ product: item, quantity: 1 }));
     // Open cart sidebar on desktop
     if (window.innerWidth >= 1024) {
       dispatch(openCart());
