@@ -12,9 +12,9 @@ const EmailVerificationPage = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const {
-    verifyEmail,
+    verifyEmailAsync,
     isVerifyingEmail,
-    resendVerification,
+    resendVerificationAsync,
     isResendingVerification,
   } = useAuth();
 
@@ -31,44 +31,44 @@ const EmailVerificationPage = () => {
       return;
     }
 
-    verifyEmail(
-      { token },
-      {
-        onSuccess: data => {
-          if (data.alreadyVerified) {
-            setStatus('already-verified');
-            setMessage('This email address has already been verified.');
-          } else {
-            setStatus('success');
-            setMessage('Your email has been successfully verified!');
-            // Redirect to login after 3 seconds
-            setTimeout(() => {
-              navigate('/login', {
-                state: {
-                  message: 'Email verified successfully! You can now log in.',
-                },
-              });
-            }, 3000);
-          }
+    const verifyToken = async () => {
+      try {
+        const data = await verifyEmailAsync({ token });
 
-          if (data.email) {
-            setEmail(data.email);
-          }
-        },
-        onError: error => {
-          console.error('Email verification error:', error);
-          setStatus('error');
-          setMessage(
-            error.message ||
-              'Verification failed. The link may be invalid or expired.'
-          );
-          if (error.email) {
-            setEmail(error.email);
-          }
-        },
+        if (data.alreadyVerified) {
+          setStatus('already-verified');
+          setMessage('This email address has already been verified.');
+        } else {
+          setStatus('success');
+          setMessage('Your email has been successfully verified!');
+          // Redirect to login after 3 seconds
+          setTimeout(() => {
+            navigate('/login', {
+              state: {
+                message: 'Email verified successfully! You can now log in.',
+              },
+            });
+          }, 3000);
+        }
+
+        if (data.email) {
+          setEmail(data.email);
+        }
+      } catch (error) {
+        console.error('Email verification error:', error);
+        setStatus('error');
+        setMessage(
+          error.message ||
+            'Verification failed. The link may be invalid or expired.'
+        );
+        if (error.email) {
+          setEmail(error.email);
+        }
       }
-    );
-  }, [token, navigate, verifyEmail]);
+    };
+
+    verifyToken();
+  }, [token, navigate, verifyEmailAsync]);
 
   // Handle resend verification email
   const handleResendEmail = async () => {
@@ -79,21 +79,16 @@ const EmailVerificationPage = () => {
 
     setResendSuccess(false);
 
-    resendVerification(
-      { email },
-      {
-        onSuccess: () => {
-          setResendSuccess(true);
-          setMessage('Verification email sent! Please check your inbox.');
-        },
-        onError: error => {
-          console.error('Resend email error:', error);
-          const errorMessage =
-            error.message || 'Failed to resend email. Please try again.';
-          setMessage(errorMessage);
-        },
-      }
-    );
+    try {
+      await resendVerificationAsync({ email });
+      setResendSuccess(true);
+      setMessage('Verification email sent! Please check your inbox.');
+    } catch (error) {
+      console.error('Resend email error:', error);
+      const errorMessage =
+        error.message || 'Failed to resend email. Please try again.';
+      setMessage(errorMessage);
+    }
   };
 
   // Verifying state

@@ -5,13 +5,7 @@ import ErrorAlert from '../components/ErrorAlert';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const {
-    register,
-    isAuthenticated,
-    isRegistering,
-    registerError,
-    registerSuccess,
-  } = useAuth();
+  const { registerAsync, isAuthenticated, isRegistering } = useAuth();
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -54,33 +48,80 @@ const RegisterPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.firstName.trim())
+    // First Name validation (matching user.validator.js)
+    if (!formData.firstName.trim()) {
       newErrors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+    } else if (formData.firstName.trim().length < 2) {
+      newErrors.firstName = 'First name must be at least 2 characters';
+    } else if (formData.firstName.trim().length > 50) {
+      newErrors.firstName = 'First name must not exceed 50 characters';
+    } else if (!/^[a-zA-Z\s\-'.]+$/.test(formData.firstName.trim())) {
+      newErrors.firstName =
+        'First name can only contain letters, spaces, hyphens, apostrophes, and periods';
+    }
+
+    // Last Name validation (matching user.validator.js)
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    } else if (formData.lastName.trim().length > 50) {
+      newErrors.lastName = 'Last name must not exceed 50 characters';
+    } else if (!/^[a-zA-Z\s\-'.]+$/.test(formData.lastName.trim())) {
+      newErrors.lastName =
+        'Last name can only contain letters, spaces, hyphens, apostrophes, and periods';
+    }
+
+    // Email validation (matching user.validator.js)
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    } else if (formData.email.trim().length < 5) {
+      newErrors.email = 'Email must be at least 5 characters';
+    } else if (formData.email.trim().length > 100) {
+      newErrors.email = 'Email must not exceed 100 characters';
+    } else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.email.trim())) {
       newErrors.email = 'Email is invalid';
     }
+
+    // Password validation (matching user.validator.js)
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
+    } else if (formData.password.trim().length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.trim().length > 25) {
+      newErrors.password = 'Password must not exceed 25 characters';
+    } else if (!/[A-Za-z]/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one letter';
+    } else if (!/\d/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one number';
     }
+
+    // Confirm Password validation
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
+
+    // Phone Number validation (matching user.validator.js)
     if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber = 'Phone number is required';
-    } else if (
-      !/^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/.test(
-        formData.phoneNumber
-      )
-    ) {
-      newErrors.phoneNumber = 'Phone number is invalid';
+    } else if (formData.phoneNumber.trim().length < 7) {
+      newErrors.phoneNumber = 'Phone number must be at least 7 characters';
+    } else if (formData.phoneNumber.trim().length > 20) {
+      newErrors.phoneNumber = 'Phone number must not exceed 20 characters';
+    } else if (!/^\+?[\d\s\-()]+$/.test(formData.phoneNumber.trim())) {
+      newErrors.phoneNumber =
+        'Phone number can only contain digits, spaces, hyphens, parentheses, and leading +';
+    } else {
+      const digitCount = (formData.phoneNumber.trim().match(/\d/g) || [])
+        .length;
+      if (digitCount < 7 || digitCount > 15) {
+        newErrors.phoneNumber =
+          'Phone number must contain between 7 and 15 digits';
+      }
     }
-    if (!formData.agreeToTerms)
+
+    // Terms agreement validation
+    if (!formData.agreeToTerms) {
       newErrors.agreeToTerms = 'You must agree to the terms';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -103,49 +144,50 @@ const RegisterPage = () => {
       phoneNumber: formData.phoneNumber,
     };
 
-    register(userData, {
-      onSuccess: response => {
-        // Check if email verification is required
-        if (response.requiresVerification) {
-          setSubmitMessage(
-            'Account created! Please check your email to verify your account.'
-          );
-          setTimeout(() => {
-            navigate('/login', {
-              state: {
-                message:
-                  'Registration successful! Please verify your email before logging in.',
-              },
-            });
-          }, 2000);
-        } else {
-          setSubmitMessage(
-            'Account created successfully! Welcome to AIOutlet.'
-          );
-          setTimeout(() => {
-            navigate('/', { replace: true });
-          }, 1000);
-        }
-      },
-      onError: error => {
-        console.error('Registration error:', error);
+    try {
+      const response = await registerAsync(userData);
 
-        // Extract error details from API response
-        const errorData = error.response?.data || {};
-        const errorMessage =
-          errorData.error ||
-          error.message ||
-          'Something went wrong. Please try again.';
+      // Check if email verification is required
+      if (response.requiresVerification) {
+        setSubmitMessage(
+          'Account created! Please check your email to verify your account.'
+        );
+        setTimeout(() => {
+          navigate('/login', {
+            state: {
+              message:
+                'Registration successful! Please verify your email before logging in.',
+            },
+          });
+        }, 2000);
+      } else {
+        setSubmitMessage('Account created successfully! Welcome to AIOutlet.');
+        setTimeout(() => {
+          navigate('/', { replace: true });
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
 
-        // Set API validation errors for display in ErrorAlert
-        if (errorData.validationErrors) {
-          setApiValidationErrors(errorData.validationErrors);
-        }
+      // Extract error details from API response
+      const errorData = error.response?.data || {};
 
-        setSubmitMessage(errorMessage);
-        setErrors({ submit: errorMessage });
-      },
-    });
+      // Ensure errorMessage is always a string
+      let errorMessage = 'Something went wrong. Please try again.';
+      if (typeof errorData.error === 'string') {
+        errorMessage = errorData.error;
+      } else if (typeof error.message === 'string') {
+        errorMessage = error.message;
+      }
+
+      // Set API validation errors for display in ErrorAlert
+      if (errorData.validationErrors) {
+        setApiValidationErrors(errorData.validationErrors);
+      }
+
+      setSubmitMessage(errorMessage);
+      setErrors({ submit: errorMessage });
+    }
   };
 
   return (
@@ -432,11 +474,13 @@ const RegisterPage = () => {
             </button>
 
             {/* Success Message Only */}
-            {submitMessage && submitMessage.includes('successfully') && (
-              <div className="p-4 rounded-lg text-center border bg-green-50 dark:bg-green-500/30 text-green-800 dark:text-green-200 border-green-200 dark:border-green-400/50">
-                {submitMessage}
-              </div>
-            )}
+            {submitMessage &&
+              typeof submitMessage === 'string' &&
+              submitMessage.includes('successfully') && (
+                <div className="p-4 rounded-lg text-center border bg-green-50 dark:bg-green-500/30 text-green-800 dark:text-green-200 border-green-200 dark:border-green-400/50">
+                  {submitMessage}
+                </div>
+              )}
           </form>
         </div>
 

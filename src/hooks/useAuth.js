@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -13,6 +13,33 @@ export const useAuth = () => {
   const dispatch = useDispatch();
   const { user, isAuthenticated, setUser, clearUser } = useAuthStore();
 
+  // ============================================
+  // QUERIES
+  // ============================================
+
+  // Get current user query
+  // Only enable if authenticated AND we don't already have user data
+  // This prevents unnecessary refetch after login/register
+  const {
+    data: currentUserData,
+    isLoading: isLoadingUser,
+    error: currentUserError,
+    refetch: refetchUser,
+  } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      const response = await bffClient.get('/api/auth/me');
+      return response.data;
+    },
+    enabled: isAuthenticated && !user, // Only fetch if authenticated but no user data
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    retry: 1, // Only retry once on failure
+  });
+
+  // ============================================
+  // MUTATIONS - Authentication
+  // ============================================
+
   // Register mutation
   const registerMutation = useMutation({
     mutationFn: async userData => {
@@ -20,29 +47,12 @@ export const useAuth = () => {
       return response.data;
     },
     onSuccess: async data => {
-      if (data.user) {
-        // Backend returns { jwt, user } - map to expected format
-        const accessToken = data.jwt || data.accessToken;
-        const refreshToken = data.refreshToken; // May be undefined if using cookies
+      // DO NOT automatically log in user after registration
+      // User must verify email before they can log in
+      console.log('Registration successful:', data);
 
-        if (accessToken) {
-          setToken(accessToken, refreshToken);
-        }
-        setUser(data.user);
-
-        // Transfer guest cart to new user account if exists
-        try {
-          const guestId = localStorage.getItem('guestId');
-          if (guestId) {
-            console.log('Transferring guest cart to new user account...');
-            await dispatch(transferCartAsync()).unwrap();
-            console.log('Cart transfer completed successfully');
-          }
-        } catch (error) {
-          console.error('Cart transfer failed:', error);
-          // Don't fail registration if cart transfer fails
-        }
-      }
+      // Note: We intentionally do NOT call setToken() or setUser() here
+      // This ensures the user must verify their email and log in manually
     },
     onError: error => {
       console.error('Registration failed:', error);
@@ -111,46 +121,9 @@ export const useAuth = () => {
     },
   });
 
-  // Get current user query
-  // Only enable if authenticated AND we don't already have user data
-  // This prevents unnecessary refetch after login/register
-  const {
-    data: currentUserData,
-    isLoading: isLoadingUser,
-    error: currentUserError,
-    refetch: refetchUser,
-  } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: async () => {
-      const response = await bffClient.get('/api/auth/me');
-      return response.data;
-    },
-    enabled: isAuthenticated && !user, // Only fetch if authenticated but no user data
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    retry: 1, // Only retry once on failure
-  });
-
-  // Handle currentUser data changes (React Query v5 pattern)
-  React.useEffect(() => {
-    if (currentUserData?.user) {
-      setUser(currentUserData.user);
-    }
-  }, [currentUserData, setUser]);
-
-  // Handle currentUser error (React Query v5 pattern)
-  React.useEffect(() => {
-    if (currentUserError) {
-      console.error('Failed to fetch current user:', currentUserError);
-      // If fetching user fails, might be invalid token
-      if (
-        currentUserError.statusCode === 401 ||
-        currentUserError.response?.status === 401
-      ) {
-        clearUser();
-        navigate('/login');
-      }
-    }
-  }, [currentUserError, clearUser, navigate]);
+  // ============================================
+  // MUTATIONS - Password Management
+  // ============================================
 
   // Forgot password mutation
   const forgotPasswordMutation = useMutation({
@@ -184,6 +157,10 @@ export const useAuth = () => {
     },
   });
 
+  // ============================================
+  // MUTATIONS - Email Verification
+  // ============================================
+
   // Verify email mutation
   const verifyEmailMutation = useMutation({
     mutationFn: async token => {
@@ -204,6 +181,36 @@ export const useAuth = () => {
     },
   });
 
+  // ============================================
+  // SIDE EFFECTS
+  // ============================================
+
+  // Handle currentUser data changes (React Query v5 pattern)
+  useEffect(() => {
+    if (currentUserData?.user) {
+      setUser(currentUserData.user);
+    }
+  }, [currentUserData, setUser]);
+
+  // Handle currentUser error (React Query v5 pattern)
+  useEffect(() => {
+    if (currentUserError) {
+      console.error('Failed to fetch current user:', currentUserError);
+      // If fetching user fails, might be invalid token
+      if (
+        currentUserError.statusCode === 401 ||
+        currentUserError.response?.status === 401
+      ) {
+        clearUser();
+        navigate('/login');
+      }
+    }
+  }, [currentUserError, clearUser, navigate]);
+
+  // ============================================
+  // RETURN API
+  // ============================================
+
   return {
     // State
     user,
@@ -214,58 +221,37 @@ export const useAuth = () => {
       logoutMutation.isPending ||
       isLoadingUser,
 
-    // Register
-    register: registerMutation.mutate,
+    // Register (async/await pattern)
     registerAsync: registerMutation.mutateAsync,
     isRegistering: registerMutation.isPending,
-    registerError: registerMutation.error,
-    registerSuccess: registerMutation.isSuccess,
 
-    // Login
-    login: loginMutation.mutate,
+    // Login (async/await pattern)
     loginAsync: loginMutation.mutateAsync,
     isLoggingIn: loginMutation.isPending,
-    loginError: loginMutation.error,
-    loginSuccess: loginMutation.isSuccess,
 
-    // Logout
-    logout: logoutMutation.mutate,
+    // Logout (async/await pattern)
+    logoutAsync: logoutMutation.mutateAsync,
     isLoggingOut: logoutMutation.isPending,
 
     // User profile
     refetchUser,
     isLoadingUser,
 
-    // Password operations
-    forgotPassword: forgotPasswordMutation.mutate,
+    // Password operations (async/await pattern)
     forgotPasswordAsync: forgotPasswordMutation.mutateAsync,
     isForgotPasswordLoading: forgotPasswordMutation.isPending,
-    forgotPasswordError: forgotPasswordMutation.error,
-    forgotPasswordSuccess: forgotPasswordMutation.isSuccess,
 
-    resetPassword: resetPasswordMutation.mutate,
     resetPasswordAsync: resetPasswordMutation.mutateAsync,
     isResetPasswordLoading: resetPasswordMutation.isPending,
-    resetPasswordError: resetPasswordMutation.error,
-    resetPasswordSuccess: resetPasswordMutation.isSuccess,
 
-    changePassword: changePasswordMutation.mutate,
     changePasswordAsync: changePasswordMutation.mutateAsync,
     isChangePasswordLoading: changePasswordMutation.isPending,
-    changePasswordError: changePasswordMutation.error,
-    changePasswordSuccess: changePasswordMutation.isSuccess,
 
-    // Email verification
-    verifyEmail: verifyEmailMutation.mutate,
+    // Email verification (async/await pattern)
     verifyEmailAsync: verifyEmailMutation.mutateAsync,
     isVerifyingEmail: verifyEmailMutation.isPending,
-    verifyEmailError: verifyEmailMutation.error,
-    verifyEmailSuccess: verifyEmailMutation.isSuccess,
 
-    resendVerification: resendVerificationMutation.mutate,
     resendVerificationAsync: resendVerificationMutation.mutateAsync,
     isResendingVerification: resendVerificationMutation.isPending,
-    resendVerificationError: resendVerificationMutation.error,
-    resendVerificationSuccess: resendVerificationMutation.isSuccess,
   };
 };

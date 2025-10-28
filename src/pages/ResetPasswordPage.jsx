@@ -12,7 +12,7 @@ const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
-  const { resetPassword, isResetPasswordLoading } = useAuth();
+  const { resetPasswordAsync, isResetPasswordLoading } = useAuth();
 
   const [formData, setFormData] = useState({
     password: '',
@@ -101,33 +101,28 @@ const ResetPasswordPage = () => {
 
     setErrors({});
 
-    resetPassword(
-      { token, password: formData.password },
-      {
-        onSuccess: () => {
-          setResetSuccess(true);
-          // Redirect to login after 3 seconds
-          setTimeout(() => {
-            navigate('/login', {
-              state: {
-                message:
-                  'Password reset successful! Please log in with your new password.',
-              },
-            });
-          }, 3000);
-        },
-        onError: error => {
-          console.error('Reset password error:', error);
-          const errorMessage =
-            error.message ||
-            'Failed to reset password. The link may have expired.';
-          setErrors({
-            submit: errorMessage,
-          });
-          setTokenValid(false);
-        },
-      }
-    );
+    try {
+      await resetPasswordAsync({ token, password: formData.password });
+
+      setResetSuccess(true);
+      // Redirect to login after 3 seconds
+      setTimeout(() => {
+        navigate('/login', {
+          state: {
+            message:
+              'Password reset successful! Please log in with your new password.',
+          },
+        });
+      }, 3000);
+    } catch (error) {
+      console.error('Reset password error:', error);
+      const errorMessage =
+        error.message || 'Failed to reset password. The link may have expired.';
+      setErrors({
+        submit: errorMessage,
+      });
+      setTokenValid(false);
+    }
   };
 
   // Invalid token view

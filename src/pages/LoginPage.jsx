@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isLoggingIn, loginError, isAuthenticated } = useAuth();
+  const { loginAsync, isLoggingIn, isAuthenticated } = useAuth();
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -65,26 +65,22 @@ const LoginPage = () => {
     setSubmitMessage('');
     setErrors({});
 
-    login(
-      { email: formData.email, password: formData.password },
-      {
-        onSuccess: () => {
-          setSubmitMessage('Login successful! Welcome back to AIOutlet.');
-          // Redirect to the page they were trying to access, or home
-          const from = location.state?.from?.pathname || '/';
-          setTimeout(() => {
-            navigate(from, { replace: true });
-          }, 500);
-        },
-        onError: error => {
-          console.error('Login error:', error);
-          const errorMessage =
-            error.message || 'Invalid credentials. Please try again.';
-          setSubmitMessage(errorMessage);
-          setErrors({ submit: errorMessage });
-        },
-      }
-    );
+    try {
+      await loginAsync({ email: formData.email, password: formData.password });
+
+      setSubmitMessage('Login successful! Welcome back to AIOutlet.');
+      // Redirect to the page they were trying to access, or home
+      const from = location.state?.from?.pathname || '/';
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 500);
+    } catch (error) {
+      console.error('Login error:', error);
+      const errorMessage =
+        error.message || 'Invalid credentials. Please try again.';
+      setSubmitMessage(errorMessage);
+      setErrors({ submit: errorMessage });
+    }
   };
 
   return (

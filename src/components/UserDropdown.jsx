@@ -111,7 +111,7 @@ const UserDropdown = ({ className = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const { logout, isLoggingOut } = useAuth();
+  const { logoutAsync, isLoggingOut } = useAuth();
   const { user } = useAuthStore();
 
   // Close dropdown when clicking outside
@@ -129,7 +129,7 @@ const UserDropdown = ({ className = '' }) => {
   const handleLogout = async () => {
     setIsOpen(false);
     try {
-      await logout();
+      await logoutAsync();
     } catch (error) {
       console.error('Logout failed:', error);
       // Navigate to login even if logout fails

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const ForgotPasswordPage = () => {
-  const { forgotPassword, isForgotPasswordLoading } = useAuth();
+  const { forgotPasswordAsync, isForgotPasswordLoading } = useAuth();
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -50,26 +50,22 @@ const ForgotPasswordPage = () => {
     setSubmitMessage('');
     setErrors({});
 
-    forgotPassword(
-      { email: formData.email },
-      {
-        onSuccess: () => {
-          setSubmitMessage(
-            'Password reset instructions have been sent to your email address. Please check your inbox and follow the instructions to reset your password.'
-          );
-          // Clear form after successful submission
-          setFormData({ email: '' });
-        },
-        onError: error => {
-          console.error('Forgot password error:', error);
-          const errorMessage =
-            error.message ||
-            'Unable to send reset instructions. Please try again later.';
-          setSubmitMessage(errorMessage);
-          setErrors({ submit: errorMessage });
-        },
-      }
-    );
+    try {
+      await forgotPasswordAsync({ email: formData.email });
+
+      setSubmitMessage(
+        'Password reset instructions have been sent to your email address. Please check your inbox and follow the instructions to reset your password.'
+      );
+      // Clear form after successful submission
+      setFormData({ email: '' });
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      const errorMessage =
+        error.message ||
+        'Unable to send reset instructions. Please try again later.';
+      setSubmitMessage(errorMessage);
+      setErrors({ submit: errorMessage });
+    }
   };
 
   return (
