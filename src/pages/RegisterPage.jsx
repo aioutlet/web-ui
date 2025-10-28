@@ -360,25 +360,25 @@ const RegisterPage = () => {
 
             {/* Terms Agreement */}
             <div>
-              <div className="flex items-start">
+              <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="agreeToTerms"
                   name="agreeToTerms"
                   checked={formData.agreeToTerms}
                   onChange={handleInputChange}
-                  className="mt-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 transition-colors duration-200"
+                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 transition-colors duration-200"
                 />
                 <label
                   htmlFor="agreeToTerms"
                   className="ml-2 text-sm text-gray-600 dark:text-gray-400"
                 >
-                  By signing up, you agree to AIOutlet's{' '}
+                  I agree to the{' '}
                   <Link
                     to="/terms"
                     className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors duration-200"
                   >
-                    Terms of Use
+                    Terms
                   </Link>{' '}
                   and{' '}
                   <Link
@@ -387,7 +387,6 @@ const RegisterPage = () => {
                   >
                     Privacy Policy
                   </Link>
-                  .
                 </label>
               </div>
               {errors.agreeToTerms && (
