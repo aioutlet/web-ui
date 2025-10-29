@@ -66,36 +66,41 @@ export const useAuth = () => {
         email,
         password,
       });
-      return response.data;
-    },
-    onSuccess: async data => {
-      // Backend returns { jwt, user } - map to expected format
+
+      // Process the response immediately in mutationFn
+      const data = response.data;
+
       const accessToken = data.jwt || data.accessToken;
-      const refreshToken = data.refreshToken; // May be undefined if using cookies
+      const refreshToken = data.refreshToken;
 
       if (accessToken) {
         setToken(accessToken, refreshToken);
       }
-      setUser(data.user);
+
+      if (data.user) {
+        setUser(data.user);
+      }
 
       // Transfer guest cart to user account if exists
       try {
         const guestId = localStorage.getItem('guestId');
         if (guestId) {
-          console.log('Transferring guest cart to user account...');
           await dispatch(transferCartAsync()).unwrap();
-          console.log('Cart transfer completed successfully');
         }
       } catch (error) {
         console.error('Cart transfer failed:', error);
         // Don't fail login if cart transfer fails
       }
 
-      // Don't invalidate - we already have fresh user data from login
-      // queryClient.invalidateQueries(['currentUser']);
+      return data;
     },
     onError: error => {
-      console.error('Login failed:', error);
+      console.error('Login mutation failed:', {
+        message: error.message,
+        statusCode: error.statusCode,
+        response: error.response,
+        fullError: error,
+      });
     },
   });
 
@@ -163,7 +168,7 @@ export const useAuth = () => {
 
   // Verify email mutation
   const verifyEmailMutation = useMutation({
-    mutationFn: async token => {
+    mutationFn: async ({ token }) => {
       const response = await bffClient.get(
         `/api/auth/email/verify?token=${token}`
       );
@@ -173,7 +178,7 @@ export const useAuth = () => {
 
   // Resend verification email mutation
   const resendVerificationMutation = useMutation({
-    mutationFn: async email => {
+    mutationFn: async ({ email }) => {
       const response = await bffClient.post('/api/auth/email/resend', {
         email,
       });

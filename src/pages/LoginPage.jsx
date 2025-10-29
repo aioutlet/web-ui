@@ -59,6 +59,7 @@ const LoginPage = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (!validateForm()) return;
 
@@ -66,18 +67,14 @@ const LoginPage = () => {
     setErrors({});
 
     try {
-      await loginAsync({ email: formData.email, password: formData.password });
-
+      await loginAsync({
+        email: formData.email,
+        password: formData.password,
+      });
       setSubmitMessage('Login successful! Welcome back to AIOutlet.');
-      // Redirect to the page they were trying to access, or home
-      const from = location.state?.from?.pathname || '/';
-      setTimeout(() => {
-        navigate(from, { replace: true });
-      }, 500);
     } catch (error) {
       console.error('Login error:', error);
-      const errorMessage =
-        error.message || 'Invalid credentials. Please try again.';
+      const errorMessage = error.message || 'Login failed. Please try again.';
       setSubmitMessage(errorMessage);
       setErrors({ submit: errorMessage });
     }
