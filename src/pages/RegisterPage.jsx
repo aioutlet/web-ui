@@ -149,17 +149,11 @@ const RegisterPage = () => {
 
       // Check if email verification is required
       if (response.requiresVerification) {
-        setSubmitMessage(
-          'Account created! Please check your email to verify your account.'
-        );
-        setTimeout(() => {
-          navigate('/login', {
-            state: {
-              message:
-                'Registration successful! Please verify your email before logging in.',
-            },
-          });
-        }, 2000);
+        // Navigate to success page with email in state
+        navigate('/registration-success', {
+          state: { email: formData.email },
+          replace: true,
+        });
       } else {
         setSubmitMessage('Account created successfully! Welcome to AIOutlet.');
         setTimeout(() => {

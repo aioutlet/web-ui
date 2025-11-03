@@ -13,6 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import ContactUsPage from './pages/ContactUsPage';
 import RegisterPage from './pages/RegisterPage';
+import RegistrationSuccessPage from './pages/RegistrationSuccessPage';
 import LoginPage from './pages/LoginPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
@@ -65,6 +66,10 @@ function App() {
                     element={<ContactUsPage />}
                   />
                   <Route path="/register" element={<RegisterPage />} />
+                  <Route
+                    path="/registration-success"
+                    element={<RegistrationSuccessPage />}
+                  />
                   <Route path="/login" element={<LoginPage />} />
                   <Route
                     path="/forgot-password"
