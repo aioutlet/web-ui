@@ -94,6 +94,11 @@ const TrendingProducts = () => {
                     src={product.image}
                     alt={product.name}
                     className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    onError={e => {
+                      e.target.onerror = null; // Prevent infinite loop
+                      e.target.src =
+                        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop';
+                    }}
                   />
                   {/* Badge */}
                   <div className="absolute left-4 top-4">
