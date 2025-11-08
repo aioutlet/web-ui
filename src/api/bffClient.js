@@ -28,7 +28,7 @@ bffClient.interceptors.request.use(
     }
 
     // Add correlation ID for request tracing
-    const correlationId = `web-ui-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const correlationId = `customer-ui-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     config.headers['x-correlation-id'] = correlationId;
 
     // Log in development
