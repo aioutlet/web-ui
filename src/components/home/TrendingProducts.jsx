@@ -1,15 +1,13 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getBadgeStyles } from '../../utils/productHelpers';
-import { useTrendingProducts } from '../../hooks/useHomeData';
+import { useHomeData } from '../../hooks/useHomeData';
 
 const TrendingProducts = () => {
   const navigate = useNavigate();
-  const {
-    data: products = [],
-    isLoading: loading,
-    error,
-  } = useTrendingProducts(4);
+  const { data, isLoading: loading, error } = useHomeData(4, 5);
+
+  const products = data?.trendingProducts || [];
 
   const handleViewDetails = productLink => {
     navigate(productLink);

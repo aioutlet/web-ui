@@ -15,6 +15,7 @@ const CheckoutPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { items, totalItems, totalPrice } = useSelector(state => state.cart);
+  const { user } = useSelector(state => state.auth);
 
   // Redirect to cart if empty
   useEffect(() => {
@@ -117,8 +118,6 @@ const CheckoutPage = () => {
     setIsProcessing(true);
 
     try {
-      const { user } = useSelector(state => state.auth);
-
       if (!user) {
         toast.error('Please log in to place an order');
         navigate('/login', { state: { from: '/checkout' } });

@@ -1,13 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useTrendingCategories } from '../../hooks/useHomeData';
+import { useHomeData } from '../../hooks/useHomeData';
 
 const ShopByCategory = () => {
-  const {
-    data: categories = [],
-    isLoading: loading,
-    error,
-  } = useTrendingCategories(5);
+  const { data, isLoading: loading, error } = useHomeData(4, 5);
+
+  const categories = data?.trendingCategories || [];
 
   return (
     <section className="relative bg-gray-50 dark:bg-gray-800/50 py-16 sm:py-20">

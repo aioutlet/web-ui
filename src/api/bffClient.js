@@ -7,7 +7,9 @@ import { getToken, setToken, clearAuth } from '../utils/storage';
 
 // BFF Configuration
 export const BFF_BASE_URL =
-  process.env.REACT_APP_BFF_URL || 'http://localhost:3100';
+  process.env.REACT_APP_BFF_URL || 'http://localhost:3580';
+const BFF_DAPR_APP_ID =
+  process.env.REACT_APP_BFF_DAPR_APP_ID || 'web-bff-service';
 const BFF_TIMEOUT = 10000; // 10 seconds
 
 const bffClient = axios.create({
@@ -21,6 +23,10 @@ const bffClient = axios.create({
 // Request interceptor - Add JWT token and correlation ID
 bffClient.interceptors.request.use(
   config => {
+    // Transform URL to use Dapr invoke API
+    // /api/storefront/trending -> /v1.0/invoke/web-bff-service/method/api/storefront/trending
+    config.url = `/v1.0/invoke/${BFF_DAPR_APP_ID}/method${config.url}`;
+
     // Add auth token
     const token = getToken();
     if (token) {
