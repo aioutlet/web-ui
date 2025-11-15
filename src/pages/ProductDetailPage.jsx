@@ -7,9 +7,7 @@ import {
   openCart,
 } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
-import axios from 'axios';
-
-const BFF_URL = process.env.REACT_APP_BFF_URL || 'http://localhost:3100';
+import bffClient from '../api/bffClient';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -81,7 +79,7 @@ const ProductDetailPage = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${BFF_URL}/api/products/${id}`);
+        const response = await bffClient.get(`/api/products/${id}`);
 
         if (response.data.success) {
           const p = response.data.data;

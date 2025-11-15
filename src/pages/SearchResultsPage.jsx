@@ -13,9 +13,7 @@ import {
 import { HeartIcon as HeartOutline } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolid } from '@heroicons/react/24/solid';
 import StarRating from '../components/ui/StarRating';
-import axios from 'axios';
-
-const BFF_URL = process.env.REACT_APP_BFF_URL || 'http://localhost:3100';
+import bffClient from '../api/bffClient';
 
 const SearchResultsPage = () => {
   const navigate = useNavigate();
@@ -76,8 +74,8 @@ const SearchResultsPage = () => {
         params.append('skip', ((currentPage - 1) * productsPerPage).toString());
         params.append('limit', productsPerPage.toString());
 
-        const response = await axios.get(
-          `${BFF_URL}/api/products/search?${params.toString()}`
+        const response = await bffClient.get(
+          `/api/products/search?${params.toString()}`
         );
 
         if (response.data.success) {

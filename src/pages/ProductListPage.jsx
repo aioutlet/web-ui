@@ -10,9 +10,7 @@ import {
 } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
 import Paginator from '../components/ui/Paginator';
-import axios from 'axios';
-
-const BFF_URL = process.env.REACT_APP_BFF_URL || 'http://localhost:3100';
+import bffClient from '../api/bffClient';
 
 // Dynamic filter configuration based on category
 const getCategoryFilters = (department, category, subcategory) => {
@@ -166,8 +164,8 @@ const ProductListPage = ({ category: propCategory }) => {
         params.append('skip', ((currentPage - 1) * productsPerPage).toString());
         params.append('limit', productsPerPage.toString());
 
-        const response = await axios.get(
-          `${BFF_URL}/api/products?${params.toString()}`
+        const response = await bffClient.get(
+          `/api/products?${params.toString()}`
         );
 
         if (response.data.success) {
