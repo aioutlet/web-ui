@@ -89,15 +89,25 @@ const ProductDetailPage = () => {
           console.log('Product details response:', p);
 
           // Extract rating information from the aggregated response
-          const ratingDetails = p.ratingDetails;
-          const rating = ratingDetails?.averageRating || p.average_rating || 0;
-          const reviewCount = ratingDetails?.totalReviews || p.num_reviews || 0;
+          // Handle both camelCase (API) and snake_case (database) formats
+          const ratingDetails = p.ratingDetails || p.review_aggregates;
+          const rating =
+            ratingDetails?.averageRating ||
+            ratingDetails?.average_rating ||
+            p.average_rating ||
+            0;
+          const reviewCount =
+            ratingDetails?.totalReviews ||
+            ratingDetails?.total_review_count ||
+            p.num_reviews ||
+            0;
           const reviews = Array.isArray(p.reviews) ? p.reviews : [];
 
           console.log('Extracted rating data:', {
             rating,
             reviewCount,
             reviews: reviews.length,
+            ratingDetails,
           });
 
           // Transform API product to match frontend format
