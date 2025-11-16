@@ -9,7 +9,7 @@ import bffClient from './bffClient';
  * @returns {Promise} Cart data
  */
 export const getCart = async () => {
-  const response = await bffClient.get('/cart');
+  const response = await bffClient.get('/api/cart');
   return response.data;
 };
 
@@ -19,7 +19,7 @@ export const getCart = async () => {
  * @returns {Promise} Updated cart
  */
 export const addItem = async itemData => {
-  const response = await bffClient.post('/cart/items', itemData);
+  const response = await bffClient.post('/api/cart/items', itemData);
   return response.data;
 };
 
@@ -30,7 +30,7 @@ export const addItem = async itemData => {
  * @returns {Promise} Updated cart
  */
 export const updateItem = async (productId, quantity) => {
-  const response = await bffClient.put(`/cart/items/${productId}`, {
+  const response = await bffClient.put(`/api/cart/items/${productId}`, {
     quantity,
   });
   return response.data;
@@ -42,7 +42,7 @@ export const updateItem = async (productId, quantity) => {
  * @returns {Promise} Updated cart
  */
 export const removeItem = async productId => {
-  const response = await bffClient.delete(`/cart/items/${productId}`);
+  const response = await bffClient.delete(`/api/cart/items/${productId}`);
   return response.data;
 };
 
@@ -51,7 +51,7 @@ export const removeItem = async productId => {
  * @returns {Promise} Success message
  */
 export const clearCart = async () => {
-  const response = await bffClient.delete('/cart');
+  const response = await bffClient.delete('/api/cart');
   return response.data;
 };
 
@@ -61,7 +61,7 @@ export const clearCart = async () => {
  * @returns {Promise} Merged cart
  */
 export const transferCart = async guestId => {
-  const response = await bffClient.post('/cart/transfer', { guestId });
+  const response = await bffClient.post('/api/cart/transfer', { guestId });
   return response.data;
 };
 
@@ -75,7 +75,7 @@ export const transferCart = async guestId => {
  * @returns {Promise} Cart data
  */
 export const getGuestCart = async guestId => {
-  const response = await bffClient.get(`/cart/guest/${guestId}`);
+  const response = await bffClient.get(`/api/cart/guest/${guestId}`);
   return response.data;
 };
 
@@ -87,7 +87,7 @@ export const getGuestCart = async guestId => {
  */
 export const addGuestItem = async (guestId, itemData) => {
   const response = await bffClient.post(
-    `/cart/guest/${guestId}/items`,
+    `/api/cart/guest/${guestId}/items`,
     itemData
   );
   return response.data;
@@ -102,7 +102,7 @@ export const addGuestItem = async (guestId, itemData) => {
  */
 export const updateGuestItem = async (guestId, productId, quantity) => {
   const response = await bffClient.put(
-    `/cart/guest/${guestId}/items/${productId}`,
+    `/api/cart/guest/${guestId}/items/${productId}`,
     { quantity }
   );
   return response.data;
@@ -116,7 +116,7 @@ export const updateGuestItem = async (guestId, productId, quantity) => {
  */
 export const removeGuestItem = async (guestId, productId) => {
   const response = await bffClient.delete(
-    `/cart/guest/${guestId}/items/${productId}`
+    `/api/cart/guest/${guestId}/items/${productId}`
   );
   return response.data;
 };
@@ -127,7 +127,7 @@ export const removeGuestItem = async (guestId, productId) => {
  * @returns {Promise} Success message
  */
 export const clearGuestCart = async guestId => {
-  const response = await bffClient.delete(`/cart/guest/${guestId}`);
+  const response = await bffClient.delete(`/api/cart/guest/${guestId}`);
   return response.data;
 };
 

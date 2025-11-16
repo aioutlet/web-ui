@@ -35,6 +35,8 @@ const mapBackendCartToState = backendCart => {
     price: item.price,
     quantity: item.quantity,
     image: item.image || '/placeholder.png',
+    selectedColor: item.selectedColor,
+    selectedSize: item.selectedSize,
   }));
 
   return {
@@ -54,9 +56,9 @@ export const fetchCartAsync = createAsyncThunk(
   'cart/fetch',
   async (_, { getState, rejectWithValue }) => {
     try {
-      const { auth } = getState();
+      const { user } = getState();
 
-      if (auth.user) {
+      if (user.user) {
         // Authenticated user
         const response = await cartAPI.getCart();
         return { data: response.data, isGuest: false };
@@ -69,7 +71,7 @@ export const fetchCartAsync = createAsyncThunk(
     } catch (error) {
       // If cart doesn't exist, return empty cart
       if (error.response?.status === 404) {
-        return { data: { items: [] }, isGuest: !getState().auth.user };
+        return { data: { items: [] }, isGuest: !getState().user.user };
       }
       return rejectWithValue(
         error.response?.data?.error?.message || 'Failed to fetch cart'
@@ -85,15 +87,18 @@ export const addToCartAsync = createAsyncThunk(
   'cart/addItem',
   async ({ product, quantity = 1 }, { getState, rejectWithValue }) => {
     try {
-      const { auth } = getState();
+      const { user } = getState();
       const itemData = {
         productId: product.id,
         productName: product.name,
         price: product.price,
         quantity,
+        image: product.image,
+        selectedColor: product.selectedColor,
+        selectedSize: product.selectedSize,
       };
 
-      if (auth.user) {
+      if (user.user) {
         // Authenticated user
         const response = await cartAPI.addItem(itemData);
         return { data: response.data, isGuest: false };
@@ -104,6 +109,7 @@ export const addToCartAsync = createAsyncThunk(
         return { data: response.data, isGuest: true, guestId };
       }
     } catch (error) {
+      console.error('Add to cart error:', error);
       return rejectWithValue(
         error.response?.data?.error?.message || 'Failed to add item to cart'
       );
@@ -118,9 +124,9 @@ export const updateQuantityAsync = createAsyncThunk(
   'cart/updateQuantity',
   async ({ productId, quantity }, { getState, rejectWithValue }) => {
     try {
-      const { auth } = getState();
+      const { user } = getState();
 
-      if (auth.user) {
+      if (user.user) {
         // Authenticated user
         const response = await cartAPI.updateItem(productId, quantity);
         return { data: response.data, isGuest: false };
@@ -149,9 +155,9 @@ export const removeFromCartAsync = createAsyncThunk(
   'cart/removeItem',
   async (productId, { getState, rejectWithValue }) => {
     try {
-      const { auth } = getState();
+      const { user } = getState();
 
-      if (auth.user) {
+      if (user.user) {
         // Authenticated user
         const response = await cartAPI.removeItem(productId);
         return { data: response.data, isGuest: false };
@@ -177,9 +183,9 @@ export const clearCartAsync = createAsyncThunk(
   'cart/clear',
   async (_, { getState, rejectWithValue }) => {
     try {
-      const { auth } = getState();
+      const { user } = getState();
 
-      if (auth.user) {
+      if (user.user) {
         // Authenticated user
         await cartAPI.clearCart();
       } else {

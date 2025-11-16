@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import {
   addToCartAsync,
   removeFromCartAsync,
@@ -138,37 +139,51 @@ const ProductDetailPage = () => {
   }, [id]);
 
   // Handle cart actions
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (product) {
-      const cartItem = {
-        product: {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.images[selectedImage],
-        },
-        quantity: quantity,
-      };
+      try {
+        const cartItem = {
+          product: {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.images[selectedImage],
+          },
+          quantity: quantity,
+        };
 
-      // Add selected color if available
-      if (
-        product.colors &&
-        product.colors.length > 0 &&
-        selectedColor !== null
-      ) {
-        cartItem.product.selectedColor = product.colors[selectedColor].name;
-      }
+        // Add selected color if available
+        if (
+          product.colors &&
+          product.colors.length > 0 &&
+          selectedColor !== null
+        ) {
+          cartItem.product.selectedColor = product.colors[selectedColor].name;
+        }
 
-      // Add selected size if available
-      if (product.sizes && product.sizes.length > 0 && selectedSize) {
-        cartItem.product.selectedSize = selectedSize;
-      }
+        // Add selected size if available
+        if (product.sizes && product.sizes.length > 0 && selectedSize) {
+          cartItem.product.selectedSize = selectedSize;
+        }
 
-      dispatch(addToCartAsync(cartItem));
+        await dispatch(addToCartAsync(cartItem)).unwrap();
 
-      // Open cart sidebar only on desktop (lg and above)
-      if (window.innerWidth >= 1024) {
-        dispatch(openCart());
+        // Show success message
+        toast.success('Item added to cart!', {
+          position: 'top-right',
+          autoClose: 2000,
+        });
+
+        // Open cart sidebar only on desktop (lg and above)
+        if (window.innerWidth >= 1024) {
+          dispatch(openCart());
+        }
+      } catch (error) {
+        console.error('Failed to add to cart:', error);
+        toast.error(error.message || 'Failed to add item to cart', {
+          position: 'top-right',
+          autoClose: 3000,
+        });
       }
     }
   };
