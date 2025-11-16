@@ -175,6 +175,75 @@ export const filterProducts = (filters = {}) => {
 };
 
 /**
+ * Color name to hex value mapping
+ * Maps common color names to their hex values for display
+ */
+const colorHexMap = {
+  // Basic colors
+  Black: '#000000',
+  White: '#FFFFFF',
+  Gray: '#9CA3AF',
+  Red: '#EF4444',
+  Blue: '#3B82F6',
+  Navy: '#1E3A8A',
+  Green: '#10B981',
+  Yellow: '#FBBF24',
+  Orange: '#F97316',
+  Purple: '#A855F7',
+  Pink: '#EC4899',
+  Brown: '#92400E',
+  Beige: '#D4C5B9',
+  Gold: '#D4AF37',
+  Silver: '#C0C0C0',
+  // Additional colors
+  Charcoal: '#36454F',
+  Cream: '#FFFDD0',
+  Ivory: '#FFFFF0',
+  Khaki: '#C3B091',
+  Maroon: '#800000',
+  Olive: '#808000',
+  Teal: '#008080',
+  Turquoise: '#40E0D0',
+  Coral: '#FF7F50',
+  Lavender: '#E6E6FA',
+  Mint: '#98FF98',
+  Peach: '#FFDAB9',
+  Rose: '#FF007F',
+  Sage: '#9CAF88',
+};
+
+/**
+ * Convert color name to hex value
+ * @param {string} colorName - Color name
+ * @returns {string} Hex color value or default gray
+ */
+export const getColorHex = colorName => {
+  return colorHexMap[colorName] || '#9CA3AF'; // Default to gray
+};
+
+/**
+ * Convert color strings array to color objects with name and value
+ * @param {Array<string>} colors - Array of color names
+ * @returns {Array<Object>} Array of color objects with name and value
+ */
+export const convertColorsToObjects = colors => {
+  if (!Array.isArray(colors)) return [];
+
+  return colors.map(color => {
+    // If already an object, return as is
+    if (typeof color === 'object' && color.name && color.value) {
+      return color;
+    }
+
+    // Convert string to object
+    return {
+      name: color,
+      value: getColorHex(color),
+    };
+  });
+};
+
+/**
  * Get badge styling classes
  * @param {string} badge - Badge name
  * @returns {string} Tailwind CSS classes for the badge

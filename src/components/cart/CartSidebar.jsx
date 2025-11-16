@@ -169,6 +169,31 @@ const CartSidebar = () => {
                       </h3>
                     </Link>
 
+                    {/* Size and Color Info */}
+                    {(item.selectedSize || item.selectedColor) && (
+                      <div className="mt-1 flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        {item.selectedColor && (
+                          <span>
+                            Color:{' '}
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              {item.selectedColor}
+                            </span>
+                          </span>
+                        )}
+                        {item.selectedColor && item.selectedSize && (
+                          <span>•</span>
+                        )}
+                        {item.selectedSize && (
+                          <span>
+                            Size:{' '}
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              {item.selectedSize}
+                            </span>
+                          </span>
+                        )}
+                      </div>
+                    )}
+
                     {/* Badge if applicable */}
                     {item.badge && (
                       <div className="mt-1">

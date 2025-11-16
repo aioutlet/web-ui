@@ -8,6 +8,7 @@ import {
 } from '../store/slices/cartSlice';
 import StarRating from '../components/ui/StarRating';
 import bffClient from '../api/bffClient';
+import { convertColorsToObjects } from '../utils/productHelpers';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -19,6 +20,7 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
+  const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   // Removed activeTab state - using separate sections instead
   const [loading, setLoading] = useState(true);
@@ -115,7 +117,7 @@ const ProductDetailPage = () => {
             department: p.department,
             category: p.category,
             subcategory: p.subcategory,
-            colors: p.colors || [],
+            colors: convertColorsToObjects(p.colors || []),
             sizes: p.sizes || [],
             specifications: p.specifications || {},
             inStock: true,
@@ -138,17 +140,32 @@ const ProductDetailPage = () => {
   // Handle cart actions
   const handleAddToCart = () => {
     if (product) {
-      dispatch(
-        addToCartAsync({
-          product: {
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            image: product.images[selectedImage],
-          },
-          quantity: quantity,
-        })
-      );
+      const cartItem = {
+        product: {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.images[selectedImage],
+        },
+        quantity: quantity,
+      };
+
+      // Add selected color if available
+      if (
+        product.colors &&
+        product.colors.length > 0 &&
+        selectedColor !== null
+      ) {
+        cartItem.product.selectedColor = product.colors[selectedColor].name;
+      }
+
+      // Add selected size if available
+      if (product.sizes && product.sizes.length > 0 && selectedSize) {
+        cartItem.product.selectedSize = selectedSize;
+      }
+
+      dispatch(addToCartAsync(cartItem));
+
       // Open cart sidebar only on desktop (lg and above)
       if (window.innerWidth >= 1024) {
         dispatch(openCart());
@@ -285,7 +302,7 @@ const ProductDetailPage = () => {
             </div>
 
             {/* Color picker */}
-            {product.colors && (
+            {product.colors && product.colors.length > 0 && (
               <div className="mt-8">
                 <div className="flex items-center space-x-3">
                   <h3 className="text-sm font-medium text-gray-900 dark:text-white w-16">
@@ -328,6 +345,50 @@ const ProductDetailPage = () => {
 
                 <fieldset className="sr-only">
                   <legend>Choose a color</legend>
+                </fieldset>
+              </div>
+            )}
+
+            {/* Size picker */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="mt-8">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                    Size
+                  </h3>
+                  {selectedSize && (
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Selected:{' '}
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        {selectedSize}
+                      </span>
+                    </span>
+                  )}
+                </div>
+                <fieldset>
+                  <legend className="sr-only">Choose a size</legend>
+                  <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
+                    {product.sizes.map(size => (
+                      <label
+                        key={size}
+                        className={`group relative flex items-center justify-center rounded-md border py-3 px-3 text-sm font-medium uppercase hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none cursor-pointer transition-all duration-200 ${
+                          selectedSize === size
+                            ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 ring-2 ring-indigo-500'
+                            : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white hover:border-gray-400 dark:hover:border-gray-500'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="size-choice"
+                          value={size}
+                          className="sr-only"
+                          checked={selectedSize === size}
+                          onChange={() => setSelectedSize(size)}
+                        />
+                        <span>{size}</span>
+                      </label>
+                    ))}
+                  </div>
                 </fieldset>
               </div>
             )}

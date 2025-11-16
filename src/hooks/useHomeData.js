@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import bffClient from '../api/bffClient';
+import { convertColorsToObjects } from '../utils/productHelpers';
 
 /**
  * Custom hook to fetch home page data (trending products and categories) in one request
@@ -35,6 +36,7 @@ export const useHomeData = (productsLimit = 4, categoriesLimit = 5) => {
         link: `/products/${product.id}`,
         badge:
           product.badge || (product.inventory?.inStock ? null : 'Out of Stock'),
+        colors: convertColorsToObjects(product.colors || []),
       }));
 
       // Map categories to component format
