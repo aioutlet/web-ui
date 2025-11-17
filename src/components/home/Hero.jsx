@@ -14,11 +14,11 @@ const Hero = () => {
         "Discover the latest in women's fashion. From elegant dresses to everyday essentials, find your perfect style.",
       primaryCta: {
         text: 'Shop Women',
-        link: '/women',
+        link: '/products?department=women',
       },
       secondaryCta: {
         text: 'Browse Clothing',
-        link: '/women/clothing',
+        link: '/products?department=women&category=clothing',
       },
     },
     {
@@ -29,11 +29,11 @@ const Hero = () => {
         "Elevate your wardrobe with our men's collection. Quality clothing and accessories for the modern gentleman.",
       primaryCta: {
         text: 'Shop Men',
-        link: '/men',
+        link: '/products?department=men',
       },
       secondaryCta: {
         text: 'Browse Clothing',
-        link: '/men/clothing',
+        link: '/products?department=men&category=clothing',
       },
     },
     {
@@ -44,11 +44,11 @@ const Hero = () => {
         'Comfortable and stylish clothing for kids. From playful outfits to everyday wear, perfect for every adventure.',
       primaryCta: {
         text: 'Shop Kids',
-        link: '/kids',
+        link: '/products?department=kids',
       },
       secondaryCta: {
         text: 'Browse Clothing',
-        link: '/kids/clothing',
+        link: '/products?department=kids&category=clothing',
       },
     },
     {
@@ -59,11 +59,11 @@ const Hero = () => {
         'Discover the latest in technology and innovation. From cutting-edge gadgets to everyday essentials.',
       primaryCta: {
         text: 'Shop Electronics',
-        link: '/electronics',
+        link: '/products?department=electronics',
       },
       secondaryCta: {
         text: 'Browse Computers',
-        link: '/electronics/computers',
+        link: '/products?department=electronics&category=computers',
       },
     },
     {
@@ -74,11 +74,11 @@ const Hero = () => {
         'Gear up for your active lifestyle. Quality sports apparel and equipment for every athlete.',
       primaryCta: {
         text: 'Shop Sports',
-        link: '/sports',
+        link: '/products?department=sports',
       },
       secondaryCta: {
         text: 'Browse Apparel',
-        link: '/sports/apparel',
+        link: '/products?department=sports&category=apparel',
       },
     },
     {
@@ -89,11 +89,11 @@ const Hero = () => {
         'Explore our curated collection of books. From fiction to nonfiction, find your next great read.',
       primaryCta: {
         text: 'Shop Books',
-        link: '/books',
+        link: '/products?department=books',
       },
       secondaryCta: {
         text: 'Browse Fiction',
-        link: '/books/fiction',
+        link: '/products?department=books&category=fiction',
       },
     },
   ];

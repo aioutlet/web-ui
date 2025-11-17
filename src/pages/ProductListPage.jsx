@@ -1076,21 +1076,21 @@ function getBreadcrumbs(department, category, subcategory) {
   if (department) {
     breadcrumbs.push({
       label: formatName(department),
-      path: `/${department}`,
+      path: `/products?department=${department}`,
     });
   }
 
   if (category) {
     breadcrumbs.push({
       label: formatName(category),
-      path: `/${department}/${category}`,
+      path: `/products?department=${department}&category=${category}`,
     });
   }
 
   if (subcategory) {
     breadcrumbs.push({
       label: formatName(subcategory),
-      path: `/${department}/${category}/${subcategory}`,
+      path: `/products?department=${department}&category=${category}&subcategory=${subcategory}`,
     });
   }
 

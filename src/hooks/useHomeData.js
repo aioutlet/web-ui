@@ -45,52 +45,52 @@ export const useHomeData = (productsLimit = 4, categoriesLimit = 5) => {
         .map((category, index) => {
           const categoryRoutes = {
             Clothing: {
-              path: '/women/clothing',
+              path: '/products?department=women&category=clothing',
               department: 'Women',
               category: 'Clothing',
             },
             Accessories: {
-              path: '/women/accessories',
+              path: '/products?department=women&category=accessories',
               department: 'Women',
               category: 'Accessories',
             },
             Apparel: {
-              path: '/sports/apparel',
+              path: '/products?department=sports&category=apparel',
               department: 'Sports',
               category: 'Apparel',
             },
             Footwear: {
-              path: '/sports/footwear',
+              path: '/products?department=sports&category=footwear',
               department: 'Sports',
               category: 'Footwear',
             },
             Mobile: {
-              path: '/electronics/mobile',
+              path: '/products?department=electronics&category=mobile',
               department: 'Electronics',
               category: 'Mobile',
             },
             Audio: {
-              path: '/electronics/audio',
+              path: '/products?department=electronics&category=audio',
               department: 'Electronics',
               category: 'Audio',
             },
             Computers: {
-              path: '/electronics/computers',
+              path: '/products?department=electronics&category=computers',
               department: 'Electronics',
               category: 'Computers',
             },
             Gaming: {
-              path: '/electronics/gaming',
+              path: '/products?department=electronics&category=gaming',
               department: 'Electronics',
               category: 'Gaming',
             },
             Fiction: {
-              path: '/books/fiction',
+              path: '/products?department=books&category=fiction',
               department: 'Books',
               category: 'Fiction',
             },
             Nonfiction: {
-              path: '/books/nonfiction',
+              path: '/products?department=books&category=nonfiction',
               department: 'Books',
               category: 'Nonfiction',
             },
