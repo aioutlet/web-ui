@@ -10,8 +10,7 @@ import CartSidebar from '../cart/CartSidebar';
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
   const isCartOpen = useSelector(state => state.cart.isOpen);
-  const { user, isAuthenticated } = useAuthStore();
-  const cartLoading = useSelector(state => state.cart.loading);
+  const { isAuthenticated } = useAuthStore();
 
   // Initialize cart on mount and when auth state changes
   useEffect(() => {

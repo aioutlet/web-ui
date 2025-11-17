@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useTheme } from '../../contexts/ThemeContext';
 
 const SunIcon = ({ className }) => (
@@ -32,6 +33,14 @@ const MoonIcon = ({ className }) => (
     />
   </svg>
 );
+
+SunIcon.propTypes = {
+  className: PropTypes.string,
+};
+
+MoonIcon.propTypes = {
+  className: PropTypes.string,
+};
 
 const ThemeToggle = () => {
   const { isDarkMode, toggleTheme } = useTheme();

@@ -201,9 +201,6 @@ const SearchResultsPage = () => {
     return sorted;
   }, [products, sortBy]);
 
-  // Pagination
-  const totalPages = Math.ceil(totalCount / productsPerPage);
-
   // Cart actions
   const handleCartAction = (product, e) => {
     e.stopPropagation();

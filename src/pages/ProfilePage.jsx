@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -37,7 +37,10 @@ const AccountPage = () => {
   });
 
   // Backend returns user object directly, not wrapped in { user: ... }
-  const profileData = profileResponse || user || {};
+  const profileData = useMemo(
+    () => profileResponse || user || {},
+    [profileResponse, user]
+  );
 
   const [profileForm, setProfileForm] = useState({
     firstName: '',

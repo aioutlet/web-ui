@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
   EyeIcon,
@@ -219,6 +220,11 @@ const ResetPasswordPage = () => {
       </span>
     </div>
   );
+
+  PasswordRequirement.propTypes = {
+    met: PropTypes.bool.isRequired,
+    text: PropTypes.string.isRequired,
+  };
 
   return (
     <div className="relative min-h-screen bg-white dark:bg-gray-900">

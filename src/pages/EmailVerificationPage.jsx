@@ -11,12 +11,8 @@ const EmailVerificationPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
-  const {
-    verifyEmailAsync,
-    isVerifyingEmail,
-    resendVerificationAsync,
-    isResendingVerification,
-  } = useAuth();
+  const { verifyEmailAsync, resendVerificationAsync, isResendingVerification } =
+    useAuth();
 
   const [status, setStatus] = useState('verifying'); // verifying, success, error, already-verified
   const [message, setMessage] = useState('');

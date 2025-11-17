@@ -16,7 +16,7 @@ import {
 const CartSidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { items, totalItems, totalPrice, isOpen, loading } = useSelector(
+  const { items, totalItems, totalPrice, isOpen } = useSelector(
     state => state.cart
   );
 

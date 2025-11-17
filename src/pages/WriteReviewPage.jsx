@@ -437,19 +437,21 @@ const WriteReviewPage = () => {
           <div className="text-center">
             <p className="text-xs text-gray-500 dark:text-gray-400">
               By submitting this review, you agree to our{' '}
-              <a
-                href="#"
+              <button
+                type="button"
+                onClick={() => {}}
                 className="text-indigo-600 dark:text-indigo-400 hover:underline"
               >
                 Terms of Use
-              </a>{' '}
+              </button>{' '}
               and{' '}
-              <a
-                href="#"
+              <button
+                type="button"
+                onClick={() => {}}
                 className="text-indigo-600 dark:text-indigo-400 hover:underline"
               >
                 Privacy Policy
-              </a>
+              </button>
             </p>
           </div>
         </form>

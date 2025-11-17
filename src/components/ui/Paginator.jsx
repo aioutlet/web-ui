@@ -68,7 +68,7 @@ const Paginator = ({
   };
 
   const { button: buttonSize, prevNext: prevNextSize } = sizeConfig[size];
-  const { active, inactive, border } = colorConfig[color];
+  const { active, inactive } = colorConfig[color];
 
   // Generate page numbers with ellipsis logic
   const generatePageNumbers = () => {

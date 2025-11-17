@@ -11,9 +11,7 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 const CartPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { items, totalItems, totalPrice, loading } = useSelector(
-    state => state.cart
-  );
+  const { items, totalItems, totalPrice } = useSelector(state => state.cart);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Scroll to top when component mounts

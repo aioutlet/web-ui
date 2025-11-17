@@ -141,18 +141,27 @@ const Header = () => {
   const navigationItems = [
     {
       name: 'Women',
-      href: '/women',
+      href: '/products?department=women',
       dropdown: {
         sections: [
           {
             title: 'Clothing',
             items: [
-              { name: 'Tops', href: '/women/clothing/tops' },
-              { name: 'Dresses', href: '/women/clothing/dresses' },
-              { name: 'Pants', href: '/women/clothing/pants' },
+              {
+                name: 'Tops',
+                href: '/products?department=women&category=clothing&subcategory=tops',
+              },
+              {
+                name: 'Dresses',
+                href: '/products?department=women&category=clothing&subcategory=dresses',
+              },
+              {
+                name: 'Pants',
+                href: '/products?department=women&category=clothing&subcategory=pants',
+              },
               {
                 name: 'Browse All',
-                href: '/women/clothing',
+                href: '/products?department=women&category=clothing',
                 isBrowseAll: true,
               },
             ],
@@ -160,11 +169,17 @@ const Header = () => {
           {
             title: 'Accessories',
             items: [
-              { name: 'Jewelry', href: '/women/accessories/jewelry' },
-              { name: 'Bags', href: '/women/accessories/bags' },
+              {
+                name: 'Jewelry',
+                href: '/products?department=women&category=accessories&subcategory=jewelry',
+              },
+              {
+                name: 'Bags',
+                href: '/products?department=women&category=accessories&subcategory=bags',
+              },
               {
                 name: 'Browse All',
-                href: '/women/accessories',
+                href: '/products?department=women&category=accessories',
                 isBrowseAll: true,
               },
             ],
@@ -174,17 +189,23 @@ const Header = () => {
     },
     {
       name: 'Men',
-      href: '/men',
+      href: '/products?department=men',
       dropdown: {
         sections: [
           {
             title: 'Clothing',
             items: [
-              { name: 'Shirts', href: '/men/clothing/shirts' },
-              { name: 'Pants', href: '/men/clothing/pants' },
+              {
+                name: 'Shirts',
+                href: '/products?department=men&category=clothing&subcategory=shirts',
+              },
+              {
+                name: 'Pants',
+                href: '/products?department=men&category=clothing&subcategory=pants',
+              },
               {
                 name: 'Browse All',
-                href: '/men/clothing',
+                href: '/products?department=men&category=clothing',
                 isBrowseAll: true,
               },
             ],
@@ -192,11 +213,17 @@ const Header = () => {
           {
             title: 'Accessories',
             items: [
-              { name: 'Belts', href: '/men/accessories/belts' },
-              { name: 'Watches', href: '/men/accessories/watches' },
+              {
+                name: 'Belts',
+                href: '/products?department=men&category=accessories&subcategory=belts',
+              },
+              {
+                name: 'Watches',
+                href: '/products?department=men&category=accessories&subcategory=watches',
+              },
               {
                 name: 'Browse All',
-                href: '/men/accessories',
+                href: '/products?department=men&category=accessories',
                 isBrowseAll: true,
               },
             ],
@@ -206,17 +233,23 @@ const Header = () => {
     },
     {
       name: 'Kids',
-      href: '/kids',
+      href: '/products?department=kids',
       dropdown: {
         sections: [
           {
             title: 'Clothing',
             items: [
-              { name: 'Tops', href: '/kids/clothing/tops' },
-              { name: 'Jackets', href: '/kids/clothing/jackets' },
+              {
+                name: 'Tops',
+                href: '/products?department=kids&category=clothing&subcategory=tops',
+              },
+              {
+                name: 'Jackets',
+                href: '/products?department=kids&category=clothing&subcategory=jackets',
+              },
               {
                 name: 'Browse All',
-                href: '/kids/clothing',
+                href: '/products?department=kids&category=clothing',
                 isBrowseAll: true,
               },
             ],
@@ -224,10 +257,13 @@ const Header = () => {
           {
             title: 'Footwear',
             items: [
-              { name: 'Sneakers', href: '/kids/footwear/sneakers' },
+              {
+                name: 'Sneakers',
+                href: '/products?department=kids&category=footwear&subcategory=sneakers',
+              },
               {
                 name: 'Browse All',
-                href: '/kids/footwear',
+                href: '/products?department=kids&category=footwear',
                 isBrowseAll: true,
               },
             ],
@@ -237,16 +273,19 @@ const Header = () => {
     },
     {
       name: 'Electronics',
-      href: '/electronics',
+      href: '/products?department=electronics',
       dropdown: {
         sections: [
           {
             title: 'Mobile',
             items: [
-              { name: 'Smartphones', href: '/electronics/mobile/smartphones' },
+              {
+                name: 'Smartphones',
+                href: '/products?department=electronics&category=mobile&subcategory=smartphones',
+              },
               {
                 name: 'Browse All',
-                href: '/electronics/mobile',
+                href: '/products?department=electronics&category=mobile',
                 isBrowseAll: true,
               },
             ],
@@ -254,10 +293,13 @@ const Header = () => {
           {
             title: 'Audio',
             items: [
-              { name: 'Headphones', href: '/electronics/audio/headphones' },
+              {
+                name: 'Headphones',
+                href: '/products?department=electronics&category=audio&subcategory=headphones',
+              },
               {
                 name: 'Browse All',
-                href: '/electronics/audio',
+                href: '/products?department=electronics&category=audio',
                 isBrowseAll: true,
               },
             ],
@@ -265,11 +307,17 @@ const Header = () => {
           {
             title: 'Computers',
             items: [
-              { name: 'Laptops', href: '/electronics/computers/laptops' },
-              { name: 'Tablets', href: '/electronics/computers/tablets' },
+              {
+                name: 'Laptops',
+                href: '/products?department=electronics&category=computers&subcategory=laptops',
+              },
+              {
+                name: 'Tablets',
+                href: '/products?department=electronics&category=computers&subcategory=tablets',
+              },
               {
                 name: 'Browse All',
-                href: '/electronics/computers',
+                href: '/products?department=electronics&category=computers',
                 isBrowseAll: true,
               },
             ],
@@ -277,10 +325,13 @@ const Header = () => {
           {
             title: 'Gaming',
             items: [
-              { name: 'Consoles', href: '/electronics/gaming/consoles' },
+              {
+                name: 'Consoles',
+                href: '/products?department=electronics&category=gaming&subcategory=consoles',
+              },
               {
                 name: 'Browse All',
-                href: '/electronics/gaming',
+                href: '/products?department=electronics&category=gaming',
                 isBrowseAll: true,
               },
             ],
@@ -290,17 +341,23 @@ const Header = () => {
     },
     {
       name: 'Sports',
-      href: '/sports',
+      href: '/products?department=sports',
       dropdown: {
         sections: [
           {
             title: 'Footwear',
             items: [
-              { name: 'Running', href: '/sports/footwear/running' },
-              { name: 'Basketball', href: '/sports/footwear/basketball' },
+              {
+                name: 'Running',
+                href: '/products?department=sports&category=footwear&subcategory=running',
+              },
+              {
+                name: 'Basketball',
+                href: '/products?department=sports&category=footwear&subcategory=basketball',
+              },
               {
                 name: 'Browse All',
-                href: '/sports/footwear',
+                href: '/products?department=sports&category=footwear',
                 isBrowseAll: true,
               },
             ],
@@ -308,11 +365,17 @@ const Header = () => {
           {
             title: 'Apparel',
             items: [
-              { name: 'Jackets', href: '/sports/apparel/jackets' },
-              { name: 'Shorts', href: '/sports/apparel/shorts' },
+              {
+                name: 'Jackets',
+                href: '/products?department=sports&category=apparel&subcategory=jackets',
+              },
+              {
+                name: 'Shorts',
+                href: '/products?department=sports&category=apparel&subcategory=shorts',
+              },
               {
                 name: 'Browse All',
-                href: '/sports/apparel',
+                href: '/products?department=sports&category=apparel',
                 isBrowseAll: true,
               },
             ],
@@ -322,17 +385,23 @@ const Header = () => {
     },
     {
       name: 'Books',
-      href: '/books',
+      href: '/products?department=books',
       dropdown: {
         sections: [
           {
             title: 'Fiction',
             items: [
-              { name: 'Contemporary', href: '/books/fiction/contemporary' },
-              { name: 'Fantasy', href: '/books/fiction/fantasy' },
+              {
+                name: 'Contemporary',
+                href: '/products?department=books&category=fiction&subcategory=contemporary',
+              },
+              {
+                name: 'Fantasy',
+                href: '/products?department=books&category=fiction&subcategory=fantasy',
+              },
               {
                 name: 'Browse All',
-                href: '/books/fiction',
+                href: '/products?department=books&category=fiction',
                 isBrowseAll: true,
               },
             ],
@@ -340,11 +409,17 @@ const Header = () => {
           {
             title: 'Nonfiction',
             items: [
-              { name: 'SelfHelp', href: '/books/nonfiction/selfhelp' },
-              { name: 'Biography', href: '/books/nonfiction/biography' },
+              {
+                name: 'SelfHelp',
+                href: '/products?department=books&category=nonfiction&subcategory=selfhelp',
+              },
+              {
+                name: 'Biography',
+                href: '/products?department=books&category=nonfiction&subcategory=biography',
+              },
               {
                 name: 'Browse All',
-                href: '/books/nonfiction',
+                href: '/products?department=books&category=nonfiction',
                 isBrowseAll: true,
               },
             ],
