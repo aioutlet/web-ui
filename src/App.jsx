@@ -84,8 +84,7 @@ function App() {
                     element={<EmailVerificationPage />}
                   />
 
-                  {/* Products - All use ProductListPage with different levels of filtering */}
-                  {/* All products page */}
+                  {/* Products - Use query parameters for filtering */}
                   <Route path="/products" element={<ProductListPage />} />
                   <Route path="/products/:id" element={<ProductDetailPage />} />
                   <Route
@@ -99,22 +98,6 @@ function App() {
                         <WriteReviewPage />
                       </ProtectedRoute>
                     }
-                  />
-
-                  {/* Hierarchical Category Pages */}
-                  {/* Level 1: Department only (e.g., /women) */}
-                  <Route path="/:department" element={<ProductListPage />} />
-
-                  {/* Level 2: Department + Category (e.g., /women/clothing) */}
-                  <Route
-                    path="/:department/:category"
-                    element={<ProductListPage />}
-                  />
-
-                  {/* Level 3: Department + Category + Subcategory (e.g., /women/clothing/tops) */}
-                  <Route
-                    path="/:department/:category/:subcategory"
-                    element={<ProductListPage />}
                   />
 
                   <Route

@@ -79,6 +79,9 @@ const ProductDetailPage = () => {
 
   // Fetch product data from API
   useEffect(() => {
+    // Scroll to top when page loads
+    window.scrollTo(0, 0);
+
     const fetchProduct = async () => {
       setLoading(true);
       try {

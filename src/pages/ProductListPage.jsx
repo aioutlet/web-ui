@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import {
@@ -92,21 +92,29 @@ const getCategoryFilters = (department, category, subcategory) => {
 };
 
 const ProductListPage = ({ category: propCategory }) => {
-  const { department, category, subcategory } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.items);
 
-  // Determine hierarchy from URL params
-  const dept = department || propCategory;
+  // Get filter values from query params
+  const department = searchParams.get('department') || propCategory;
+  const category = searchParams.get('category');
+  const subcategory = searchParams.get('subcategory');
+  const pageParam = parseInt(searchParams.get('page') || '1', 10);
+  const limitParam = parseInt(searchParams.get('limit') || '12', 10);
 
   // Determine which filters to show based on category
   const activeFilters = useMemo(() => {
-    console.log('Filter Debug - Original:', { dept, category, subcategory });
-    const filters = getCategoryFilters(dept, category, subcategory);
+    console.log('Filter Debug - Original:', {
+      department,
+      category,
+      subcategory,
+    });
+    const filters = getCategoryFilters(department, category, subcategory);
     console.log('Filter Debug - Active Filters:', filters);
     return filters;
-  }, [dept, category, subcategory]);
+  }, [department, category, subcategory]);
 
   // State management
   const [products, setProducts] = useState([]);
@@ -119,11 +127,16 @@ const ProductListPage = ({ category: propCategory }) => {
     color: new Set(),
     size: new Set(),
   });
-  const [sortBy, setSortBy] = useState('featured');
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'featured');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 12;
+  const [currentPage, setCurrentPage] = useState(pageParam);
+  const productsPerPage = limitParam;
+
+  // Sync state with URL params when they change
+  useEffect(() => {
+    setCurrentPage(pageParam);
+  }, [pageParam]);
 
   // Fetch products from BFF
   useEffect(() => {
@@ -135,7 +148,7 @@ const ProductListPage = ({ category: propCategory }) => {
         const params = new URLSearchParams();
 
         // Convert to lowercase to match API expectations
-        if (dept) params.append('department', dept.toLowerCase());
+        if (department) params.append('department', department.toLowerCase());
         if (category) params.append('category', category.toLowerCase());
         if (subcategory)
           params.append('subcategory', subcategory.toLowerCase());
@@ -215,12 +228,19 @@ const ProductListPage = ({ category: propCategory }) => {
     };
 
     fetchProducts();
-  }, [dept, category, subcategory, filters.price, currentPage]);
+  }, [
+    department,
+    category,
+    subcategory,
+    filters.price,
+    currentPage,
+    productsPerPage,
+  ]);
 
   // Scroll to top when component mounts or route changes
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [dept, category, subcategory]);
+  }, [department, category, subcategory]);
 
   // Apply client-side filtering for color and size
   const filteredProducts = useMemo(() => {
@@ -274,7 +294,7 @@ const ProductListPage = ({ category: propCategory }) => {
   const totalPages = Math.ceil(effectiveTotalCount / productsPerPage);
 
   // Get breadcrumbs for navigation
-  const breadcrumbs = getBreadcrumbs(dept, category, subcategory);
+  const breadcrumbs = getBreadcrumbs(department, category, subcategory);
 
   // Helper functions
   const isInCart = productId => {
@@ -348,6 +368,12 @@ const ProductListPage = ({ category: propCategory }) => {
 
   const handlePageChange = page => {
     setCurrentPage(page);
+
+    // Update URL with new page number
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', page.toString());
+    setSearchParams(newParams);
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -383,7 +409,7 @@ const ProductListPage = ({ category: propCategory }) => {
     let commonSizeOptions = ['All'];
 
     // Determine size options based on category context
-    if (dept === 'Electronics' || category === 'Electronics') {
+    if (department === 'Electronics' || category === 'Electronics') {
       // No size filter for electronics
       commonSizeOptions = ['All'];
     } else if (
@@ -424,7 +450,7 @@ const ProductListPage = ({ category: propCategory }) => {
         '36',
         '38',
       ];
-    } else if (dept === 'Kids' || category === 'Kids') {
+    } else if (department === 'Kids' || category === 'Kids') {
       // Kids sizes
       commonSizeOptions = ['All', '4', '6', '8', '10', '12', '14'];
     } else {
@@ -449,7 +475,7 @@ const ProductListPage = ({ category: propCategory }) => {
     });
     console.log('Filter Options:', relevantOptions);
     return relevantOptions;
-  }, [activeFilters, category, dept, subcategory]);
+  }, [activeFilters, category, department, subcategory]);
 
   // Sort options
   const sortOptions = [
@@ -557,8 +583,9 @@ const ProductListPage = ({ category: propCategory }) => {
                     ? subcategory.charAt(0).toUpperCase() + subcategory.slice(1)
                     : category
                       ? category.charAt(0).toUpperCase() + category.slice(1)
-                      : dept
-                        ? dept.charAt(0).toUpperCase() + dept.slice(1)
+                      : department
+                        ? department.charAt(0).toUpperCase() +
+                          department.slice(1)
                         : 'Products'}
                 </span>
               </div>
@@ -651,6 +678,12 @@ const ProductListPage = ({ category: propCategory }) => {
                             setSortBy(option.value);
                             setSortDropdownOpen(false);
                             setCurrentPage(1);
+
+                            // Update URL with new sort option
+                            const newParams = new URLSearchParams(searchParams);
+                            newParams.set('sort', option.value);
+                            newParams.set('page', '1');
+                            setSearchParams(newParams);
                           }}
                           className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
                             sortBy === option.value
@@ -752,6 +785,18 @@ const ProductListPage = ({ category: propCategory }) => {
         {/* Products Grid */}
         {!loading && !error && sortedProducts.length > 0 ? (
           <>
+            {/* Results Info */}
+            <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
+              {(() => {
+                const startItem = (currentPage - 1) * productsPerPage + 1;
+                const endItem = Math.min(
+                  currentPage * productsPerPage,
+                  effectiveTotalCount
+                );
+                return `Showing ${startItem}-${endItem} of ${effectiveTotalCount} results`;
+              })()}
+            </div>
+
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
               {sortedProducts.map(product => (
                 <div key={product.id} className="group">
