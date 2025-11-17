@@ -138,6 +138,29 @@ const ProductListPage = ({ category: propCategory }) => {
     setCurrentPage(pageParam);
   }, [pageParam]);
 
+  // Ensure URL always has page and limit params
+  useEffect(() => {
+    const currentParams = new URLSearchParams(searchParams);
+    let needsUpdate = false;
+
+    // Add page param if missing
+    if (!currentParams.has('page')) {
+      currentParams.set('page', '1');
+      needsUpdate = true;
+    }
+
+    // Add limit param if missing
+    if (!currentParams.has('limit')) {
+      currentParams.set('limit', '12');
+      needsUpdate = true;
+    }
+
+    // Update URL if needed
+    if (needsUpdate) {
+      setSearchParams(currentParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
   // Fetch products from BFF
   useEffect(() => {
     const fetchProducts = async () => {

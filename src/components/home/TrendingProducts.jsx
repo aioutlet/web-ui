@@ -44,7 +44,7 @@ const TrendingProducts = () => {
             customers love most.
           </p>
           <Link
-            to="/products"
+            to="/products?page=1&limit=12"
             className="inline-flex items-center gap-x-2 text-sm font-semibold leading-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors bg-indigo-50 dark:bg-indigo-900/20 px-4 py-2 rounded-full hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
           >
             See all products
