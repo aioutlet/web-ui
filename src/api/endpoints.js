@@ -16,11 +16,18 @@ export const API_ENDPOINTS = {
     CATEGORIES: `${BFF_BASE_URL}/api/home/categories`,
   },
 
+  // Storefront
+  STOREFRONT: {
+    HOME: `${BFF_BASE_URL}/api/storefront/home`,
+    CATEGORIES: `${BFF_BASE_URL}/api/storefront/categories`,
+  },
+
   // Products
   PRODUCTS: {
     LIST: `${BFF_BASE_URL}/api/products`,
     DETAIL: id => `${BFF_BASE_URL}/api/products/${id}`,
     SEARCH: `${BFF_BASE_URL}/api/products/search`,
+    CATEGORIES: `${BFF_BASE_URL}/api/products/categories`,
     BY_CATEGORY: category =>
       `${BFF_BASE_URL}/api/products?category=${category}`,
   },

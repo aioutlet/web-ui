@@ -37,6 +37,7 @@ import AddPaymentPage from './pages/AddPaymentPage';
 import EditPaymentPage from './pages/EditPaymentPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import WishlistPage from './pages/WishlistPage';
+import CategoryListPage from './pages/CategoryListPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Create React Query client
@@ -83,6 +84,9 @@ function App() {
                     path="/verify-email"
                     element={<EmailVerificationPage />}
                   />
+
+                  {/* Categories */}
+                  <Route path="/categories" element={<CategoryListPage />} />
 
                   {/* Products - Use query parameters for filtering */}
                   <Route path="/products" element={<ProductListPage />} />
