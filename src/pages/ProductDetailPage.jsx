@@ -437,26 +437,15 @@ const ProductDetailPage = () => {
             {/* Size picker */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="mt-8">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                <div className="flex items-center space-x-3">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white w-16">
                     Size
                   </h3>
-                  {selectedSize && (
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Selected:{' '}
-                      <span className="font-semibold text-gray-900 dark:text-white">
-                        {selectedSize}
-                      </span>
-                    </span>
-                  )}
-                </div>
-                <fieldset>
-                  <legend className="sr-only">Choose a size</legend>
-                  <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
+                  <div className="grid grid-cols-5 gap-2 flex-1">
                     {product.sizes.map(size => (
                       <label
                         key={size}
-                        className={`group relative flex items-center justify-center rounded-md border py-3 px-3 text-sm font-medium uppercase hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none cursor-pointer transition-all duration-200 ${
+                        className={`group relative flex items-center justify-center rounded-md border py-2 px-2 text-sm font-medium uppercase hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none cursor-pointer transition-all duration-200 ${
                           selectedSize === size
                             ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 ring-2 ring-indigo-500'
                             : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white hover:border-gray-400 dark:hover:border-gray-500'
@@ -474,7 +463,7 @@ const ProductDetailPage = () => {
                       </label>
                     ))}
                   </div>
-                </fieldset>
+                </div>
               </div>
             )}
 
@@ -493,13 +482,15 @@ const ProductDetailPage = () => {
                     value={quantity}
                     onChange={e => setQuantity(parseInt(e.target.value))}
                     disabled={variantInventory?.quantityAvailable === 0}
-                    className="min-w-[80px] rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-base font-medium px-3 py-2 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    size="1"
+                    className="min-w-[80px] rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-base font-medium px-3 py-2 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 appearance-none disabled:opacity-50 disabled:cursor-not-allowed [&>option]:py-1"
                     style={{
                       backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                       backgroundPosition: 'right 0.5rem center',
                       backgroundRepeat: 'no-repeat',
                       backgroundSize: '1.5em 1.5em',
                       paddingRight: '2.5rem',
+                      maxHeight: '200px',
                     }}
                   >
                     {Array.from(
