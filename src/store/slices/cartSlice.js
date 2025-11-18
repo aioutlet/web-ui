@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import cartAPI from '../../api/cartAPI';
 import { v4 as uuidv4 } from 'uuid';
+import bffClient from '../../api/bffClient';
 
 // ============================================================================
 // Helper Functions
@@ -24,18 +25,49 @@ const calculateTotals = items => {
   return { totalItems, totalPrice };
 };
 
-const mapBackendCartToState = backendCart => {
+const fetchInventoryForItems = async items => {
+  if (!items || items.length === 0) return {};
+
+  try {
+    const skus = items.map(item => item.sku).filter(Boolean);
+    if (skus.length === 0) return {};
+
+    console.log('Fetching inventory for SKUs:', skus);
+    const response = await bffClient.post('/api/inventory/batch', { skus });
+    const inventoryData = response.data?.data || [];
+    console.log('Inventory response:', inventoryData);
+
+    // Create a map of sku -> inventory
+    const inventoryMap = {};
+    inventoryData.forEach(inv => {
+      inventoryMap[inv.sku] = inv.quantityAvailable;
+    });
+    console.log('Inventory map:', inventoryMap);
+
+    return inventoryMap;
+  } catch (error) {
+    console.error('Failed to fetch inventory for cart items:', error);
+    return {};
+  }
+};
+
+const mapBackendCartToState = (backendCart, inventoryMap = {}) => {
   if (!backendCart || !backendCart.items) {
     return { items: [], totalItems: 0, totalPrice: 0 };
   }
 
   const items = backendCart.items.map(item => {
+    const quantityAvailable = inventoryMap[item.sku] ?? null;
+    console.log(
+      `Mapping item ${item.sku}: quantity=${item.quantity}, quantityAvailable=${quantityAvailable}`
+    );
     return {
       id: item.productId,
       sku: item.sku,
       name: item.productName,
       price: item.price,
       quantity: item.quantity,
+      quantityAvailable: quantityAvailable, // Add inventory data
       image:
         item.imageUrl && item.imageUrl !== '/placeholder.png'
           ? item.imageUrl
@@ -61,21 +93,33 @@ export const fetchCartAsync = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const { user } = getState();
+      let response;
 
       if (user.user) {
         // Authenticated user
-        const response = await cartAPI.getCart();
-        return { data: response.data, isGuest: false };
+        response = await cartAPI.getCart();
       } else {
         // Guest user
         const guestId = getGuestId();
-        const response = await cartAPI.getGuestCart(guestId);
-        return { data: response.data, isGuest: true, guestId };
+        response = await cartAPI.getGuestCart(guestId);
       }
+
+      // Fetch inventory data for all cart items
+      const inventoryMap = await fetchInventoryForItems(response.data.items);
+
+      return {
+        data: response.data,
+        inventoryMap,
+        isGuest: !user.user,
+      };
     } catch (error) {
       // If cart doesn't exist, return empty cart
       if (error.response?.status === 404) {
-        return { data: { items: [] }, isGuest: !getState().user.user };
+        return {
+          data: { items: [] },
+          inventoryMap: {},
+          isGuest: !getState().user.user,
+        };
       }
       return rejectWithValue(
         error.response?.data?.error?.message || 'Failed to fetch cart'
@@ -113,20 +157,29 @@ export const addToCartAsync = createAsyncThunk(
         },
       });
 
+      let response;
       if (user.user) {
         // Authenticated user
         console.log('addToCartAsync: Adding item for authenticated user');
-        const response = await cartAPI.addItem(itemData);
+        response = await cartAPI.addItem(itemData);
         console.log('addToCartAsync: API response', response);
-        return { data: response.data, isGuest: false };
       } else {
         // Guest user
         const guestId = getGuestId();
         console.log('addToCartAsync: Adding item for guest user', { guestId });
-        const response = await cartAPI.addGuestItem(guestId, itemData);
+        response = await cartAPI.addGuestItem(guestId, itemData);
         console.log('addToCartAsync: API response', response);
-        return { data: response.data, isGuest: true, guestId };
       }
+
+      // Fetch inventory data for all cart items
+      const inventoryMap = await fetchInventoryForItems(response.data.items);
+
+      return {
+        data: response.data,
+        inventoryMap,
+        isGuest: !user.user,
+        guestId: !user.user ? getGuestId() : null,
+      };
     } catch (error) {
       console.error('addToCartAsync: Error caught', {
         error,
@@ -152,17 +205,25 @@ export const updateQuantityAsync = createAsyncThunk(
   async ({ sku, quantity }, { getState, rejectWithValue }) => {
     try {
       const { user } = getState();
+      let response;
 
       if (user.user) {
         // Authenticated user
-        const response = await cartAPI.updateItem(sku, quantity);
-        return { data: response.data, isGuest: false };
+        response = await cartAPI.updateItem(sku, quantity);
       } else {
         // Guest user
         const guestId = getGuestId();
-        const response = await cartAPI.updateGuestItem(guestId, sku, quantity);
-        return { data: response.data, isGuest: true, guestId };
+        response = await cartAPI.updateGuestItem(guestId, sku, quantity);
       }
+
+      // Fetch inventory data for all cart items
+      const inventoryMap = await fetchInventoryForItems(response.data.items);
+
+      return {
+        data: response.data,
+        inventoryMap,
+        isGuest: !user.user,
+      };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error?.message || 'Failed to update item quantity'
@@ -179,17 +240,25 @@ export const removeFromCartAsync = createAsyncThunk(
   async (productId, { getState, rejectWithValue }) => {
     try {
       const { user } = getState();
+      let response;
 
       if (user.user) {
         // Authenticated user
-        const response = await cartAPI.removeItem(productId);
-        return { data: response.data, isGuest: false };
+        response = await cartAPI.removeItem(productId);
       } else {
         // Guest user
         const guestId = getGuestId();
-        const response = await cartAPI.removeGuestItem(guestId, productId);
-        return { data: response.data, isGuest: true, guestId };
+        response = await cartAPI.removeGuestItem(guestId, productId);
       }
+
+      // Fetch inventory data for remaining cart items
+      const inventoryMap = await fetchInventoryForItems(response.data.items);
+
+      return {
+        data: response.data,
+        inventoryMap,
+        isGuest: !user.user,
+      };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error?.message ||
@@ -266,6 +335,7 @@ const initialState = {
   loading: false,
   error: null,
   guestId: null,
+  inventoryMap: {}, // Map of sku -> quantityAvailable
 };
 
 const cartSlice = createSlice({
@@ -339,10 +409,14 @@ const cartSlice = createSlice({
       })
       .addCase(fetchCartAsync.fulfilled, (state, action) => {
         state.loading = false;
-        const cartData = mapBackendCartToState(action.payload.data);
+        const cartData = mapBackendCartToState(
+          action.payload.data,
+          action.payload.inventoryMap
+        );
         state.items = cartData.items;
         state.totalItems = cartData.totalItems;
         state.totalPrice = cartData.totalPrice;
+        state.inventoryMap = action.payload.inventoryMap || {};
         state.guestId = action.payload.guestId || null;
       })
       .addCase(fetchCartAsync.rejected, (state, action) => {
@@ -358,10 +432,14 @@ const cartSlice = createSlice({
       })
       .addCase(addToCartAsync.fulfilled, (state, action) => {
         state.loading = false;
-        const cartData = mapBackendCartToState(action.payload.data);
+        const cartData = mapBackendCartToState(
+          action.payload.data,
+          action.payload.inventoryMap
+        );
         state.items = cartData.items;
         state.totalItems = cartData.totalItems;
         state.totalPrice = cartData.totalPrice;
+        state.inventoryMap = action.payload.inventoryMap || {};
         state.guestId = action.payload.guestId || null;
       })
       .addCase(addToCartAsync.rejected, (state, action) => {
@@ -377,10 +455,14 @@ const cartSlice = createSlice({
       })
       .addCase(updateQuantityAsync.fulfilled, (state, action) => {
         state.loading = false;
-        const cartData = mapBackendCartToState(action.payload.data);
+        const cartData = mapBackendCartToState(
+          action.payload.data,
+          action.payload.inventoryMap
+        );
         state.items = cartData.items;
         state.totalItems = cartData.totalItems;
         state.totalPrice = cartData.totalPrice;
+        state.inventoryMap = action.payload.inventoryMap || {};
       })
       .addCase(updateQuantityAsync.rejected, (state, action) => {
         state.loading = false;
@@ -395,10 +477,14 @@ const cartSlice = createSlice({
       })
       .addCase(removeFromCartAsync.fulfilled, (state, action) => {
         state.loading = false;
-        const cartData = mapBackendCartToState(action.payload.data);
+        const cartData = mapBackendCartToState(
+          action.payload.data,
+          action.payload.inventoryMap
+        );
         state.items = cartData.items;
         state.totalItems = cartData.totalItems;
         state.totalPrice = cartData.totalPrice;
+        state.inventoryMap = action.payload.inventoryMap || {};
       })
       .addCase(removeFromCartAsync.rejected, (state, action) => {
         state.loading = false;
@@ -430,7 +516,10 @@ const cartSlice = createSlice({
       })
       .addCase(transferCartAsync.fulfilled, (state, action) => {
         state.loading = false;
-        const cartData = mapBackendCartToState(action.payload.data);
+        const cartData = mapBackendCartToState(
+          action.payload.data,
+          state.inventoryMap
+        );
         state.items = cartData.items;
         state.totalItems = cartData.totalItems;
         state.totalPrice = cartData.totalPrice;

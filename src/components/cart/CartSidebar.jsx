@@ -27,8 +27,36 @@ const CartSidebar = () => {
     }
   }, [items.length, isOpen, dispatch]);
 
-  const handleQuantityChange = (sku, currentQuantity, change) => {
+  const handleQuantityChange = (
+    sku,
+    currentQuantity,
+    change,
+    quantityAvailable
+  ) => {
     const newQuantity = currentQuantity + change;
+
+    console.log('handleQuantityChange:', {
+      sku,
+      currentQuantity,
+      change,
+      newQuantity,
+      quantityAvailable,
+      willBlock:
+        change > 0 &&
+        quantityAvailable !== null &&
+        newQuantity > quantityAvailable,
+    });
+
+    // Check if increasing quantity would exceed available inventory
+    if (
+      change > 0 &&
+      quantityAvailable !== null &&
+      newQuantity > quantityAvailable
+    ) {
+      console.log('Blocking quantity increase - exceeds available inventory');
+      return; // Don't allow quantity to exceed available inventory
+    }
+
     if (newQuantity > 0) {
       dispatch(updateQuantityAsync({ sku, quantity: newQuantity }));
     } else {
@@ -238,7 +266,12 @@ const CartSidebar = () => {
                       <div className="inline-flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
                         <button
                           onClick={() =>
-                            handleQuantityChange(item.sku, item.quantity, -1)
+                            handleQuantityChange(
+                              item.sku,
+                              item.quantity,
+                              -1,
+                              item.quantityAvailable
+                            )
                           }
                           className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-l-lg transition-colors"
                           aria-label="Decrease quantity"
@@ -254,9 +287,18 @@ const CartSidebar = () => {
                         </span>
                         <button
                           onClick={() =>
-                            handleQuantityChange(item.sku, item.quantity, 1)
+                            handleQuantityChange(
+                              item.sku,
+                              item.quantity,
+                              1,
+                              item.quantityAvailable
+                            )
                           }
-                          className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-r-lg transition-colors"
+                          disabled={
+                            item.quantityAvailable !== null &&
+                            item.quantity >= item.quantityAvailable
+                          }
+                          className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-r-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 dark:disabled:hover:bg-gray-700"
                           aria-label="Increase quantity"
                         >
                           <PlusIcon className="h-3.5 w-3.5 text-gray-700 dark:text-gray-300" />

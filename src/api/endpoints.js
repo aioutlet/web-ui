@@ -95,4 +95,9 @@ export const API_ENDPOINTS = {
     UPDATE: id => `${BFF_BASE_URL}/api/reviews/${id}`,
     DELETE: id => `${BFF_BASE_URL}/api/reviews/${id}`,
   },
+
+  // Inventory
+  INVENTORY: {
+    BATCH: `${BFF_BASE_URL}/api/inventory/batch`,
+  },
 };
