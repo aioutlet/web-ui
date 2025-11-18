@@ -58,7 +58,12 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <ThemeProvider>
-            <Router>
+            <Router
+              future={{
+                v7_startTransition: true,
+                v7_relativeSplatPath: true,
+              }}
+            >
               <Layout>
                 <Routes>
                   <Route path="/" element={<HomePage />} />

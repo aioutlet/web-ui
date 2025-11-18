@@ -29,23 +29,26 @@ const mapBackendCartToState = backendCart => {
     return { items: [], totalItems: 0, totalPrice: 0 };
   }
 
-  const items = backendCart.items.map(item => ({
-    id: item.productId,
-    name: item.productName,
-    price: item.price,
-    quantity: item.quantity,
-    image: item.image || '/placeholder.png',
-    selectedColor: item.selectedColor,
-    selectedSize: item.selectedSize,
-  }));
+  const items = backendCart.items.map(item => {
+    return {
+      id: item.productId,
+      name: item.productName,
+      price: item.price,
+      quantity: item.quantity,
+      image:
+        item.imageUrl && item.imageUrl !== '/placeholder.png'
+          ? item.imageUrl
+          : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" fill="%23e5e7eb"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" fill="%239ca3af"%3ENo Image%3C/text%3E%3C/svg%3E',
+      selectedColor: item.selectedColor,
+      selectedSize: item.selectedSize,
+    };
+  });
 
   return {
     items,
     ...calculateTotals(items),
   };
-};
-
-// ============================================================================
+}; // ============================================================================
 // Async Thunks
 // ============================================================================
 
@@ -93,25 +96,48 @@ export const addToCartAsync = createAsyncThunk(
         productName: product.name,
         price: product.price,
         quantity,
-        image: product.image,
+        imageUrl: product.images?.[0] || product.image || '/placeholder.png',
         selectedColor: product.selectedColor,
         selectedSize: product.selectedSize,
       };
 
+      console.log('addToCartAsync: Preparing to add item', {
+        isAuthenticated: !!user.user,
+        itemData,
+        product: {
+          id: product.id,
+          name: product.name,
+          inStock: product.inStock,
+          availableQuantity: product.availableQuantity,
+        },
+      });
+
       if (user.user) {
         // Authenticated user
+        console.log('addToCartAsync: Adding item for authenticated user');
         const response = await cartAPI.addItem(itemData);
+        console.log('addToCartAsync: API response', response);
         return { data: response.data, isGuest: false };
       } else {
         // Guest user
         const guestId = getGuestId();
+        console.log('addToCartAsync: Adding item for guest user', { guestId });
         const response = await cartAPI.addGuestItem(guestId, itemData);
+        console.log('addToCartAsync: API response', response);
         return { data: response.data, isGuest: true, guestId };
       }
     } catch (error) {
-      console.error('Add to cart error:', error);
+      console.error('addToCartAsync: Error caught', {
+        error,
+        errorMessage: error?.message,
+        responseData: error?.response?.data,
+        responseStatus: error?.response?.status,
+        responseStatusText: error?.response?.statusText,
+      });
       return rejectWithValue(
-        error.response?.data?.error?.message || 'Failed to add item to cart'
+        error.response?.data?.message ||
+          error.response?.data?.error?.message ||
+          'Failed to add item to cart'
       );
     }
   }

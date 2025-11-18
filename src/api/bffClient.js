@@ -38,15 +38,15 @@ bffClient.interceptors.request.use(
     config.headers['x-correlation-id'] = correlationId;
 
     // Log in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('📤 BFF Request:', {
-        method: config.method?.toUpperCase(),
-        url: config.url,
-        fullURL: `${config.baseURL}${config.url}`,
-        correlationId,
-        hasToken: !!token,
-      });
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //   console.log('📤 BFF Request:', {
+    //     method: config.method?.toUpperCase(),
+    //     url: config.url,
+    //     fullURL: `${config.baseURL}${config.url}`,
+    //     correlationId,
+    //     hasToken: !!token,
+    //   });
+    // }
 
     return config;
   },
@@ -60,13 +60,13 @@ bffClient.interceptors.request.use(
 bffClient.interceptors.response.use(
   response => {
     // Log successful response in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('✅ BFF Response:', {
-        status: response.status,
-        url: response.config.url,
-        correlationId: response.headers['x-correlation-id'],
-      });
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //   console.log('✅ BFF Response:', {
+    //     status: response.status,
+    //     url: response.config.url,
+    //     correlationId: response.headers['x-correlation-id'],
+    //   });
+    // }
     return response;
   },
   async error => {

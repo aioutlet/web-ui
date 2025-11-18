@@ -23,6 +23,7 @@ const ProductDetailPage = () => {
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [variantInventory, setVariantInventory] = useState(null);
   // Removed activeTab state - using separate sections instead
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState(new Set());
@@ -116,6 +117,7 @@ const ProductDetailPage = () => {
           // Transform API product to match frontend format
           const productData = {
             id: p.id,
+            sku: p.sku,
             name: p.name,
             description: p.description,
             price: p.price,
@@ -137,6 +139,14 @@ const ProductDetailPage = () => {
             inStock: true,
           };
           setProduct(productData);
+
+          // Auto-select first color and size if available
+          if (productData.colors?.length > 0) {
+            setSelectedColor(0);
+          }
+          if (productData.sizes?.length > 0) {
+            setSelectedSize(productData.sizes[0]);
+          }
         } else {
           setProduct(null);
         }
@@ -150,6 +160,48 @@ const ProductDetailPage = () => {
 
     fetchProduct();
   }, [id]);
+
+  // Fetch inventory for selected variant
+  useEffect(() => {
+    const fetchVariantInventory = async () => {
+      if (!product?.sku || selectedColor === null || !selectedSize) {
+        setVariantInventory(null);
+        return;
+      }
+
+      const color = product.colors[selectedColor]?.name;
+      if (!color) return;
+
+      // Generate variant SKU: BASE-COLOR-SIZE
+      const variantSku = `${product.sku}-${color.toUpperCase()}-${selectedSize.toUpperCase()}`;
+
+      console.log('Fetching inventory for variant SKU:', variantSku);
+
+      try {
+        const response = await bffClient.post('/api/inventory/batch', {
+          skus: [variantSku],
+        });
+
+        if (response.data.success && response.data.data.length > 0) {
+          const inventory = response.data.data[0];
+          console.log('Variant inventory:', inventory);
+          setVariantInventory(inventory);
+
+          // Reset quantity if it exceeds available stock
+          if (quantity > inventory.quantityAvailable) {
+            setQuantity(Math.min(quantity, inventory.quantityAvailable));
+          }
+        } else {
+          setVariantInventory({ quantityAvailable: 0 });
+        }
+      } catch (error) {
+        console.error('Error fetching variant inventory:', error);
+        setVariantInventory({ quantityAvailable: 0 });
+      }
+    };
+
+    fetchVariantInventory();
+  }, [product?.sku, selectedColor, selectedSize]);
 
   // Handle cart actions
   const handleAddToCart = async () => {
@@ -180,12 +232,6 @@ const ProductDetailPage = () => {
         }
 
         await dispatch(addToCartAsync(cartItem)).unwrap();
-
-        // Show success message
-        toast.success('Item added to cart!', {
-          position: 'top-right',
-          autoClose: 2000,
-        });
 
         // Open cart sidebar only on desktop (lg and above)
         if (window.innerWidth >= 1024) {
@@ -435,7 +481,8 @@ const ProductDetailPage = () => {
                     id="quantity"
                     value={quantity}
                     onChange={e => setQuantity(parseInt(e.target.value))}
-                    className="min-w-[80px] rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-base font-medium px-3 py-2 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 appearance-none"
+                    disabled={variantInventory?.quantityAvailable === 0}
+                    className="min-w-[80px] rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-base font-medium px-3 py-2 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                       backgroundPosition: 'right 0.5rem center',
@@ -444,13 +491,34 @@ const ProductDetailPage = () => {
                       paddingRight: '2.5rem',
                     }}
                   >
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                    {Array.from(
+                      {
+                        length: Math.min(
+                          variantInventory?.quantityAvailable ?? 10,
+                          20
+                        ),
+                      },
+                      (_, i) => i + 1
+                    ).map(num => (
                       <option key={num} value={num}>
                         {num}
                       </option>
                     ))}
                   </select>
                 </div>
+                {variantInventory && (
+                  <div className="text-sm">
+                    {variantInventory.quantityAvailable > 0 ? (
+                      <span className="text-green-600 dark:text-green-400">
+                        {variantInventory.quantityAvailable} available
+                      </span>
+                    ) : (
+                      <span className="text-red-600 dark:text-red-400">
+                        Out of stock
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="flex space-x-4">
@@ -464,7 +532,8 @@ const ProductDetailPage = () => {
                 ) : (
                   <button
                     onClick={handleAddToCart}
-                    className="flex-1 bg-blue-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                    disabled={variantInventory?.quantityAvailable === 0}
+                    className="flex-1 bg-blue-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
                   >
                     Add to Cart
                   </button>

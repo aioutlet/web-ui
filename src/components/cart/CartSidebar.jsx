@@ -151,8 +151,16 @@ const CartSidebar = () => {
                     className="flex-shrink-0"
                   >
                     <img
-                      src={item.image}
+                      src={
+                        item.image ||
+                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" fill="%23e5e7eb"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" fill="%239ca3af"%3ENo Image%3C/text%3E%3C/svg%3E'
+                      }
                       alt={item.name}
+                      onError={e => {
+                        e.target.onerror = null; // Prevent infinite loop
+                        e.target.src =
+                          'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" fill="%23e5e7eb"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" fill="%239ca3af"%3ENo Image%3C/text%3E%3C/svg%3E';
+                      }}
                       className="w-20 h-20 object-cover rounded-lg bg-gray-100 dark:bg-gray-700 hover:opacity-75 transition-opacity"
                     />
                   </Link>
