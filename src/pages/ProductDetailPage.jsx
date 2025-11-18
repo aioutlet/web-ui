@@ -28,9 +28,16 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState(new Set());
 
-  // Helper function to check if product is in cart
-  const isInCart = productId => {
-    return cartItems.some(item => item.id === productId);
+  // Helper function to check if specific variant is in cart
+  const isInCart = () => {
+    if (!product?.sku || selectedColor === null || !selectedSize) {
+      return false;
+    }
+    const color = product.colors[selectedColor]?.name;
+    if (!color) return false;
+
+    const variantSku = `${product.sku}-${color.toUpperCase()}-${selectedSize.toUpperCase()}`;
+    return cartItems.some(item => item.sku === variantSku);
   };
 
   // Helper function to check if product is in favorites
@@ -248,8 +255,12 @@ const ProductDetailPage = () => {
   };
 
   const handleRemoveFromCart = () => {
-    if (product) {
-      dispatch(removeFromCartAsync(product.id));
+    if (product && selectedColor !== null && selectedSize) {
+      const color = product.colors[selectedColor]?.name;
+      if (!color) return;
+
+      const variantSku = `${product.sku}-${color.toUpperCase()}-${selectedSize.toUpperCase()}`;
+      dispatch(removeFromCartAsync(variantSku));
     }
   };
 
@@ -522,7 +533,7 @@ const ProductDetailPage = () => {
               </div>
 
               <div className="flex space-x-4">
-                {isInCart(product.id) ? (
+                {isInCart() ? (
                   <button
                     onClick={handleRemoveFromCart}
                     className="flex-1 bg-red-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"

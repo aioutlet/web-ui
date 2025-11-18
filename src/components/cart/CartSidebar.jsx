@@ -27,17 +27,17 @@ const CartSidebar = () => {
     }
   }, [items.length, isOpen, dispatch]);
 
-  const handleQuantityChange = (id, currentQuantity, change) => {
+  const handleQuantityChange = (sku, currentQuantity, change) => {
     const newQuantity = currentQuantity + change;
     if (newQuantity > 0) {
-      dispatch(updateQuantityAsync({ productId: id, quantity: newQuantity }));
+      dispatch(updateQuantityAsync({ sku, quantity: newQuantity }));
     } else {
-      dispatch(removeFromCartAsync(id));
+      dispatch(removeFromCartAsync(sku));
     }
   };
 
-  const handleRemoveItem = id => {
-    dispatch(removeFromCartAsync(id));
+  const handleRemoveItem = sku => {
+    dispatch(removeFromCartAsync(sku));
   };
 
   const handleGoToCart = () => {
@@ -238,7 +238,7 @@ const CartSidebar = () => {
                       <div className="inline-flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
                         <button
                           onClick={() =>
-                            handleQuantityChange(item.id, item.quantity, -1)
+                            handleQuantityChange(item.sku, item.quantity, -1)
                           }
                           className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-l-lg transition-colors"
                           aria-label="Decrease quantity"
@@ -254,7 +254,7 @@ const CartSidebar = () => {
                         </span>
                         <button
                           onClick={() =>
-                            handleQuantityChange(item.id, item.quantity, 1)
+                            handleQuantityChange(item.sku, item.quantity, 1)
                           }
                           className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-r-lg transition-colors"
                           aria-label="Increase quantity"
@@ -264,7 +264,7 @@ const CartSidebar = () => {
                       </div>
 
                       <button
-                        onClick={() => handleRemoveItem(item.id)}
+                        onClick={() => handleRemoveItem(item.sku)}
                         className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium"
                       >
                         Delete

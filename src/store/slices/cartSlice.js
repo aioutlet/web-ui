@@ -32,6 +32,7 @@ const mapBackendCartToState = backendCart => {
   const items = backendCart.items.map(item => {
     return {
       id: item.productId,
+      sku: item.sku,
       name: item.productName,
       price: item.price,
       quantity: item.quantity,
@@ -148,22 +149,18 @@ export const addToCartAsync = createAsyncThunk(
  */
 export const updateQuantityAsync = createAsyncThunk(
   'cart/updateQuantity',
-  async ({ productId, quantity }, { getState, rejectWithValue }) => {
+  async ({ sku, quantity }, { getState, rejectWithValue }) => {
     try {
       const { user } = getState();
 
       if (user.user) {
         // Authenticated user
-        const response = await cartAPI.updateItem(productId, quantity);
+        const response = await cartAPI.updateItem(sku, quantity);
         return { data: response.data, isGuest: false };
       } else {
         // Guest user
         const guestId = getGuestId();
-        const response = await cartAPI.updateGuestItem(
-          guestId,
-          productId,
-          quantity
-        );
+        const response = await cartAPI.updateGuestItem(guestId, sku, quantity);
         return { data: response.data, isGuest: true, guestId };
       }
     } catch (error) {
@@ -295,19 +292,19 @@ const cartSlice = createSlice({
       state.totalPrice = totals.totalPrice;
     },
     removeFromCart: (state, action) => {
-      state.items = state.items.filter(item => item.id !== action.payload);
+      state.items = state.items.filter(item => item.sku !== action.payload);
       const totals = calculateTotals(state.items);
       state.totalItems = totals.totalItems;
       state.totalPrice = totals.totalPrice;
     },
     updateQuantity: (state, action) => {
-      const { id, quantity } = action.payload;
-      const item = state.items.find(item => item.id === id);
+      const { sku, quantity } = action.payload;
+      const item = state.items.find(item => item.sku === sku);
 
       if (item) {
         item.quantity = quantity;
         if (quantity <= 0) {
-          state.items = state.items.filter(item => item.id !== id);
+          state.items = state.items.filter(item => item.sku !== sku);
         }
       }
 

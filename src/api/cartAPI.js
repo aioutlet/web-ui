@@ -25,12 +25,12 @@ export const addItem = async itemData => {
 
 /**
  * Update item quantity in authenticated user's cart
- * @param {string} productId - Product ID
+ * @param {string} sku - Product variant SKU
  * @param {number} quantity - New quantity
  * @returns {Promise} Updated cart
  */
-export const updateItem = async (productId, quantity) => {
-  const response = await bffClient.put(`/api/cart/items/${productId}`, {
+export const updateItem = async (sku, quantity) => {
+  const response = await bffClient.put(`/api/cart/items/${sku}`, {
     quantity,
   });
   return response.data;
@@ -38,11 +38,11 @@ export const updateItem = async (productId, quantity) => {
 
 /**
  * Remove item from authenticated user's cart
- * @param {string} productId - Product ID
+ * @param {string} sku - Product variant SKU
  * @returns {Promise} Updated cart
  */
-export const removeItem = async productId => {
-  const response = await bffClient.delete(`/api/cart/items/${productId}`);
+export const removeItem = async sku => {
+  const response = await bffClient.delete(`/api/cart/items/${sku}`);
   return response.data;
 };
 
@@ -96,13 +96,13 @@ export const addGuestItem = async (guestId, itemData) => {
 /**
  * Update item quantity in guest cart
  * @param {string} guestId - Guest ID (UUID)
- * @param {string} productId - Product ID
+ * @param {string} sku - Product variant SKU
  * @param {number} quantity - New quantity
  * @returns {Promise} Updated cart
  */
-export const updateGuestItem = async (guestId, productId, quantity) => {
+export const updateGuestItem = async (guestId, sku, quantity) => {
   const response = await bffClient.put(
-    `/api/cart/guest/${guestId}/items/${productId}`,
+    `/api/cart/guest/${guestId}/items/${sku}`,
     { quantity }
   );
   return response.data;
@@ -111,12 +111,12 @@ export const updateGuestItem = async (guestId, productId, quantity) => {
 /**
  * Remove item from guest cart
  * @param {string} guestId - Guest ID (UUID)
- * @param {string} productId - Product ID
+ * @param {string} sku - Product variant SKU
  * @returns {Promise} Updated cart
  */
-export const removeGuestItem = async (guestId, productId) => {
+export const removeGuestItem = async (guestId, sku) => {
   const response = await bffClient.delete(
-    `/api/cart/guest/${guestId}/items/${productId}`
+    `/api/cart/guest/${guestId}/items/${sku}`
   );
   return response.data;
 };
