@@ -24,15 +24,32 @@ const CartPage = () => {
   const isFreeDelivery = totalPrice >= freeDeliveryThreshold;
   const amountToFreeDelivery = freeDeliveryThreshold - totalPrice;
 
-  const handleQuantityChange = (id, currentQuantity, change) => {
+  const handleQuantityChange = (
+    sku,
+    currentQuantity,
+    change,
+    quantityAvailable
+  ) => {
     const newQuantity = currentQuantity + change;
+
+    // Check if increasing quantity would exceed available inventory
+    if (
+      change > 0 &&
+      quantityAvailable !== null &&
+      newQuantity > quantityAvailable
+    ) {
+      return; // Don't allow quantity to exceed available inventory
+    }
+
     if (newQuantity > 0) {
-      dispatch(updateQuantityAsync({ productId: id, quantity: newQuantity }));
+      dispatch(updateQuantityAsync({ sku, quantity: newQuantity }));
+    } else {
+      dispatch(removeFromCartAsync(sku));
     }
   };
 
-  const handleRemoveItem = id => {
-    dispatch(removeFromCartAsync(id));
+  const handleRemoveItem = sku => {
+    dispatch(removeFromCartAsync(sku));
   };
 
   const handleClearCart = () => {
@@ -267,7 +284,12 @@ const CartPage = () => {
                           <div className="inline-flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
                             <button
                               onClick={() =>
-                                handleQuantityChange(item.id, item.quantity, -1)
+                                handleQuantityChange(
+                                  item.sku,
+                                  item.quantity,
+                                  -1,
+                                  item.quantityAvailable
+                                )
                               }
                               className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-l-lg transition-colors"
                               aria-label="Decrease quantity"
@@ -279,9 +301,18 @@ const CartPage = () => {
                             </span>
                             <button
                               onClick={() =>
-                                handleQuantityChange(item.id, item.quantity, 1)
+                                handleQuantityChange(
+                                  item.sku,
+                                  item.quantity,
+                                  1,
+                                  item.quantityAvailable
+                                )
                               }
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-r-lg transition-colors"
+                              disabled={
+                                item.quantityAvailable !== null &&
+                                item.quantity >= item.quantityAvailable
+                              }
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-r-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 dark:disabled:hover:bg-gray-700"
                               aria-label="Increase quantity"
                             >
                               <PlusIcon className="h-4 w-4 text-gray-700 dark:text-gray-300" />
@@ -292,7 +323,7 @@ const CartPage = () => {
                         {/* Action Links */}
                         <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
                           <button
-                            onClick={() => handleRemoveItem(item.id)}
+                            onClick={() => handleRemoveItem(item.sku)}
                             className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium"
                           >
                             Delete
