@@ -14,7 +14,12 @@ const KEYS = {
  * @returns {string|null}
  */
 export const getToken = () => {
-  return localStorage.getItem(KEYS.ACCESS_TOKEN);
+  const token = localStorage.getItem(KEYS.ACCESS_TOKEN);
+  console.log('🔍 getToken called:', {
+    hasToken: !!token,
+    tokenPreview: token ? token.substring(0, 20) + '...' : 'null',
+  });
+  return token;
 };
 
 /**
@@ -31,8 +36,17 @@ export const getRefreshToken = () => {
  * @param {string} refreshToken
  */
 export const setToken = (accessToken, refreshToken) => {
+  console.log('🔐 setToken called:', {
+    hasAccessToken: !!accessToken,
+    accessTokenLength: accessToken?.length,
+    hasRefreshToken: !!refreshToken,
+  });
+
   if (accessToken) {
     localStorage.setItem(KEYS.ACCESS_TOKEN, accessToken);
+    console.log('✅ Token stored, verifying...', {
+      stored: localStorage.getItem(KEYS.ACCESS_TOKEN)?.substring(0, 20) + '...',
+    });
   }
   if (refreshToken) {
     localStorage.setItem(KEYS.REFRESH_TOKEN, refreshToken);

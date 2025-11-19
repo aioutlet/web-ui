@@ -29,6 +29,13 @@ bffClient.interceptors.request.use(
 
     // Add auth token
     const token = getToken();
+    console.log('🔑 bffClient interceptor:', {
+      url: config.url,
+      method: config.method,
+      hasToken: !!token,
+      tokenPreview: token ? `${token.substring(0, 20)}...` : 'none',
+    });
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -91,12 +98,18 @@ bffClient.interceptors.response.use(
 
     // Handle 401 Unauthorized - Token refresh
     if (error.response.status === 401 && !originalRequest._retry) {
+      console.warn('⚠️ 401 Unauthorized:', {
+        url: originalRequest.url,
+        hasRefreshToken: !!localStorage.getItem('refreshToken'),
+      });
+
       originalRequest._retry = true;
 
       try {
         const refreshToken = localStorage.getItem('refreshToken');
 
         if (!refreshToken) {
+          console.error('❌ No refresh token available, clearing auth');
           clearAuth();
           window.location.href = '/login';
           return Promise.reject(error);

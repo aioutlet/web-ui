@@ -9,8 +9,13 @@ const LoginPage = () => {
 
   // Redirect if already authenticated
   useEffect(() => {
+    console.log('🔒 Auth state changed:', {
+      isAuthenticated,
+      from: location.state?.from?.pathname,
+    });
     if (isAuthenticated) {
       const from = location.state?.from?.pathname || '/';
+      console.log('✅ Already authenticated, redirecting to:', from);
       navigate(from, { replace: true });
     }
   }, [isAuthenticated, navigate, location]);
@@ -61,17 +66,32 @@ const LoginPage = () => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!validateForm()) return;
+    console.log('=== LOGIN ATTEMPT ===');
+    console.log('Email:', formData.email);
+    console.log('Password length:', formData.password?.length);
+
+    if (!validateForm()) {
+      console.log('Validation failed, errors:', errors);
+      return;
+    }
 
     setSubmitMessage('');
     setErrors({});
 
     try {
-      await loginAsync({
+      console.log('Calling loginAsync...');
+      const result = await loginAsync({
         email: formData.email,
         password: formData.password,
       });
+
+      console.log('Login result:', result);
       setSubmitMessage('Login successful! Welcome back to AIOutlet.');
+
+      // Redirect after successful login
+      const from = location.state?.from?.pathname || '/';
+      console.log('Redirecting to:', from);
+      navigate(from, { replace: true });
     } catch (error) {
       console.error('Login error:', error);
       const errorMessage = error.message || 'Login failed. Please try again.';
@@ -193,6 +213,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isLoggingIn}
+              onClick={() => console.log('🖱️ Button clicked')}
               className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {isLoggingIn ? (

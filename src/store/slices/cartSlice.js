@@ -32,17 +32,14 @@ const fetchInventoryForItems = async items => {
     const skus = items.map(item => item.sku).filter(Boolean);
     if (skus.length === 0) return {};
 
-    console.log('Fetching inventory for SKUs:', skus);
     const response = await bffClient.post('/api/inventory/batch', { skus });
     const inventoryData = response.data?.data || [];
-    console.log('Inventory response:', inventoryData);
 
     // Create a map of sku -> inventory
     const inventoryMap = {};
     inventoryData.forEach(inv => {
       inventoryMap[inv.sku] = inv.quantityAvailable;
     });
-    console.log('Inventory map:', inventoryMap);
 
     return inventoryMap;
   } catch (error) {

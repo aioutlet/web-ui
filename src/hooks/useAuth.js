@@ -70,29 +70,53 @@ export const useAuth = () => {
       // Process the response immediately in mutationFn
       const data = response.data;
 
-      const accessToken = data.jwt || data.accessToken;
+      console.log('📦 Login API response:', {
+        hasJwt: !!data.jwt,
+        hasAccessToken: !!data.accessToken,
+        hasRefreshToken: !!data.refreshToken,
+        hasUser: !!data.user,
+        hasToken: !!data.token,
+        dataKeys: Object.keys(data),
+        fullData: data,
+      });
+
+      const accessToken = data.token || data.jwt || data.accessToken;
       const refreshToken = data.refreshToken;
 
+      // Set token and user state immediately
       if (accessToken) {
         setToken(accessToken, refreshToken);
+        console.log('✅ Token stored');
+      } else {
+        console.error('❌ No access token found in response!');
       }
 
       if (data.user) {
         setUser(data.user);
-      }
-
-      // Transfer guest cart to user account if exists
-      try {
-        const guestId = localStorage.getItem('guestId');
-        if (guestId) {
-          await dispatch(transferCartAsync()).unwrap();
-        }
-      } catch (error) {
-        console.error('Cart transfer failed:', error);
-        // Don't fail login if cart transfer fails
+        console.log('✅ User state set');
       }
 
       return data;
+    },
+    onSuccess: async () => {
+      // Transfer guest cart AFTER login completes and auth state is established
+      const guestId = localStorage.getItem('guestId');
+      if (guestId) {
+        console.log('🛒 Transferring guest cart after login...');
+        try {
+          await dispatch(transferCartAsync()).unwrap();
+          console.log('✅ Cart transfer successful');
+          localStorage.removeItem('guestId');
+        } catch (error) {
+          console.error('⚠️ Cart transfer failed (non-critical):', {
+            message: error.message,
+            statusCode: error.statusCode,
+            response: error.response?.data,
+            fullError: error,
+          });
+          // Don't fail the login if cart transfer fails
+        }
+      }
     },
     onError: error => {
       console.error('Login mutation failed:', {
