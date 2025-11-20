@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   ArrowLeftIcon,
   PencilIcon,
@@ -8,12 +9,13 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import bffClient from '../api/bffClient';
-import { useAuthStore } from '../store/authStore';
+import { updateUser } from '../store/slices/authSlice';
 
 const AccountPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user, updateUser } = useAuthStore();
+  const dispatch = useDispatch();
+  const { user } = useSelector(state => state.auth);
 
   const [isEditing, setIsEditing] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
@@ -51,12 +53,12 @@ const AccountPage = () => {
     gender: 'prefer-not-to-say',
   });
 
-  // Sync profile data from backend to Zustand store
+  // Sync profile data from backend to Redux store
   useEffect(() => {
     if (profileResponse) {
-      updateUser(profileResponse);
+      dispatch(updateUser(profileResponse));
     }
-  }, [profileResponse, updateUser]);
+  }, [profileResponse, dispatch]);
 
   useEffect(() => {
     if (profileData) {
@@ -77,12 +79,12 @@ const AccountPage = () => {
       return response.data;
     },
     onSuccess: data => {
-      // Update both React Query cache and Zustand store
+      // Update both React Query cache and Redux store
       queryClient.invalidateQueries(['userProfile']);
 
-      // Update the Zustand auth store with the new user data
+      // Update the Redux auth store with the new user data
       // Backend returns user object directly
-      updateUser(data);
+      dispatch(updateUser(data));
 
       setSaveMessage('Profile updated successfully!');
       setErrorMessage('');

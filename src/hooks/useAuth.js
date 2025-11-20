@@ -1,17 +1,23 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import bffClient from '../api/bffClient';
-import { useAuthStore } from '../store/authStore';
-import { setToken, getRefreshToken } from '../utils/storage';
+import {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  setUser,
+  logout as logoutAction,
+} from '../store/slices/authSlice';
+import { getRefreshToken } from '../utils/storage';
 import { transferCartAsync } from '../store/slices/cartSlice';
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, isAuthenticated, setUser, clearUser } = useAuthStore();
+  const { user, isAuthenticated } = useSelector(state => state.auth);
 
   // ============================================
   // QUERIES
@@ -62,6 +68,8 @@ export const useAuth = () => {
   // Login mutation
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }) => {
+      dispatch(loginStart());
+
       const response = await bffClient.post('/api/auth/login', {
         email,
         password,
@@ -83,18 +91,18 @@ export const useAuth = () => {
       const accessToken = data.token || data.jwt || data.accessToken;
       const refreshToken = data.refreshToken;
 
-      // Set token and user state immediately
-      if (accessToken) {
-        setToken(accessToken, refreshToken);
-        console.log('✅ Token stored');
-      } else {
-        console.error('❌ No access token found in response!');
+      if (!accessToken || !data.user) {
+        throw new Error('Invalid login response: missing token or user data');
       }
 
-      if (data.user) {
-        setUser(data.user);
-        console.log('✅ User state set');
-      }
+      // Dispatch to Redux
+      dispatch(
+        loginSuccess({
+          user: data.user,
+          token: accessToken,
+          refreshToken: refreshToken,
+        })
+      );
 
       return data;
     },
@@ -125,6 +133,7 @@ export const useAuth = () => {
         response: error.response,
         fullError: error,
       });
+      dispatch(loginFailure(error.message || 'Login failed'));
     },
   });
 
@@ -137,14 +146,14 @@ export const useAuth = () => {
       return response.data;
     },
     onSuccess: () => {
-      clearUser();
+      dispatch(logoutAction());
       queryClient.clear(); // Clear all cached queries
       navigate('/login');
     },
     onError: error => {
       // Even if API fails, clear local state
       console.error('Logout error:', error);
-      clearUser();
+      dispatch(logoutAction());
       queryClient.clear();
       navigate('/login');
     },
@@ -217,9 +226,9 @@ export const useAuth = () => {
   // Handle currentUser data changes (React Query v5 pattern)
   useEffect(() => {
     if (currentUserData?.user) {
-      setUser(currentUserData.user);
+      dispatch(setUser(currentUserData.user));
     }
-  }, [currentUserData, setUser]);
+  }, [currentUserData, dispatch]);
 
   // Handle currentUser error (React Query v5 pattern)
   useEffect(() => {
@@ -230,11 +239,11 @@ export const useAuth = () => {
         currentUserError.statusCode === 401 ||
         currentUserError.response?.status === 401
       ) {
-        clearUser();
+        dispatch(logoutAction());
         navigate('/login');
       }
     }
-  }, [currentUserError, clearUser, navigate]);
+  }, [currentUserError, dispatch, navigate]);
 
   // ============================================
   // RETURN API

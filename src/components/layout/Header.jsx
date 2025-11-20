@@ -4,7 +4,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toggleCart } from '../../store/slices/cartSlice';
 import ThemeToggle from '../ui/ThemeToggle';
 import UserDropdown from '../UserDropdown';
-import { useAuthStore } from '../../store/authStore';
 import PropTypes from 'prop-types';
 
 // Icons matching the design
@@ -119,8 +118,7 @@ const Header = () => {
 
   const dispatch = useDispatch();
   const { totalItems } = useSelector(state => state.cart);
-  // Use Zustand auth store instead of Redux
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useSelector(state => state.auth);
 
   // Sync search query with URL when on search page
   useEffect(() => {

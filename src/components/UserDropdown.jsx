@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { useAuth } from '../hooks/useAuth';
-import { useAuthStore } from '../store/authStore';
 import PropTypes from 'prop-types';
 
 // Icons
@@ -112,7 +112,7 @@ const UserDropdown = ({ className = '' }) => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { logoutAsync, isLoggingOut } = useAuth();
-  const { user } = useAuthStore();
+  const { user } = useSelector(state => state.auth);
 
   // Close dropdown when clicking outside
   useEffect(() => {

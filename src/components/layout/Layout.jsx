@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
-import { useAuthStore } from '../../store/authStore';
 import { fetchCartAsync } from '../../store/slices/cartSlice';
 import Header from './Header';
 import Footer from './Footer';
@@ -10,7 +9,7 @@ import CartSidebar from '../cart/CartSidebar';
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
   const isCartOpen = useSelector(state => state.cart.isOpen);
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useSelector(state => state.auth);
 
   // Initialize cart on mount and when auth state changes
   useEffect(() => {

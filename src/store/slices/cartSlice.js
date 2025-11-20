@@ -89,10 +89,10 @@ export const fetchCartAsync = createAsyncThunk(
   'cart/fetch',
   async (_, { getState, rejectWithValue }) => {
     try {
-      const { user } = getState();
+      const { auth } = getState();
       let response;
 
-      if (user.user) {
+      if (auth.user) {
         // Authenticated user
         response = await cartAPI.getCart();
       } else {
@@ -107,7 +107,7 @@ export const fetchCartAsync = createAsyncThunk(
       return {
         data: response.data,
         inventoryMap,
-        isGuest: !user.user,
+        isGuest: !auth.user,
       };
     } catch (error) {
       // If cart doesn't exist, return empty cart
@@ -115,7 +115,7 @@ export const fetchCartAsync = createAsyncThunk(
         return {
           data: { items: [] },
           inventoryMap: {},
-          isGuest: !getState().user.user,
+          isGuest: !getState().auth.user,
         };
       }
       return rejectWithValue(
@@ -132,7 +132,7 @@ export const addToCartAsync = createAsyncThunk(
   'cart/addItem',
   async ({ product, quantity = 1 }, { getState, rejectWithValue }) => {
     try {
-      const { user } = getState();
+      const { auth } = getState();
       const itemData = {
         productId: product.id,
         productName: product.name,
@@ -144,7 +144,7 @@ export const addToCartAsync = createAsyncThunk(
       };
 
       console.log('addToCartAsync: Preparing to add item', {
-        isAuthenticated: !!user.user,
+        isAuthenticated: !!auth.user,
         itemData,
         product: {
           id: product.id,
@@ -155,7 +155,7 @@ export const addToCartAsync = createAsyncThunk(
       });
 
       let response;
-      if (user.user) {
+      if (auth.user) {
         // Authenticated user
         console.log('addToCartAsync: Adding item for authenticated user');
         response = await cartAPI.addItem(itemData);
@@ -174,8 +174,8 @@ export const addToCartAsync = createAsyncThunk(
       return {
         data: response.data,
         inventoryMap,
-        isGuest: !user.user,
-        guestId: !user.user ? getGuestId() : null,
+        isGuest: !auth.user,
+        guestId: !auth.user ? getGuestId() : null,
       };
     } catch (error) {
       console.error('addToCartAsync: Error caught', {
@@ -201,10 +201,10 @@ export const updateQuantityAsync = createAsyncThunk(
   'cart/updateQuantity',
   async ({ sku, quantity }, { getState, rejectWithValue }) => {
     try {
-      const { user } = getState();
+      const { auth } = getState();
       let response;
 
-      if (user.user) {
+      if (auth.user) {
         // Authenticated user
         response = await cartAPI.updateItem(sku, quantity);
       } else {
@@ -219,7 +219,7 @@ export const updateQuantityAsync = createAsyncThunk(
       return {
         data: response.data,
         inventoryMap,
-        isGuest: !user.user,
+        isGuest: !auth.user,
       };
     } catch (error) {
       return rejectWithValue(
@@ -236,10 +236,10 @@ export const removeFromCartAsync = createAsyncThunk(
   'cart/removeItem',
   async (productId, { getState, rejectWithValue }) => {
     try {
-      const { user } = getState();
+      const { auth } = getState();
       let response;
 
-      if (user.user) {
+      if (auth.user) {
         // Authenticated user
         response = await cartAPI.removeItem(productId);
       } else {
@@ -254,7 +254,7 @@ export const removeFromCartAsync = createAsyncThunk(
       return {
         data: response.data,
         inventoryMap,
-        isGuest: !user.user,
+        isGuest: !auth.user,
       };
     } catch (error) {
       return rejectWithValue(
@@ -272,9 +272,9 @@ export const clearCartAsync = createAsyncThunk(
   'cart/clear',
   async (_, { getState, rejectWithValue }) => {
     try {
-      const { user } = getState();
+      const { auth } = getState();
 
-      if (user.user) {
+      if (auth.user) {
         // Authenticated user
         await cartAPI.clearCart();
       } else {
