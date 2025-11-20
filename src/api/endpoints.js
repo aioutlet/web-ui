@@ -2,102 +2,97 @@
  * BFF API Endpoints
  * Centralized endpoint definitions for all BFF routes
  * All requests from web UI go through the BFF (Backend for Frontend)
+ * Note: Base URL is already set in bffClient, so paths here are relative
  */
-import { BFF_BASE_URL } from './bffClient';
 
 export const API_ENDPOINTS = {
   // Health Check
-  HEALTH: `${BFF_BASE_URL}/health`,
+  HEALTH: '/health',
 
   // Home Page
   HOME: {
-    TRENDING: `${BFF_BASE_URL}/api/home/trending`,
-    TRENDING_CATEGORIES: `${BFF_BASE_URL}/api/home/trending-categories`,
-    CATEGORIES: `${BFF_BASE_URL}/api/home/categories`,
+    TRENDING: '/api/home/trending',
+    TRENDING_CATEGORIES: '/api/home/trending-categories',
+    CATEGORIES: '/api/home/categories',
   },
 
   // Storefront
   STOREFRONT: {
-    HOME: `${BFF_BASE_URL}/api/storefront/home`,
-    CATEGORIES: `${BFF_BASE_URL}/api/storefront/categories`,
+    HOME: '/api/storefront/home',
+    CATEGORIES: '/api/storefront/categories',
   },
 
   // Products
   PRODUCTS: {
-    LIST: `${BFF_BASE_URL}/api/products`,
-    DETAIL: id => `${BFF_BASE_URL}/api/products/${id}`,
-    SEARCH: `${BFF_BASE_URL}/api/products/search`,
-    CATEGORIES: `${BFF_BASE_URL}/api/products/categories`,
-    BY_CATEGORY: category =>
-      `${BFF_BASE_URL}/api/products?category=${category}`,
+    LIST: '/api/products',
+    DETAIL: id => `/api/products/${id}`,
+    SEARCH: '/api/products/search',
+    CATEGORIES: '/api/products/categories',
+    BY_CATEGORY: category => `/api/products?category=${category}`,
   },
 
   // Authentication (proxied through BFF)
   AUTH: {
-    LOGIN: `${BFF_BASE_URL}/api/auth/login`,
-    REGISTER: `${BFF_BASE_URL}/api/auth/register`,
-    LOGOUT: `${BFF_BASE_URL}/api/auth/logout`,
-    REFRESH: `${BFF_BASE_URL}/api/auth/refresh`,
-    ME: `${BFF_BASE_URL}/api/auth/me`,
-    FORGOT_PASSWORD: `${BFF_BASE_URL}/api/auth/password/forgot`,
-    RESET_PASSWORD: `${BFF_BASE_URL}/api/auth/password/reset`,
-    CHANGE_PASSWORD: `${BFF_BASE_URL}/api/auth/password/change`,
-    VERIFY_EMAIL: `${BFF_BASE_URL}/api/auth/email/verify`,
-    RESEND_VERIFICATION: `${BFF_BASE_URL}/api/auth/email/resend`,
+    LOGIN: '/api/auth/login',
+    REGISTER: '/api/auth/register',
+    LOGOUT: '/api/auth/logout',
+    REFRESH: '/api/auth/refresh',
+    ME: '/api/auth/me',
+    FORGOT_PASSWORD: '/api/auth/password/forgot',
+    RESET_PASSWORD: '/api/auth/password/reset',
+    CHANGE_PASSWORD: '/api/auth/password/change',
+    VERIFY_EMAIL: '/api/auth/email/verify',
+    RESEND_VERIFICATION: '/api/auth/email/resend',
   },
 
   // User Profile
   USER: {
-    PROFILE: `${BFF_BASE_URL}/api/user/profile`,
-    UPDATE_PROFILE: `${BFF_BASE_URL}/api/user/profile`,
-    DELETE_ACCOUNT: `${BFF_BASE_URL}/api/user/profile`,
+    PROFILE: '/api/user/profile',
+    UPDATE_PROFILE: '/api/user/profile',
+    DELETE_ACCOUNT: '/api/user/profile',
 
     // Addresses
-    ADDRESSES: `${BFF_BASE_URL}/api/user/addresses`,
-    ADDRESS_DETAIL: id => `${BFF_BASE_URL}/api/user/addresses/${id}`,
-    SET_DEFAULT_ADDRESS: id =>
-      `${BFF_BASE_URL}/api/user/addresses/${id}/default`,
+    ADDRESSES: '/api/user/addresses',
+    ADDRESS_DETAIL: id => `/api/user/addresses/${id}`,
+    SET_DEFAULT_ADDRESS: id => `/api/user/addresses/${id}/default`,
 
     // Payment Methods
-    PAYMENT_METHODS: `${BFF_BASE_URL}/api/user/payment-methods`,
-    PAYMENT_METHOD_DETAIL: id =>
-      `${BFF_BASE_URL}/api/user/payment-methods/${id}`,
-    SET_DEFAULT_PAYMENT: id =>
-      `${BFF_BASE_URL}/api/user/payment-methods/${id}/default`,
+    PAYMENT_METHODS: '/api/user/payment-methods',
+    PAYMENT_METHOD_DETAIL: id => `/api/user/payment-methods/${id}`,
+    SET_DEFAULT_PAYMENT: id => `/api/user/payment-methods/${id}/default`,
 
     // Wishlist
-    WISHLIST: `${BFF_BASE_URL}/api/user/wishlist`,
-    WISHLIST_ITEM: id => `${BFF_BASE_URL}/api/user/wishlist/${id}`,
+    WISHLIST: '/api/user/wishlist',
+    WISHLIST_ITEM: id => `/api/user/wishlist/${id}`,
   },
 
   // Cart
   CART: {
-    GET: `${BFF_BASE_URL}/api/cart`,
-    ADD_ITEM: `${BFF_BASE_URL}/api/cart/items`,
-    UPDATE_ITEM: id => `${BFF_BASE_URL}/api/cart/items/${id}`,
-    REMOVE_ITEM: id => `${BFF_BASE_URL}/api/cart/items/${id}`,
-    CLEAR: `${BFF_BASE_URL}/api/cart/clear`,
+    GET: '/api/cart',
+    ADD_ITEM: '/api/cart/items',
+    UPDATE_ITEM: id => `/api/cart/items/${id}`,
+    REMOVE_ITEM: id => `/api/cart/items/${id}`,
+    CLEAR: '/api/cart/clear',
   },
 
   // Orders
   ORDERS: {
-    LIST: `${BFF_BASE_URL}/api/orders`,
-    DETAIL: id => `${BFF_BASE_URL}/api/orders/${id}`,
-    CREATE: `${BFF_BASE_URL}/api/orders`,
-    CANCEL: id => `${BFF_BASE_URL}/api/orders/${id}/cancel`,
+    LIST: '/api/orders',
+    DETAIL: id => `/api/orders/${id}`,
+    CREATE: '/api/orders',
+    CANCEL: id => `/api/orders/${id}/cancel`,
   },
 
   // Reviews
   REVIEWS: {
-    BY_PRODUCT: productId =>
-      `${BFF_BASE_URL}/api/reviews/products/${productId}`,
-    CREATE: `${BFF_BASE_URL}/api/reviews`,
-    UPDATE: id => `${BFF_BASE_URL}/api/reviews/${id}`,
-    DELETE: id => `${BFF_BASE_URL}/api/reviews/${id}`,
+    BY_PRODUCT: productId => `/api/reviews/products/${productId}`,
+    CREATE: '/api/reviews',
+    UPDATE: id => `/api/reviews/${id}`,
+    DELETE: id => `/api/reviews/${id}`,
   },
 
   // Inventory
   INVENTORY: {
-    BATCH: `${BFF_BASE_URL}/api/inventory/batch`,
+    BATCH: '/api/inventory/batch',
   },
 };
