@@ -66,10 +66,6 @@ const LoginPage = () => {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log('=== LOGIN ATTEMPT ===');
-    console.log('Email:', formData.email);
-    console.log('Password length:', formData.password?.length);
-
     if (!validateForm()) {
       console.log('Validation failed, errors:', errors);
       return;
