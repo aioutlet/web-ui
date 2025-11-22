@@ -26,6 +26,15 @@ export const createOrder = async orderData => {
  */
 export const getMyOrders = async () => {
   const response = await bffClient.get(`${API_ENDPOINTS.ORDERS.LIST}/my`);
+  console.log('📦 getMyOrders API response:', response);
+  console.log('📦 response.data:', response.data);
+
+  // The BFF returns { success: true, data: orders }
+  // We need to extract the actual orders array
+  if (response.data && response.data.data) {
+    return response.data.data;
+  }
+
   return response.data;
 };
 

@@ -130,6 +130,7 @@ const CheckoutPage = () => {
         items: items.map(item => ({
           productId: item.id,
           productName: item.name,
+          productImageUrl: item.image || item.imageUrl,
           unitPrice: item.price,
           quantity: item.quantity,
         })),

@@ -1,12 +1,30 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { orders as mockOrders } from '../../data/orders';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import ordersAPI from '../../api/ordersAPI';
 
 // Initial state for orders
 const initialState = {
-  orders: mockOrders, // In future, this will be populated from API
+  orders: [],
   loading: false,
   error: null,
 };
+
+// Async thunk to fetch orders from API
+export const fetchOrders = createAsyncThunk(
+  'orders/fetchOrders',
+  async (_, { rejectWithValue }) => {
+    try {
+      console.log('🔄 Fetching orders from API...');
+      const response = await ordersAPI.getMyOrders();
+      console.log('✅ Orders fetched successfully:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ Failed to fetch orders:', error);
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to fetch orders'
+      );
+    }
+  }
+);
 
 // Redux slice for orders state management
 const ordersSlice = createSlice({
@@ -30,22 +48,21 @@ const ordersSlice = createSlice({
       state.error = null;
     },
   },
-  // Future: Add extraReducers for async thunks
-  // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(fetchOrders.pending, (state) => {
-  //       state.loading = true;
-  //       state.error = null;
-  //     })
-  //     .addCase(fetchOrders.fulfilled, (state, action) => {
-  //       state.loading = false;
-  //       state.orders = action.payload;
-  //     })
-  //     .addCase(fetchOrders.failure, (state, action) => {
-  //       state.loading = false;
-  //       state.error = action.payload;
-  //     });
-  // },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchOrders.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload;
+      })
+      .addCase(fetchOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
 });
 
 // Export actions
@@ -59,18 +76,5 @@ export const selectOrdersError = state => state.orders.error;
 
 // Memoized selectors for derived state (using createSelector if needed)
 export const selectOrdersCount = state => state.orders.orders.length;
-
-// Future: Add async thunks for API calls
-// export const fetchOrders = createAsyncThunk(
-//   'orders/fetchOrders',
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const response = await ordersAPI.getOrders();
-//       return response.data;
-//     } catch (error) {
-//       return rejectWithValue(error.response.data);
-//     }
-//   }
-// );
 
 export default ordersSlice.reducer;

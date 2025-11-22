@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   MagnifyingGlassIcon,
   ChevronDownIcon,
@@ -8,13 +8,22 @@ import {
 } from '@heroicons/react/24/outline';
 import Paginator from '../components/ui/Paginator';
 import OrderProgressBar from '../components/ui/OrderProgressBar';
-import { selectAllOrders } from '../store/slices/ordersSlice';
+import {
+  selectAllOrders,
+  selectOrdersLoading,
+  selectOrdersError,
+  fetchOrders,
+} from '../store/slices/ordersSlice';
 import { filterOrders } from '../utils/orderHelpers';
 
 function OrdersPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   // Get orders from Redux store
   const allOrders = useSelector(selectAllOrders);
+  const isLoadingOrders = useSelector(selectOrdersLoading);
+  const ordersError = useSelector(selectOrdersError);
 
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,6 +33,11 @@ function OrdersPage() {
   const [timeFilter, setTimeFilter] = useState('all-time');
   const [timeFilterOpen, setTimeFilterOpen] = useState(false);
   const ordersPerPage = 5;
+
+  // Fetch orders on mount
+  useEffect(() => {
+    dispatch(fetchOrders());
+  }, [dispatch]);
 
   const statusOptions = [
     { value: 'all', label: 'All Orders' },
@@ -41,9 +55,12 @@ function OrdersPage() {
     { value: 'all-time', label: 'All Orders' },
   ];
 
+  // Ensure allOrders is always an array
+  const ordersArray = Array.isArray(allOrders) ? allOrders : [];
+
   // Filter orders using the helper function from ordersSlice
   const filteredOrders = filterOrders(
-    allOrders,
+    ordersArray,
     searchTerm,
     statusFilter,
     timeFilter
@@ -63,13 +80,11 @@ function OrdersPage() {
   };
 
   useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => {
+    // Use the loading state from Redux
+    if (!isLoadingOrders) {
       setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
+    }
+  }, [isLoadingOrders]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -100,6 +115,46 @@ function OrdersPage() {
             <p className="mt-4 text-gray-600 dark:text-gray-300">
               Loading your orders...
             </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (ordersError) {
+    return (
+      <div className="relative min-h-screen bg-white dark:bg-gray-900">
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-purple-50/50 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20" />
+        <div className="relative flex items-center justify-center min-h-screen">
+          <div className="text-center max-w-md mx-auto px-4">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+              <svg
+                className="h-12 w-12 text-red-500 mx-auto mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <h3 className="text-lg font-semibold text-red-900 dark:text-red-200 mb-2">
+                Failed to Load Orders
+              </h3>
+              <p className="text-red-700 dark:text-red-300 mb-4">
+                {ordersError}
+              </p>
+              <button
+                onClick={() => dispatch(fetchOrders())}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -271,7 +326,7 @@ function OrdersPage() {
                           Order number
                         </p>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {order.id}
+                          {order.orderNumber || order.id}
                         </p>
                       </div>
                       <div>
@@ -279,7 +334,16 @@ function OrdersPage() {
                           Date placed
                         </p>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {order.placedDate}
+                          {order.createdAt
+                            ? new Date(order.createdAt).toLocaleDateString(
+                                'en-US',
+                                {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                }
+                              )
+                            : 'N/A'}
                         </p>
                       </div>
                       <div>
@@ -287,7 +351,7 @@ function OrdersPage() {
                           Total amount
                         </p>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {order.total}
+                          ${order.totalAmount?.toFixed(2) || '0.00'}
                         </p>
                       </div>
                     </div>
@@ -308,32 +372,41 @@ function OrdersPage() {
 
                   {/* Order Content */}
                   <div className="space-y-6">
-                    {order.items.map((item, itemIndex) => (
+                    {order.items?.map((item, itemIndex) => (
                       <div key={item.id}>
                         <div className="flex items-start gap-4 mb-3">
                           <div className="flex-shrink-0">
-                            <img
-                              src={item.image}
-                              alt={item.title}
-                              className="w-20 h-20 object-cover rounded-md bg-gray-100 dark:bg-gray-700"
-                            />
+                            {item.productImageUrl ? (
+                              <img
+                                src={item.productImageUrl}
+                                alt={item.productName}
+                                className="w-20 h-20 object-cover rounded-md bg-gray-100 dark:bg-gray-700"
+                                onError={e => {
+                                  e.target.onerror = null;
+                                  e.target.src =
+                                    'https://via.placeholder.com/80?text=No+Image';
+                                }}
+                              />
+                            ) : (
+                              <div className="w-20 h-20 flex items-center justify-center rounded-md bg-gray-100 dark:bg-gray-700 text-gray-400 text-xs">
+                                No Image
+                              </div>
+                            )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <h3 className="text-base font-medium text-gray-900 dark:text-white mb-1">
-                              {item.title}
+                              {item.productName}
                             </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2 line-clamp-2">
-                              {item.description}
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              Quantity: {item.quantity}
                             </p>
-                            {item.quantity > 1 && (
-                              <p className="text-sm text-gray-600 dark:text-gray-400">
-                                Quantity: {item.quantity}
-                              </p>
-                            )}
                             <div className="flex items-center gap-4 mt-3">
-                              <button className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
+                              <Link
+                                to={`/products/${item.productId}`}
+                                className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium"
+                              >
                                 View Product
-                              </button>
+                              </Link>
                               <button className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
                                 Buy Again
                               </button>
@@ -341,7 +414,7 @@ function OrdersPage() {
                           </div>
                           <div className="flex-shrink-0">
                             <p className="text-base font-semibold text-gray-900 dark:text-white">
-                              ${item.price}
+                              ${item.unitPrice?.toFixed(2) || '0.00'}
                             </p>
                           </div>
                         </div>
