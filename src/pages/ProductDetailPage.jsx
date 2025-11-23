@@ -112,7 +112,25 @@ const ProductDetailPage = () => {
             ratingDetails?.total_review_count ||
             p.num_reviews ||
             0;
-          const reviews = Array.isArray(p.reviews) ? p.reviews : [];
+
+          // Fetch reviews separately from the reviews endpoint
+          let reviews = [];
+          try {
+            const reviewsResponse = await bffClient.get(
+              `/api/products/${productId}/reviews`,
+              {
+                params: {
+                  limit: 10, // Get top 10 reviews for product detail page
+                  sort: 'recent',
+                },
+              }
+            );
+            reviews = reviewsResponse.data?.data?.reviews || [];
+            console.log('Fetched reviews:', reviews);
+          } catch (reviewError) {
+            console.error('Error fetching reviews:', reviewError);
+            // Continue without reviews - don't fail the product page load
+          }
 
           console.log('Extracted rating data:', {
             rating,
@@ -195,9 +213,9 @@ const ProductDetailPage = () => {
           setVariantInventory(inventory);
 
           // Reset quantity if it exceeds available stock
-          if (quantity > inventory.quantityAvailable) {
-            setQuantity(Math.min(quantity, inventory.quantityAvailable));
-          }
+          setQuantity(prevQuantity =>
+            Math.min(prevQuantity, inventory.quantityAvailable)
+          );
         } else {
           setVariantInventory({ quantityAvailable: 0 });
         }
@@ -208,7 +226,7 @@ const ProductDetailPage = () => {
     };
 
     fetchVariantInventory();
-  }, [product?.sku, selectedColor, selectedSize]);
+  }, [product?.sku, product?.colors, selectedColor, selectedSize]);
 
   // Handle cart actions
   const handleAddToCart = async () => {
@@ -268,9 +286,9 @@ const ProductDetailPage = () => {
   const reviews = product?.reviewsData || [];
 
   // Debug logging
-  console.log('Product data:', product);
-  console.log('Reviews data:', reviews);
-  console.log('Rating details:', product?.ratingDetails);
+  // console.log('Product data:', product);
+  // console.log('Reviews data:', reviews);
+  // console.log('Rating details:', product?.ratingDetails);
 
   if (loading) {
     return (

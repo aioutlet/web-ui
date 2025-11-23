@@ -3,31 +3,36 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
 import bffClient from '../api/bffClient';
+import ordersAPI from '../api/ordersAPI';
+import { useAuth } from '../hooks/useAuth';
 
 const WriteReviewPage = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
+  const { user } = useAuth();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasPurchased, setHasPurchased] = useState(false);
+  const [checkingPurchase, setCheckingPurchase] = useState(true);
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewText, setReviewText] = useState('');
-  const [userName, setUserName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Fetch product data from API
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       try {
-        const response = await bffClient.get(`/api/products/${productId}`);
-        if (response.data.success) {
-          const p = response.data.data;
+        // Fetch product data
+        const productResponse = await bffClient.get(
+          `/api/products/${productId}`
+        );
+        if (productResponse.data.success) {
+          const p = productResponse.data.data;
           setProduct({
             id: p.id,
             sku: p.sku,
@@ -42,23 +47,56 @@ const WriteReviewPage = () => {
           });
         } else {
           navigate('/products');
+          return;
+        }
+
+        // Check if user has purchased this product
+        // If orderId is provided in URL, use it directly
+        if (orderId) {
+          setHasPurchased(true);
+        } else {
+          // Otherwise, check user's order history
+          try {
+            const orders = await ordersAPI.getMyOrders();
+            console.log('Orders response:', orders);
+            console.log('Checking orders for productId:', productId);
+
+            // Ensure orders is an array
+            const ordersArray = Array.isArray(orders) ? orders : [];
+
+            // Check both items and orderItems, and compare both string and number IDs
+            const purchased = ordersArray.some(order => {
+              const items = order.items || order.orderItems || [];
+              console.log('Order items:', items);
+
+              return items.some(item => {
+                const itemProductId =
+                  item.productId || item.product_id || item.product?.id;
+                console.log('Comparing:', itemProductId, 'with', productId);
+                // Compare as strings to handle both string and number IDs
+                return String(itemProductId) === String(productId);
+              });
+            });
+
+            console.log('Has purchased:', purchased);
+            setHasPurchased(purchased);
+          } catch (orderError) {
+            console.error('Error checking purchase history:', orderError);
+            // Allow review even if we can't verify purchase
+            setHasPurchased(false);
+          }
         }
       } catch (error) {
         console.error('Error fetching product:', error);
         navigate('/products');
       } finally {
         setLoading(false);
+        setCheckingPurchase(false);
       }
     };
 
-    fetchProduct();
-
-    // Pre-fill user data if available (from localStorage or Redux in production)
-    const savedUserName = localStorage.getItem('userName') || '';
-    const savedUserEmail = localStorage.getItem('userEmail') || '';
-    setUserName(savedUserName);
-    setUserEmail(savedUserEmail);
-  }, [productId, navigate]);
+    fetchData();
+  }, [productId, orderId, navigate]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -79,16 +117,6 @@ const WriteReviewPage = () => {
       newErrors.reviewText = 'Review must be at least 20 characters';
     }
 
-    if (!userName.trim()) {
-      newErrors.userName = 'Name is required';
-    }
-
-    if (!userEmail.trim()) {
-      newErrors.userEmail = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
-      newErrors.userEmail = 'Please enter a valid email';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -102,34 +130,40 @@ const WriteReviewPage = () => {
 
     setIsSubmitting(true);
 
-    // Simulate API call to submit review
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // POST review to the backend
+      const reviewData = {
+        productId,
+        rating,
+        title: reviewTitle,
+        comment: reviewText,
+        author: user?.name || user?.username,
+        email: user?.email,
+        orderId,
+        verified: !!orderId, // Verified if submitted with order ID
+      };
 
-    // Save user data for future reviews
-    localStorage.setItem('userName', userName);
-    localStorage.setItem('userEmail', userEmail);
+      console.log('Submitting review:', reviewData);
 
-    // In production, this would POST to the reviews microservice API:
-    // POST /api/reviews
-    // Body: { productId, rating, title: reviewTitle, comment: reviewText, author: userName, email: userEmail, orderId }
-    const reviewData = {
-      productId: parseInt(productId),
-      rating,
-      title: reviewTitle,
-      comment: reviewText,
-      author: userName,
-      email: userEmail,
-      orderId,
-      verified: !!orderId, // Verified if submitted with order ID
-      date: new Date().toISOString(),
-    };
+      const response = await bffClient.post('/api/reviews', reviewData);
 
-    console.log('Submitting review:', reviewData);
-
-    setIsSubmitting(false);
-
-    // Navigate back to product page with success message
-    navigate(`/products/${productId}?reviewSubmitted=true`);
+      if (response.data.success) {
+        console.log('Review submitted successfully:', response.data);
+        // Navigate back to product page with success message
+        navigate(`/products/${productId}?reviewSubmitted=true`);
+      } else {
+        console.error('Review submission failed:', response.data);
+        setErrors({ submit: 'Failed to submit review. Please try again.' });
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      setErrors({
+        submit:
+          error.message || 'Failed to submit review. Please try again later.',
+      });
+      setIsSubmitting(false);
+    }
   };
 
   const renderStarRating = () => {
@@ -159,10 +193,68 @@ const WriteReviewPage = () => {
     );
   };
 
-  if (loading || !product) {
+  if (loading || checkingPurchase || !product) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  // Show message if user hasn't purchased the product
+  if (!hasPurchased) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-6">
+            <button
+              onClick={() => navigate(`/products/${productId}`)}
+              className="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium mb-4 inline-flex items-center"
+            >
+              ← Back to product
+            </button>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center">
+            <div className="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-8 h-8 text-yellow-600 dark:text-yellow-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Purchase Required
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              You need to purchase this product before you can write a review.
+              This helps ensure authentic and helpful reviews for other
+              customers.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => navigate(`/products/${productId}`)}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors"
+              >
+                View Product
+              </button>
+              <button
+                onClick={() => navigate('/account/orders')}
+                className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 font-medium transition-colors"
+              >
+                View My Orders
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -321,96 +413,39 @@ const WriteReviewPage = () => {
             </div>
           </div>
 
-          {/* User Information */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Your Information
-            </h3>
-
-            {/* Name */}
-            <div>
-              <label
-                htmlFor="userName"
-                className="block text-sm font-semibold text-gray-900 dark:text-white mb-2"
+          {/* Verified Purchase Badge */}
+          {orderId && (
+            <div className="flex items-start gap-2 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+              <svg
+                className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
               >
-                Name *
-              </label>
-              <input
-                type="text"
-                id="userName"
-                value={userName}
-                onChange={e => setUserName(e.target.value)}
-                placeholder="Your name"
-                className={`w-full px-4 py-2 border ${
-                  errors.userName
-                    ? 'border-red-300 dark:border-red-600'
-                    : 'border-gray-300 dark:border-gray-600'
-                } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white`}
-              />
-              {errors.userName && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                  {errors.userName}
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <div>
+                <p className="text-sm font-medium text-green-800 dark:text-green-300">
+                  Verified Purchase
                 </p>
-              )}
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                This will be displayed with your review
-              </p>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label
-                htmlFor="userEmail"
-                className="block text-sm font-semibold text-gray-900 dark:text-white mb-2"
-              >
-                Email *
-              </label>
-              <input
-                type="email"
-                id="userEmail"
-                value={userEmail}
-                onChange={e => setUserEmail(e.target.value)}
-                placeholder="your.email@example.com"
-                className={`w-full px-4 py-2 border ${
-                  errors.userEmail
-                    ? 'border-red-300 dark:border-red-600'
-                    : 'border-gray-300 dark:border-gray-600'
-                } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white`}
-              />
-              {errors.userEmail && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                  {errors.userEmail}
+                <p className="text-sm text-green-700 dark:text-green-400 mt-0.5">
+                  You purchased this product (Order #{orderId})
                 </p>
-              )}
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Your email will not be displayed publicly
-              </p>
-            </div>
-
-            {orderId && (
-              <div className="flex items-start gap-2 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <svg
-                  className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <div>
-                  <p className="text-sm font-medium text-green-800 dark:text-green-300">
-                    Verified Purchase
-                  </p>
-                  <p className="text-sm text-green-700 dark:text-green-400 mt-0.5">
-                    You purchased this product (Order #{orderId})
-                  </p>
-                </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* Submit Error Message */}
+          {errors.submit && (
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.submit}
+              </p>
+            </div>
+          )}
 
           {/* Submit Buttons */}
           <div className="flex gap-3 justify-end">
