@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
-import { getProductById } from '../utils/productHelpers';
+import bffClient from '../api/bffClient';
 
 const WriteReviewPage = () => {
   const { productId } = useParams();
@@ -11,6 +11,7 @@ const WriteReviewPage = () => {
   const orderId = searchParams.get('orderId');
 
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewTitle, setReviewTitle] = useState('');
@@ -21,13 +22,36 @@ const WriteReviewPage = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Load product data
-    const productData = getProductById(parseInt(productId));
-    if (!productData) {
-      navigate('/products');
-      return;
-    }
-    setProduct(productData);
+    // Fetch product data from API
+    const fetchProduct = async () => {
+      try {
+        const response = await bffClient.get(`/api/products/${productId}`);
+        if (response.data.success) {
+          const p = response.data.data;
+          setProduct({
+            id: p.id,
+            sku: p.sku,
+            name: p.name,
+            description: p.description,
+            price: p.price,
+            brand: p.brand,
+            images:
+              p.images && p.images.length > 0
+                ? p.images
+                : ['https://via.placeholder.com/800'],
+          });
+        } else {
+          navigate('/products');
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        navigate('/products');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
 
     // Pre-fill user data if available (from localStorage or Redux in production)
     const savedUserName = localStorage.getItem('userName') || '';
@@ -135,7 +159,7 @@ const WriteReviewPage = () => {
     );
   };
 
-  if (!product) {
+  if (loading || !product) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
@@ -166,7 +190,7 @@ const WriteReviewPage = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
           <div className="flex gap-4">
             <img
-              src={product.image}
+              src={product.images?.[0] || 'https://via.placeholder.com/800'}
               alt={product.name}
               className="w-20 h-20 rounded-lg object-cover bg-gray-100 dark:bg-gray-700"
             />

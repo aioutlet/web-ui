@@ -109,14 +109,7 @@ function App() {
 
                     {/* Products - Use query parameters for filtering */}
                     <Route path="/products" element={<ProductListPage />} />
-                    <Route
-                      path="/products/:id"
-                      element={<ProductDetailPage />}
-                    />
-                    <Route
-                      path="/products/:id/reviews"
-                      element={<ReviewListPage />}
-                    />
+                    {/* More specific routes first */}
                     <Route
                       path="/products/:productId/write-review"
                       element={
@@ -124,6 +117,14 @@ function App() {
                           <WriteReviewPage />
                         </ProtectedRoute>
                       }
+                    />
+                    <Route
+                      path="/products/:productId/reviews"
+                      element={<ReviewListPage />}
+                    />
+                    <Route
+                      path="/products/:productId"
+                      element={<ProductDetailPage />}
                     />
 
                     <Route
