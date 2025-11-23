@@ -16,7 +16,8 @@ export const getOrdersByTimeRange = (orders, timeFilter) => {
   const now = new Date();
 
   return orders.filter(order => {
-    const orderDate = new Date(order.placedDate);
+    // Use createdAt field from the order object
+    const orderDate = new Date(order.createdAt || order.placedDate);
     const orderYear = orderDate.getFullYear();
 
     switch (timeFilter) {
