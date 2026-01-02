@@ -82,7 +82,7 @@ const LoginPage = () => {
       });
 
       console.log('Login result:', result);
-      setSubmitMessage('Login successful! Welcome back to AIOutlet.');
+      setSubmitMessage('Login successful! Welcome back to xShop.ai.');
 
       // Redirect after successful login
       const from = location.state?.from?.pathname || '/';

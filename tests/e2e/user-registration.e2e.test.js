@@ -49,7 +49,7 @@ test.describe('User Registration E2E Workflow', () => {
     console.log('📋 Step 1: Navigating to registration page...');
 
     await page.goto(`${WEB_UI_URL}/register`);
-    await expect(page).toHaveTitle(/AIOutlet/i);
+    await expect(page).toHaveTitle(/xShop.ai/i);
 
     // Verify registration form is visible
     await expect(page.getByRole('heading', { name: /register|sign up|create account/i })).toBeVisible();

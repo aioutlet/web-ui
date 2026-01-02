@@ -15,7 +15,7 @@ test.describe('Landing Page - Homepage', () => {
 
   test('should load the homepage successfully', async ({ page }) => {
     // Verify the page loads and has the correct title
-    await expect(page).toHaveTitle(/AIOutlet/i);
+    await expect(page).toHaveTitle(/xShop.ai/i);
 
     // Verify the page is visible
     await expect(page.locator('body')).toBeVisible();
