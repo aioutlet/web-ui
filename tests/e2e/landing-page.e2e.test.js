@@ -15,7 +15,7 @@ test.describe('Landing Page - Homepage', () => {
 
   test('should load the homepage successfully', async ({ page }) => {
     // Verify the page loads and has the correct title
-    await expect(page).toHaveTitle(/xShop.ai/i);
+    await expect(page).toHaveTitle(/xshop.ai/i);
 
     // Verify the page is visible
     await expect(page.locator('body')).toBeVisible();
@@ -75,7 +75,7 @@ test.describe('Landing Page - Homepage', () => {
     await expect(header).toBeVisible();
 
     // Check for logo/brand link
-    const logo = page.getByRole('link', { name: /aioutlet|home/i }).first();
+    const logo = page.getByRole('link', { name: /xshopai|home/i }).first();
     await expect(logo).toBeVisible();
 
     // Check for search functionality (if present)

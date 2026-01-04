@@ -1,4 +1,4 @@
-# Copilot Coding Agent Instructions for aioutlet/customer-ui
+# Copilot Coding Agent Instructions for xshopai/customer-ui
 
 ## Project Overview
 
