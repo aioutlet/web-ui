@@ -131,7 +131,7 @@ const WhyChooseUs = () => {
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
             <span className="text-gray-900 dark:text-white">Why Choose</span>{' '}
             <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent dark:from-green-400 dark:to-blue-400">
-              xshop.ai
+              xshopai
             </span>
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">

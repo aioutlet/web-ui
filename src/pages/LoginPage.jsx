@@ -82,7 +82,7 @@ const LoginPage = () => {
       });
 
       console.log('Login result:', result);
-      setSubmitMessage('Login successful! Welcome back to xshop.ai.');
+      setSubmitMessage('Login successful! Welcome back to xshopai.');
 
       // Redirect after successful login
       const from = location.state?.from?.pathname || '/';

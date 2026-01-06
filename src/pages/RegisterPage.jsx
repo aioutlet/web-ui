@@ -155,7 +155,7 @@ const RegisterPage = () => {
           replace: true,
         });
       } else {
-        setSubmitMessage('Account created successfully! Welcome to xshop.ai.');
+        setSubmitMessage('Account created successfully! Welcome to xshopai.');
         setTimeout(() => {
           navigate('/', { replace: true });
         }, 1000);

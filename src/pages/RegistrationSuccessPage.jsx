@@ -94,7 +94,7 @@ const RegistrationSuccessPage = () => {
                   2
                 </span>
                 <span className="text-gray-700 dark:text-gray-300">
-                  Look for an email from xshop.ai
+                  Look for an email from xshopai
                 </span>
               </li>
               <li className="flex items-start">
