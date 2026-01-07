@@ -95,4 +95,10 @@ export const API_ENDPOINTS = {
   INVENTORY: {
     BATCH: '/api/inventory/batch',
   },
+
+  // Chat
+  CHAT: {
+    MESSAGE: '/api/chat/message',
+    HISTORY: '/api/chat/history',
+  },
 };

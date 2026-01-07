@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toggleCart } from '../../store/slices/cartSlice';
+import { useChat } from '../../contexts/ChatContext';
 import ThemeToggle from '../ui/ThemeToggle';
 import UserDropdown from '../UserDropdown';
 import PropTypes from 'prop-types';
@@ -108,6 +109,22 @@ const MenuIcon = () => (
   </svg>
 );
 
+const ChatIcon = () => (
+  <svg
+    className="w-5 h-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+    />
+  </svg>
+);
+
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -119,6 +136,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const { totalItems } = useSelector(state => state.cart);
   const { isAuthenticated } = useSelector(state => state.auth);
+  const { toggleChat } = useChat();
 
   // Sync search query with URL when on search page
   useEffect(() => {
@@ -567,6 +585,15 @@ const Header = () => {
                 <UserIcon />
               </Link>
             )}
+
+            {/* Chat Assistant */}
+            <button
+              onClick={toggleChat}
+              className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-all duration-200"
+              aria-label="Open chat assistant"
+            >
+              <ChatIcon />
+            </button>
 
             {/* Cart */}
             <button

@@ -5,6 +5,7 @@ import { fetchCartAsync } from '../../store/slices/cartSlice';
 import Header from './Header';
 import Footer from './Footer';
 import CartSidebar from '../cart/CartSidebar';
+import ChatBot from '../chat/ChatBot';
 
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const Layout = ({ children }) => {
         <Footer />
       </div>
       <CartSidebar />
+      <ChatBot />
     </div>
   );
 };

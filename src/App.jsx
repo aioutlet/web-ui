@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { store } from './store';
 import { checkAuth } from './store/slices/authSlice';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { ChatProvider } from './contexts/ChatContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -72,171 +73,176 @@ function App() {
         <Provider store={store}>
           <AuthInitializer>
             <ThemeProvider>
-              <Router
-                future={{
-                  v7_startTransition: true,
-                  v7_relativeSplatPath: true,
-                }}
-              >
-                <Layout>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route
-                      path="/customer-service/contact"
-                      element={<ContactUsPage />}
-                    />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route
-                      path="/registration-success"
-                      element={<RegistrationSuccessPage />}
-                    />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route
-                      path="/forgot-password"
-                      element={<ForgotPasswordPage />}
-                    />
-                    <Route
-                      path="/reset-password"
-                      element={<ResetPasswordPage />}
-                    />
-                    <Route
-                      path="/verify-email"
-                      element={<EmailVerificationPage />}
-                    />
+              <ChatProvider>
+                <Router
+                  future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true,
+                  }}
+                >
+                  <Layout>
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route
+                        path="/customer-service/contact"
+                        element={<ContactUsPage />}
+                      />
+                      <Route path="/register" element={<RegisterPage />} />
+                      <Route
+                        path="/registration-success"
+                        element={<RegistrationSuccessPage />}
+                      />
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route
+                        path="/forgot-password"
+                        element={<ForgotPasswordPage />}
+                      />
+                      <Route
+                        path="/reset-password"
+                        element={<ResetPasswordPage />}
+                      />
+                      <Route
+                        path="/verify-email"
+                        element={<EmailVerificationPage />}
+                      />
 
-                    {/* Categories */}
-                    <Route path="/categories" element={<CategoryListPage />} />
+                      {/* Categories */}
+                      <Route
+                        path="/categories"
+                        element={<CategoryListPage />}
+                      />
 
-                    {/* Products - Use query parameters for filtering */}
-                    <Route path="/products" element={<ProductListPage />} />
-                    {/* More specific routes first */}
-                    <Route
-                      path="/products/:productId/write-review"
-                      element={
-                        <ProtectedRoute>
-                          <WriteReviewPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/products/:productId/reviews"
-                      element={<ReviewListPage />}
-                    />
-                    <Route
-                      path="/products/:productId"
-                      element={<ProductDetailPage />}
-                    />
+                      {/* Products - Use query parameters for filtering */}
+                      <Route path="/products" element={<ProductListPage />} />
+                      {/* More specific routes first */}
+                      <Route
+                        path="/products/:productId/write-review"
+                        element={
+                          <ProtectedRoute>
+                            <WriteReviewPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/products/:productId/reviews"
+                        element={<ReviewListPage />}
+                      />
+                      <Route
+                        path="/products/:productId"
+                        element={<ProductDetailPage />}
+                      />
 
-                    <Route
-                      path="/account/orders"
-                      element={
-                        <ProtectedRoute>
-                          <OrdersPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/account/orders/:orderId"
-                      element={
-                        <ProtectedRoute>
-                          <OrderDetailsPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="/cart" element={<CartPage />} />
-                    <Route
-                      path="/checkout"
-                      element={
-                        <ProtectedRoute>
-                          <CheckoutPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/order-success"
-                      element={
-                        <ProtectedRoute>
-                          <OrderSuccessPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/account"
-                      element={
-                        <ProtectedRoute>
-                          <AccountDashboard />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/account/profile"
-                      element={
-                        <ProtectedRoute>
-                          <AccountPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/account/addresses"
-                      element={
-                        <ProtectedRoute>
-                          <AddressesPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/account/addresses/add"
-                      element={
-                        <ProtectedRoute>
-                          <AddAddressPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/account/addresses/:id/edit"
-                      element={
-                        <ProtectedRoute>
-                          <EditAddressPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/account/payments"
-                      element={
-                        <ProtectedRoute>
-                          <PaymentsPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/account/payments/add"
-                      element={
-                        <ProtectedRoute>
-                          <AddPaymentPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/account/payments/:id/edit"
-                      element={
-                        <ProtectedRoute>
-                          <EditPaymentPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/account/wishlist"
-                      element={
-                        <ProtectedRoute>
-                          <WishlistPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="/search" element={<SearchResultsPage />} />
-                    <Route path="*" element={<NotFoundPage />} />
-                  </Routes>
-                </Layout>
-              </Router>
+                      <Route
+                        path="/account/orders"
+                        element={
+                          <ProtectedRoute>
+                            <OrdersPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account/orders/:orderId"
+                        element={
+                          <ProtectedRoute>
+                            <OrderDetailsPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route path="/cart" element={<CartPage />} />
+                      <Route
+                        path="/checkout"
+                        element={
+                          <ProtectedRoute>
+                            <CheckoutPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/order-success"
+                        element={
+                          <ProtectedRoute>
+                            <OrderSuccessPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account"
+                        element={
+                          <ProtectedRoute>
+                            <AccountDashboard />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account/profile"
+                        element={
+                          <ProtectedRoute>
+                            <AccountPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account/addresses"
+                        element={
+                          <ProtectedRoute>
+                            <AddressesPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account/addresses/add"
+                        element={
+                          <ProtectedRoute>
+                            <AddAddressPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account/addresses/:id/edit"
+                        element={
+                          <ProtectedRoute>
+                            <EditAddressPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account/payments"
+                        element={
+                          <ProtectedRoute>
+                            <PaymentsPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account/payments/add"
+                        element={
+                          <ProtectedRoute>
+                            <AddPaymentPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account/payments/:id/edit"
+                        element={
+                          <ProtectedRoute>
+                            <EditPaymentPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account/wishlist"
+                        element={
+                          <ProtectedRoute>
+                            <WishlistPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route path="/search" element={<SearchResultsPage />} />
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+                  </Layout>
+                </Router>
+              </ChatProvider>
             </ThemeProvider>
           </AuthInitializer>
         </Provider>
