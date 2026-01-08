@@ -108,25 +108,158 @@ const ChatMessage = ({ message, onProductClick, onOrderClick }) => {
         {/* Order results */}
         {message.orders && message.orders.length > 0 && (
           <div className="mt-3 space-y-2">
-            {message.orders.slice(0, 3).map((order, idx) => (
-              <button
-                key={idx}
-                onClick={() => onOrderClick(order.id || order.orderId)}
-                className="w-full flex items-center gap-3 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors text-left"
-              >
-                <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center">
-                  <ClipboardDocumentListIcon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    Order #{order.orderNumber || order.id?.slice(-8)}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {order.status} • £{order.totalAmount?.toFixed(2)}
-                  </p>
-                </div>
-              </button>
-            ))}
+            {message.orders.slice(0, 3).map((order, idx) => {
+              // Status badge colors
+              const statusConfig = {
+                Created: {
+                  bg: 'bg-gray-100 dark:bg-gray-600',
+                  text: 'text-gray-700 dark:text-gray-300',
+                  icon: '📝',
+                },
+                Confirmed: {
+                  bg: 'bg-blue-100 dark:bg-blue-900/50',
+                  text: 'text-blue-700 dark:text-blue-300',
+                  icon: '✓',
+                },
+                Processing: {
+                  bg: 'bg-yellow-100 dark:bg-yellow-900/50',
+                  text: 'text-yellow-700 dark:text-yellow-300',
+                  icon: '⚙️',
+                },
+                Shipped: {
+                  bg: 'bg-purple-100 dark:bg-purple-900/50',
+                  text: 'text-purple-700 dark:text-purple-300',
+                  icon: '📦',
+                },
+                Delivered: {
+                  bg: 'bg-green-100 dark:bg-green-900/50',
+                  text: 'text-green-700 dark:text-green-300',
+                  icon: '✅',
+                },
+                Cancelled: {
+                  bg: 'bg-red-100 dark:bg-red-900/50',
+                  text: 'text-red-700 dark:text-red-300',
+                  icon: '✕',
+                },
+                Refunded: {
+                  bg: 'bg-orange-100 dark:bg-orange-900/50',
+                  text: 'text-orange-700 dark:text-orange-300',
+                  icon: '↩️',
+                },
+              };
+              const status = statusConfig[order.status] || statusConfig.Created;
+              const itemCount = order.items?.length || 0;
+              const firstItemImage = order.items?.[0]?.productImageUrl;
+              const orderDate = order.createdAt
+                ? new Date(order.createdAt).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                : null;
+
+              return (
+                <button
+                  key={idx}
+                  onClick={() => onOrderClick(order.id || order.orderId)}
+                  className="w-full rounded-xl transition-all text-left shadow-sm hover:shadow-lg overflow-hidden group"
+                >
+                  {/* Status bar at top */}
+                  <div
+                    className={`px-4 py-2 ${status.bg} flex items-center justify-between`}
+                  >
+                    <span className={`text-xs font-semibold ${status.text}`}>
+                      {status.icon} {order.status}
+                    </span>
+                    {orderDate && (
+                      <span
+                        className={`text-xs font-medium ${status.text} opacity-80`}
+                      >
+                        {orderDate}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Card body with gradient background */}
+                  <div className="bg-gradient-to-br from-white via-gray-50 to-indigo-50/30 dark:from-gray-800 dark:via-gray-800 dark:to-indigo-900/20 border-x border-b border-gray-200 dark:border-gray-700 rounded-b-xl">
+                    {/* Order number */}
+                    <div className="px-4 pt-3 pb-1">
+                      <p className="text-xs font-mono font-medium text-indigo-600 dark:text-indigo-400 tracking-wide">
+                        {order.orderNumber || `#${order.id?.slice(-8)}`}
+                      </p>
+                    </div>
+
+                    {/* Product row - image and name */}
+                    <div className="px-4 pt-2 flex items-center gap-3">
+                      {/* Order thumbnail or icon */}
+                      <div className="flex-shrink-0">
+                        {firstItemImage ? (
+                          <img
+                            src={firstItemImage}
+                            alt="Order item"
+                            className="w-12 h-12 object-cover rounded-lg bg-gray-100 dark:bg-gray-700 ring-2 ring-white dark:ring-gray-700 shadow-sm"
+                            onError={e => {
+                              e.target.onerror = null;
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className={`w-12 h-12 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 rounded-lg flex items-center justify-center ring-2 ring-white dark:ring-gray-700 shadow-sm ${firstItemImage ? 'hidden' : 'flex'}`}
+                        >
+                          <ClipboardDocumentListIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                      </div>
+
+                      {/* Product details - full width */}
+                      <div className="flex-1 min-w-0">
+                        {order.items?.[0]?.productName && (
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-2">
+                            {order.items[0].productName}
+                          </p>
+                        )}
+                        {itemCount > 1 && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                            +{itemCount - 1} more item{itemCount > 2 ? 's' : ''}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Price row - bottom right */}
+                    <div className="px-4 pb-3 pt-2 flex items-center justify-end gap-2">
+                      <span className="text-base font-bold text-gray-900 dark:text-white">
+                        {{ USD: '$', EUR: '€', GBP: '£', INR: '₹' }[
+                          order.currency
+                        ] || '$'}
+                        {order.totalAmount?.toFixed(2)}
+                      </span>
+                      <div className="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800 transition-colors">
+                        <svg
+                          className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2.5}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+            {message.orders.length > 3 && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-1">
+                +{message.orders.length - 3} more orders
+              </p>
+            )}
           </div>
         )}
 
@@ -172,6 +305,14 @@ ChatMessage.propTypes = {
         orderNumber: PropTypes.string,
         status: PropTypes.string,
         totalAmount: PropTypes.number,
+        createdAt: PropTypes.string,
+        items: PropTypes.arrayOf(
+          PropTypes.shape({
+            productName: PropTypes.string,
+            productImageUrl: PropTypes.string,
+            quantity: PropTypes.number,
+          })
+        ),
       })
     ),
   }).isRequired,
