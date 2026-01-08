@@ -16,9 +16,14 @@ export const sendChatMessage = async message => {
       message,
     });
 
+    console.log('Raw API response:', response.data);
+
     // Handle different response structures
     if (response.data?.success) {
-      return response.data.data;
+      const result = response.data.data;
+      console.log('Extracted result:', result);
+      console.log('Products in result:', result?.data?.products);
+      return result;
     }
 
     return response.data;
