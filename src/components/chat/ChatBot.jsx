@@ -8,6 +8,8 @@ import {
   ShoppingBagIcon,
   ClipboardDocumentListIcon,
   ArrowPathIcon,
+  ArrowsPointingOutIcon,
+  ArrowsPointingInIcon,
 } from '@heroicons/react/24/outline';
 import { ChatBubbleLeftRightIcon as ChatBubbleLeftRightIconSolid } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
@@ -392,6 +394,7 @@ const ChatBot = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [hasNewMessage, setHasNewMessage] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -503,18 +506,40 @@ const ChatBot = () => {
     setMessages([]);
   };
 
+  const handleToggleExpand = () => {
+    setIsExpanded(prev => !prev);
+  };
+
   return (
     <>
-      {/* Chat Window */}
+      {/* Backdrop - only in expanded mode */}
+      {isOpen && isExpanded && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={toggleChat}
+        />
+      )}
+
+      {/* Chat Window - Popup or Sidebar mode */}
       <div
-        className={`fixed bottom-20 right-4 sm:right-6 w-[calc(100%-2rem)] sm:w-96 max-h-[70vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col z-50 transform transition-all duration-300 ease-out ${
-          isOpen
-            ? 'opacity-100 translate-y-0 scale-100'
-            : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
+        className={`fixed bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col z-50 transform transition-all duration-300 ease-out ${
+          isExpanded
+            ? `right-0 top-[117px] w-full sm:w-[420px] h-[calc(100vh-117px)] rounded-none ${
+                isOpen ? 'translate-x-0' : 'translate-x-full'
+              }`
+            : `bottom-20 right-4 sm:right-6 w-[calc(100%-2rem)] sm:w-96 max-h-[70vh] rounded-2xl ${
+                isOpen
+                  ? 'opacity-100 translate-y-0 scale-100'
+                  : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
+              }`
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-2xl">
+        <div
+          className={`flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-indigo-600 to-purple-600 ${
+            isExpanded ? 'rounded-none' : 'rounded-t-2xl'
+          }`}
+        >
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
               <SparklesIcon className="w-5 h-5 text-white" />
@@ -535,6 +560,17 @@ const ChatBot = () => {
               <ArrowPathIcon className="w-5 h-5 text-white" />
             </button>
             <button
+              onClick={handleToggleExpand}
+              className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+              title={isExpanded ? 'Collapse to popup' : 'Expand to sidebar'}
+            >
+              {isExpanded ? (
+                <ArrowsPointingInIcon className="w-5 h-5 text-white" />
+              ) : (
+                <ArrowsPointingOutIcon className="w-5 h-5 text-white" />
+              )}
+            </button>
+            <button
               onClick={toggleChat}
               className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
             >
@@ -544,7 +580,11 @@ const ChatBot = () => {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 min-h-[300px] max-h-[400px]">
+        <div
+          className={`flex-1 overflow-y-auto p-4 ${
+            isExpanded ? '' : 'min-h-[300px] max-h-[400px]'
+          }`}
+        >
           {messages.map(message => (
             <ChatMessage
               key={message.id}
