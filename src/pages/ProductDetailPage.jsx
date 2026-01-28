@@ -47,27 +47,33 @@ const ProductDetailPage = () => {
 
   // Helper function to calculate star percentage for review summary
   const getStarPercentage = starRating => {
-    if (!product?.ratingDetails?.ratingDistribution) {
-      // Fallback to mock data if no real distribution available
-      const distribution = {
-        5: 81,
-        4: 14,
-        3: 4,
-        2: 0,
-        1: 1,
-      };
-      return distribution[starRating] || 0;
-    }
-
-    // Use real rating distribution data
-    const distribution = product.ratingDetails.ratingDistribution;
-    const totalReviews = product.ratingDetails.totalReviews || 0;
+    // First check if we have any reviews at all
+    const totalReviews =
+      product?.ratingDetails?.totalReviews ||
+      product?.ratingDetails?.total_review_count ||
+      product?.reviewCount ||
+      0;
 
     if (totalReviews === 0) {
       return 0;
     }
 
-    const countForRating = distribution[starRating] || 0;
+    // Get rating distribution from product data
+    const distribution =
+      product?.ratingDetails?.ratingDistribution ||
+      product?.ratingDetails?.rating_distribution;
+
+    if (!distribution) {
+      return 0;
+    }
+
+    // Handle both camelCase and snake_case keys
+    const countForRating =
+      distribution[starRating] ||
+      distribution[`${starRating}_star`] ||
+      distribution[`${starRating}star`] ||
+      0;
+
     return Math.round((countForRating / totalReviews) * 100);
   };
 
