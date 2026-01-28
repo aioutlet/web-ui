@@ -1,19 +1,20 @@
 #!/bin/bash
 
 # ============================================================================
-# Azure Container Apps Deployment Script for Customer UI
+# Azure Static Web Apps Deployment Script for Customer UI
 # ============================================================================
-# This script deploys the Customer UI to Azure Container Apps.
-# Customer UI is a React SPA served by Nginx that connects to Web BFF.
+# This script deploys the Customer UI to Azure Static Web Apps.
 # 
+# Static Web Apps is ideal for SPAs because:
+#   - Free tier available
+#   - Global CDN built-in
+#   - Automatic SSL certificates
+#   - No container overhead
+#   - Instant deployments (no cold starts)
+#
 # PREREQUISITE: Run the infrastructure deployment script first:
 #   cd infrastructure/azure/aca/scripts
 #   ./deploy-infra.sh
-#
-# The infrastructure script creates all shared resources:
-#   - Resource Group, ACR, Container Apps Environment
-#   - Service Bus, Redis, Cosmos DB, MySQL, Key Vault
-#   - Dapr components (pubsub, statestore, secretstore)
 # ============================================================================
 
 set -e
@@ -63,12 +64,19 @@ if ! command -v az &> /dev/null; then
 fi
 print_success "Azure CLI is installed"
 
-# Check Docker
-if ! command -v docker &> /dev/null; then
-    print_error "Docker is not installed. Please install Docker first."
+# Check Node.js
+if ! command -v node &> /dev/null; then
+    print_error "Node.js is not installed. Please install Node.js first."
     exit 1
 fi
-print_success "Docker is installed"
+print_success "Node.js is installed: $(node --version)"
+
+# Check npm
+if ! command -v npm &> /dev/null; then
+    print_error "npm is not installed. Please install Node.js/npm first."
+    exit 1
+fi
+print_success "npm is installed: $(npm --version)"
 
 # Check if logged into Azure
 if ! az account show &> /dev/null; then
@@ -84,8 +92,6 @@ print_header "Configuration"
 
 # Service-specific configuration
 SERVICE_NAME="customer-ui"
-SERVICE_VERSION="1.0.0"
-APP_PORT=8080
 PROJECT_NAME="xshopai"
 
 # Get script directory and service directory
@@ -139,18 +145,12 @@ print_success "Using suffix: $SUFFIX"
 # ============================================================================
 # Derive Resource Names from Infrastructure
 # ============================================================================
-# These names must match what was created by deploy-infra.sh
 RESOURCE_GROUP="rg-${PROJECT_NAME}-${ENVIRONMENT}-${SUFFIX}"
-ACR_NAME="${PROJECT_NAME}${ENVIRONMENT}${SUFFIX}"
-CONTAINER_ENV="cae-${PROJECT_NAME}-${ENVIRONMENT}-${SUFFIX}"
-KEY_VAULT="kv-${PROJECT_NAME}-${ENVIRONMENT}-${SUFFIX}"
-MANAGED_IDENTITY="id-${PROJECT_NAME}-${ENVIRONMENT}-${SUFFIX}"
+SWA_NAME="swa-${PROJECT_NAME}-${ENVIRONMENT}-${SUFFIX}"
 
 print_info "Derived resource names:"
 echo "   Resource Group:      $RESOURCE_GROUP"
-echo "   Container Registry:  $ACR_NAME"
-echo "   Container Env:       $CONTAINER_ENV"
-echo "   Key Vault:           $KEY_VAULT"
+echo "   Static Web App:      $SWA_NAME"
 echo ""
 
 # ============================================================================
@@ -169,35 +169,41 @@ if ! az group show --name "$RESOURCE_GROUP" &> /dev/null; then
 fi
 print_success "Resource Group exists: $RESOURCE_GROUP"
 
-# Check ACR
-if ! az acr show --name "$ACR_NAME" &> /dev/null; then
-    print_error "Container Registry '$ACR_NAME' does not exist."
-    exit 1
-fi
-ACR_LOGIN_SERVER=$(az acr show --name "$ACR_NAME" --query loginServer -o tsv)
-print_success "Container Registry exists: $ACR_LOGIN_SERVER"
+# Get location from resource group (for reference)
+RG_LOCATION=$(az group show --name "$RESOURCE_GROUP" --query location -o tsv)
+print_success "Resource Group Location: $RG_LOCATION"
 
-# Check Container Apps Environment
-if ! az containerapp env show --name "$CONTAINER_ENV" --resource-group "$RESOURCE_GROUP" &> /dev/null; then
-    print_error "Container Apps Environment '$CONTAINER_ENV' does not exist."
-    exit 1
-fi
-print_success "Container Apps Environment exists: $CONTAINER_ENV"
-
-# Get Managed Identity ID
-IDENTITY_ID=$(MSYS_NO_PATHCONV=1 az identity show --name "$MANAGED_IDENTITY" --resource-group "$RESOURCE_GROUP" --query id -o tsv 2>/dev/null || echo "")
-if [ -z "$IDENTITY_ID" ]; then
-    print_warning "Managed Identity not found, will deploy without it"
-else
-    print_success "Managed Identity exists: $MANAGED_IDENTITY"
-fi
+# Static Web Apps is only available in specific regions:
+# westus2, centralus, eastus2, westeurope, eastasia
+# Map to closest available SWA region
+case "$RG_LOCATION" in
+    swedencentral|northeurope|westeurope|uksouth|ukwest|francecentral|germanywestcentral)
+        SWA_LOCATION="westeurope"
+        ;;
+    eastus|eastus2|canadaeast|canadacentral)
+        SWA_LOCATION="eastus2"
+        ;;
+    westus|westus2|westus3)
+        SWA_LOCATION="westus2"
+        ;;
+    centralus|northcentralus|southcentralus)
+        SWA_LOCATION="centralus"
+        ;;
+    eastasia|southeastasia|japaneast|japanwest|australiaeast|koreacentral)
+        SWA_LOCATION="eastasia"
+        ;;
+    *)
+        SWA_LOCATION="westeurope"  # Default fallback
+        ;;
+esac
+print_success "Static Web App Location: $SWA_LOCATION (SWA has limited region availability)"
 
 # ============================================================================
 # Web BFF URL Detection
 # ============================================================================
 print_header "Web BFF Configuration"
 
-print_info "Customer UI connects to Web BFF at runtime via Nginx proxy"
+print_info "Customer UI calls Web BFF directly (CORS must be enabled on web-bff)"
 EXISTING_BFF_URL=$(az containerapp show --name web-bff --resource-group "$RESOURCE_GROUP" --query "properties.configuration.ingress.fqdn" --output tsv 2>/dev/null || echo "")
 if [ -n "$EXISTING_BFF_URL" ]; then
     WEB_BFF_URL="https://$EXISTING_BFF_URL"
@@ -205,10 +211,10 @@ if [ -n "$EXISTING_BFF_URL" ]; then
 else
     print_warning "Web BFF not found in resource group."
     echo ""
-    read -p "Enter Web BFF URL (or leave empty for default): " WEB_BFF_URL
+    read -p "Enter Web BFF URL: " WEB_BFF_URL
     if [ -z "$WEB_BFF_URL" ]; then
-        WEB_BFF_URL="http://localhost:3100"
-        print_warning "Using default URL (update after deploying Web BFF): $WEB_BFF_URL"
+        print_error "Web BFF URL is required for Static Web Apps deployment."
+        exit 1
     fi
 fi
 
@@ -220,119 +226,110 @@ print_header "Deployment Configuration Summary"
 echo -e "${CYAN}Environment:${NC}          $ENVIRONMENT"
 echo -e "${CYAN}Suffix:${NC}               $SUFFIX"
 echo -e "${CYAN}Resource Group:${NC}       $RESOURCE_GROUP"
-echo -e "${CYAN}Container Registry:${NC}   $ACR_LOGIN_SERVER"
-echo -e "${CYAN}Container Env:${NC}        $CONTAINER_ENV"
+echo -e "${CYAN}SWA Location:${NC}         $SWA_LOCATION"
 echo ""
 echo -e "${CYAN}Service Configuration:${NC}"
-echo -e "   Service Name:      $SERVICE_NAME"
-echo -e "   Service Version:   $SERVICE_VERSION"
-echo -e "   App Port:          $APP_PORT"
+echo -e "   Static Web App:    $SWA_NAME"
 echo -e "   Web BFF URL:       $WEB_BFF_URL"
 echo ""
 
 read -p "Do you want to proceed with deployment? (y/N): " CONFIRM
-if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
+if [[ ! $CONFIRM =~ ^[Yy]$ ]]; then
     print_warning "Deployment cancelled by user"
     exit 0
 fi
 
 # ============================================================================
-# Step 1: Build and Push Container Image
+# Step 1: Create Static Web App (if needed)
 # ============================================================================
-print_header "Step 1: Building and Pushing Container Image"
+print_header "Step 1: Creating Static Web App"
 
-# Login to ACR
-print_info "Logging into ACR..."
-az acr login --name "$ACR_NAME"
-print_success "Logged into ACR"
-
-# Navigate to service directory
-cd "$SERVICE_DIR"
-
-# Build Docker image (using production target)
-print_info "Building Docker image..."
-docker build --target production -t "$SERVICE_NAME:latest" .
-print_success "Docker image built"
-
-# Tag and push
-IMAGE_TAG="$ACR_LOGIN_SERVER/$SERVICE_NAME:latest"
-docker tag "$SERVICE_NAME:latest" "$IMAGE_TAG"
-print_info "Pushing image to ACR..."
-docker push "$IMAGE_TAG"
-print_success "Image pushed: $IMAGE_TAG"
-
-# ============================================================================
-# Step 2: Deploy Container App
-# ============================================================================
-print_header "Step 2: Deploying Container App"
-
-# Get ACR credentials
-ACR_PASSWORD=$(az acr credential show --name "$ACR_NAME" --query "passwords[0].value" -o tsv)
-
-# Build environment variables
-ENV_VARS=("BFF_URL=$WEB_BFF_URL")
-
-# Check if container app exists
-if az containerapp show --name "$SERVICE_NAME" --resource-group "$RESOURCE_GROUP" &> /dev/null; then
-    print_info "Container app '$SERVICE_NAME' exists, updating..."
-    az containerapp update \
-        --name "$SERVICE_NAME" \
-        --resource-group "$RESOURCE_GROUP" \
-        --image "$IMAGE_TAG" \
-        --set-env-vars "${ENV_VARS[@]}" \
-        --output none
-    print_success "Container app updated"
+if az staticwebapp show --name "$SWA_NAME" --resource-group "$RESOURCE_GROUP" &> /dev/null; then
+    print_info "Static Web App '$SWA_NAME' already exists"
 else
-    print_info "Creating container app '$SERVICE_NAME'..."
-    
-    MSYS_NO_PATHCONV=1 az containerapp create \
-        --name "$SERVICE_NAME" \
+    print_info "Creating Static Web App '$SWA_NAME'..."
+    az staticwebapp create \
+        --name "$SWA_NAME" \
         --resource-group "$RESOURCE_GROUP" \
-        --environment "$CONTAINER_ENV" \
-        --image "$IMAGE_TAG" \
-        --registry-server "$ACR_LOGIN_SERVER" \
-        --registry-username "$ACR_NAME" \
-        --registry-password "$ACR_PASSWORD" \
-        --target-port $APP_PORT \
-        --ingress external \
-        --min-replicas 1 \
-        --max-replicas 5 \
-        --cpu 0.25 \
-        --memory 0.5Gi \
-        --env-vars "${ENV_VARS[@]}" \
-        ${IDENTITY_ID:+--user-assigned "$IDENTITY_ID"} \
+        --location "$SWA_LOCATION" \
+        --sku Free \
         --output none
-    
-    print_success "Container app created"
+    print_success "Static Web App created"
 fi
 
-# ============================================================================
-# Step 3: Verify Deployment
-# ============================================================================
-print_header "Step 3: Verifying Deployment"
-
-APP_URL=$(az containerapp show \
-    --name "$SERVICE_NAME" \
+# Get deployment token
+print_info "Getting deployment token..."
+DEPLOYMENT_TOKEN=$(az staticwebapp secrets list \
+    --name "$SWA_NAME" \
     --resource-group "$RESOURCE_GROUP" \
-    --query properties.configuration.ingress.fqdn \
-    -o tsv)
+    --query "properties.apiKey" -o tsv)
 
-print_success "Deployment completed!"
+if [ -z "$DEPLOYMENT_TOKEN" ]; then
+    print_error "Failed to get deployment token"
+    exit 1
+fi
+print_success "Deployment token retrieved"
+
+# ============================================================================
+# Step 2: Build React Application
+# ============================================================================
+print_header "Step 2: Building React Application"
+
+cd "$SERVICE_DIR"
+
+# Install dependencies
+print_info "Installing dependencies..."
+npm ci
+print_success "Dependencies installed"
+
+# Build with BFF URL
+print_info "Building React app with REACT_APP_BFF_URL=$WEB_BFF_URL"
+REACT_APP_BFF_URL="$WEB_BFF_URL" npm run build
+print_success "React app built"
+
+# ============================================================================
+# Step 3: Deploy to Static Web App
+# ============================================================================
+print_header "Step 3: Deploying to Static Web App"
+
+# Check if SWA CLI is installed
+if ! command -v swa &> /dev/null; then
+    print_info "Installing SWA CLI..."
+    npm install -g @azure/static-web-apps-cli
+fi
+
+# Deploy using SWA CLI
+print_info "Deploying to Azure Static Web Apps..."
+swa deploy ./build \
+    --deployment-token "$DEPLOYMENT_TOKEN" \
+    --env production
+
+print_success "Deployment completed"
+
+# ============================================================================
+# Step 4: Get Application URL
+# ============================================================================
+print_header "Step 4: Verifying Deployment"
+
+APP_URL=$(az staticwebapp show \
+    --name "$SWA_NAME" \
+    --resource-group "$RESOURCE_GROUP" \
+    --query "defaultHostname" -o tsv)
+
+print_success "Static Web App deployed!"
 echo ""
 print_info "Application URL: https://$APP_URL"
 echo ""
 
-# Test health endpoint
-print_info "Waiting for app to start (30s)..."
-sleep 30
-
-print_info "Testing health endpoint..."
+# Test the deployment
+print_info "Testing deployment..."
+sleep 10
 HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://$APP_URL" 2>/dev/null || echo "000")
 
 if [ "$HTTP_STATUS" = "200" ]; then
     print_success "Health check passed! (HTTP $HTTP_STATUS)"
 else
-    print_warning "Health check returned HTTP $HTTP_STATUS. The app may still be starting."
+    print_warning "Health check returned HTTP $HTTP_STATUS. The app may still be propagating."
 fi
 
 # ============================================================================
@@ -341,7 +338,7 @@ fi
 print_header "Deployment Summary"
 
 echo -e "${GREEN}==============================================================================${NC}"
-echo -e "${GREEN}   ✅ $SERVICE_NAME DEPLOYED SUCCESSFULLY${NC}"
+echo -e "${GREEN}   ✅ $SERVICE_NAME DEPLOYED TO AZURE STATIC WEB APPS${NC}"
 echo -e "${GREEN}==============================================================================${NC}"
 echo ""
 echo -e "${CYAN}Application:${NC}"
@@ -349,20 +346,25 @@ echo "   URL:              https://$APP_URL"
 echo ""
 echo -e "${CYAN}Infrastructure:${NC}"
 echo "   Resource Group:   $RESOURCE_GROUP"
-echo "   Environment:      $CONTAINER_ENV"
-echo "   Registry:         $ACR_LOGIN_SERVER"
+echo "   Static Web App:   $SWA_NAME"
+echo "   SKU:              Free"
 echo ""
 echo -e "${CYAN}Configuration:${NC}"
-echo "   Web BFF URL:      $WEB_BFF_URL"
+echo "   Web BFF URL:      $WEB_BFF_URL (baked into build)"
+echo ""
+echo -e "${CYAN}Features:${NC}"
+echo "   ✓ Global CDN"
+echo "   ✓ Free SSL certificate"
+echo "   ✓ No container overhead"
+echo "   ✓ Instant deployments"
 echo ""
 echo -e "${CYAN}Useful Commands:${NC}"
-echo -e "   View logs:        ${BLUE}az containerapp logs show --name $SERVICE_NAME --resource-group $RESOURCE_GROUP --follow${NC}"
-echo -e "   Update BFF URL:   ${BLUE}az containerapp update --name $SERVICE_NAME --resource-group $RESOURCE_GROUP --set-env-vars \"BFF_URL=https://new-bff-url\"${NC}"
-echo -e "   Delete app:       ${BLUE}az containerapp delete --name $SERVICE_NAME --resource-group $RESOURCE_GROUP --yes${NC}"
+echo -e "   View app:         ${BLUE}az staticwebapp show --name $SWA_NAME --resource-group $RESOURCE_GROUP${NC}"
+echo -e "   Delete app:       ${BLUE}az staticwebapp delete --name $SWA_NAME --resource-group $RESOURCE_GROUP --yes${NC}"
+echo -e "   Redeploy:         ${BLUE}./swa.sh${NC}"
+echo ""
+echo -e "${YELLOW}⚠️  Important: Ensure CORS is enabled on web-bff for https://$APP_URL${NC}"
 echo ""
 echo -e "${CYAN}Test the deployment:${NC}"
-echo "   curl https://$APP_URL"
-echo "   # Then open in browser: https://$APP_URL"
-echo ""
-print_warning "Note: Ensure Web BFF is deployed for full functionality."
+echo "   Open in browser: https://$APP_URL"
 echo ""

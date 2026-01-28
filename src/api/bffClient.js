@@ -6,12 +6,12 @@ import axios from 'axios';
 import { getToken, setToken, clearAuth } from '../utils/storage';
 
 // BFF Configuration
-// In production, use relative URL (nginx proxies /api to web-bff)
-// In development, use REACT_APP_BFF_URL or localhost
+// - For Azure Container Apps: Use relative URL (nginx proxies /api to web-bff)
+// - For Azure Static Web Apps: Use REACT_APP_BFF_URL (direct API calls with CORS)
+// - For local development: Use REACT_APP_BFF_URL or localhost
 export const BFF_BASE_URL =
-  process.env.NODE_ENV === 'production'
-    ? '' // Empty string = relative URL, nginx handles proxying
-    : process.env.REACT_APP_BFF_URL || 'http://localhost:3100';
+  process.env.REACT_APP_BFF_URL || // SWA or explicit config takes priority
+  (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3100');
 const BFF_TIMEOUT = 10000; // 10 seconds
 
 const bffClient = axios.create({
