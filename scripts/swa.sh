@@ -12,9 +12,8 @@
 #   - No container overhead
 #   - Instant deployments (no cold starts)
 #
-# PREREQUISITE: Run the infrastructure deployment script first:
-#   cd infrastructure/azure/aca/scripts
-#   ./deploy-infra.sh
+# PREREQUISITE: Run the infrastructure deployment first:
+#   cd infrastructure/azure/aca/scripts && ./deploy.sh
 # ============================================================================
 
 set -e
