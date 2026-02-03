@@ -78,6 +78,7 @@ print_success "Suffix: $SUFFIX"
 RESOURCE_GROUP="rg-${PROJECT_NAME}-${ENVIRONMENT}-${SUFFIX}"
 SWA_NAME="swa-${SERVICE_NAME}-${ENVIRONMENT}-${SUFFIX}"
 BFF_APP_NAME="ca-web-bff-${ENVIRONMENT}-${SUFFIX}"
+KEY_VAULT_NAME="kv-${PROJECT_NAME}-${ENVIRONMENT}-${SUFFIX}"
 
 # Map to SWA-available region (SWA has limited regions)
 RG_LOCATION=$(az group show --name "$RESOURCE_GROUP" --query location -o tsv 2>/dev/null) || { print_error "Resource group not found"; exit 1; }
@@ -105,6 +106,14 @@ if [ -n "$WEB_BFF_URL" ]; then
 else
     print_error "Web BFF not found. Deploy web-bff first."
     exit 1
+fi
+
+# Get Application Insights connection string from Key Vault
+APPINSIGHTS_CONNECTION_STRING=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "appinsights-connection" --query "value" -o tsv 2>/dev/null || echo "")
+if [ -n "$APPINSIGHTS_CONNECTION_STRING" ]; then
+    print_success "Application Insights: configured"
+else
+    print_warning "Application Insights: not configured (telemetry disabled)"
 fi
 
 # ============================================================================
@@ -152,8 +161,13 @@ print_info "Installing dependencies..."
 npm ci --silent
 print_success "Dependencies installed"
 
-print_info "Building with REACT_APP_BFF_URL=$WEB_BFF_URL"
-REACT_APP_BFF_URL="$WEB_BFF_URL" npm run build
+print_info "Building with:"
+echo "  REACT_APP_BFF_URL=$WEB_BFF_URL"
+echo "  REACT_APP_APPINSIGHTS_CONNECTION_STRING=${APPINSIGHTS_CONNECTION_STRING:+[configured]}"
+
+REACT_APP_BFF_URL="$WEB_BFF_URL" \
+REACT_APP_APPINSIGHTS_CONNECTION_STRING="$APPINSIGHTS_CONNECTION_STRING" \
+npm run build
 print_success "Build complete"
 
 # ============================================================================
