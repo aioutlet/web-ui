@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { parseApiError } from '../utils/errorHelpers';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -90,9 +91,15 @@ const LoginPage = () => {
       navigate(from, { replace: true });
     } catch (error) {
       console.error('Login error:', error);
-      const errorMessage = error.message || 'Login failed. Please try again.';
-      setSubmitMessage(errorMessage);
-      setErrors({ submit: errorMessage });
+
+      // Parse error using utility function for consistent error handling
+      const { message } = parseApiError(
+        error,
+        'Login failed. Please check your credentials and try again.'
+      );
+
+      setSubmitMessage(message);
+      setErrors({ submit: message });
     }
   };
 

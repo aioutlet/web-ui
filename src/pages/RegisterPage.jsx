@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import ErrorAlert from '../components/ErrorAlert';
+import { parseApiError } from '../utils/errorHelpers';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -163,24 +164,19 @@ const RegisterPage = () => {
     } catch (error) {
       console.error('Registration error:', error);
 
-      // Extract error details from API response
-      const errorData = error.response?.data || {};
+      // Parse error using utility function for consistent error handling
+      const { message, details } = parseApiError(
+        error,
+        'Registration failed. Please try again.'
+      );
 
-      // Ensure errorMessage is always a string
-      let errorMessage = 'Something went wrong. Please try again.';
-      if (typeof errorData.error === 'string') {
-        errorMessage = errorData.error;
-      } else if (typeof error.message === 'string') {
-        errorMessage = error.message;
+      // Set validation errors for display
+      if (details) {
+        setApiValidationErrors(details);
       }
 
-      // Set API validation errors for display in ErrorAlert
-      if (errorData.validationErrors) {
-        setApiValidationErrors(errorData.validationErrors);
-      }
-
-      setSubmitMessage(errorMessage);
-      setErrors({ submit: errorMessage });
+      setSubmitMessage(message);
+      setErrors({ submit: message });
     }
   };
 
