@@ -8,14 +8,14 @@ import { getToken, setToken, clearAuth } from '../utils/storage';
 // BFF Configuration
 // - For Azure Container Apps: Use relative URL (nginx proxies /api to web-bff)
 // - For Azure Static Web Apps: Use REACT_APP_BFF_URL (direct API calls with CORS)
-// - For local development: Use REACT_APP_BFF_URL or localhost
-export const BFF_BASE_URL =
+// - For local development: Use REACT_APP_BFF_URL or localhost:8014
+export const REACT_APP_BFF_URL =
   process.env.REACT_APP_BFF_URL || // SWA or explicit config takes priority
-  (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3100');
+  (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8014');
 const BFF_TIMEOUT = 10000; // 10 seconds
 
 const bffClient = axios.create({
-  baseURL: BFF_BASE_URL,
+  baseURL: REACT_APP_BFF_URL,
   timeout: BFF_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ bffClient.interceptors.response.use(
         console.log('🔄 Attempting token refresh...');
 
         // Refresh token through BFF
-        const response = await axios.post(`${BFF_BASE_URL}/api/auth/refresh`, {
+        const response = await axios.post(`${REACT_APP_BFF_URL}/api/auth/refresh`, {
           refreshToken,
         });
 
