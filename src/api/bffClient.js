@@ -116,9 +116,12 @@ bffClient.interceptors.response.use(
         console.log('🔄 Attempting token refresh...');
 
         // Refresh token through BFF
-        const response = await axios.post(`${REACT_APP_BFF_URL}/api/auth/refresh`, {
-          refreshToken,
-        });
+        const response = await axios.post(
+          `${REACT_APP_BFF_URL}/api/auth/refresh`,
+          {
+            refreshToken,
+          }
+        );
 
         const { accessToken, refreshToken: newRefreshToken } = response.data;
 
