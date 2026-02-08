@@ -121,6 +121,7 @@ const ProductDetailPage = () => {
 
           // Fetch reviews separately from the reviews endpoint
           let reviews = [];
+          let reviewsRatingDetails = null;
           try {
             const reviewsResponse = await bffClient.get(
               `/api/products/${productId}/reviews`,
@@ -132,17 +133,26 @@ const ProductDetailPage = () => {
               }
             );
             reviews = reviewsResponse.data?.data?.reviews || [];
+            // Get rating details from reviews endpoint (always fresh)
+            reviewsRatingDetails = reviewsResponse.data?.data?.ratingDetails;
             console.log('Fetched reviews:', reviews);
+            console.log('Reviews rating details:', reviewsRatingDetails);
           } catch (reviewError) {
             console.error('Error fetching reviews:', reviewError);
             // Continue without reviews - don't fail the product page load
           }
 
+          // Use ratingDetails from reviews endpoint (most accurate), fallback to product data
+          const finalRatingDetails = reviewsRatingDetails || ratingDetails;
+          const finalRating = finalRatingDetails?.averageRating || rating;
+          const finalReviewCount =
+            finalRatingDetails?.totalReviews || reviewCount;
+
           console.log('Extracted rating data:', {
-            rating,
-            reviewCount,
+            rating: finalRating,
+            reviewCount: finalReviewCount,
             reviews: reviews.length,
-            ratingDetails,
+            ratingDetails: finalRatingDetails,
           });
 
           // Transform API product to match frontend format
@@ -157,10 +167,10 @@ const ProductDetailPage = () => {
               p.images && p.images.length > 0
                 ? p.images
                 : ['https://via.placeholder.com/800'],
-            rating,
-            reviewCount,
+            rating: finalRating,
+            reviewCount: finalReviewCount,
             reviewsData: reviews,
-            ratingDetails, // Keep detailed rating data for advanced display
+            ratingDetails: finalRatingDetails, // Use fresh rating details from reviews endpoint
             department: p.department,
             category: p.category,
             subcategory: p.subcategory,
