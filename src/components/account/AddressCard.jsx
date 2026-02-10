@@ -47,6 +47,11 @@ const AddressCard = ({ address, onEdit, onDelete, onSetDefault }) => {
 
       {/* Address Details */}
       <div className="space-y-2 mb-4">
+        {address.fullName && (
+          <p className="text-gray-900 dark:text-white font-semibold">
+            {address.fullName}
+          </p>
+        )}
         <p className="text-gray-900 dark:text-white font-medium">
           {address.addressLine1}
         </p>

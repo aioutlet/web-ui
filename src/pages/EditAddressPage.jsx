@@ -30,6 +30,7 @@ const EditAddressPage = () => {
   const [formData, setFormData] = useState({
     type: 'home',
     isDefault: false,
+    fullName: '',
     addressLine1: '',
     addressLine2: '',
     city: '',
@@ -45,6 +46,7 @@ const EditAddressPage = () => {
       setFormData({
         type: addressData.type || 'home',
         isDefault: addressData.isDefault || false,
+        fullName: addressData.fullName || '',
         addressLine1: addressData.addressLine1 || '',
         addressLine2: addressData.addressLine2 || '',
         city: addressData.city || '',
@@ -92,6 +94,8 @@ const EditAddressPage = () => {
 
   const validateForm = () => {
     const errors = {};
+    if (!formData.fullName.trim())
+      errors.fullName = 'Recipient name is required';
     if (!formData.addressLine1.trim())
       errors.addressLine1 = 'Address line 1 is required';
     if (!formData.city.trim()) errors.city = 'City is required';
@@ -234,6 +238,31 @@ const EditAddressPage = () => {
                 />
                 Set as default address
               </label>
+            </div>
+
+            {/* Recipient Full Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Recipient Full Name *
+              </label>
+              <input
+                type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                placeholder="John Doe"
+                required
+                className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 ${
+                  validationErrors.fullName
+                    ? 'border-red-500'
+                    : 'border-gray-300 dark:border-gray-600'
+                }`}
+              />
+              {validationErrors.fullName && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {validationErrors.fullName}
+                </p>
+              )}
             </div>
 
             {/* Address Line 1 */}

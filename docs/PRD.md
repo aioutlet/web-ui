@@ -6,8 +6,7 @@
 2. [Scope](#2-scope)
 3. [User Stories](#3-user-stories)
 4. [Functional Requirements](#4-functional-requirements)
-5. [Traceability Matrix](#5-traceability-matrix)
-6. [Non-Functional Requirements](#6-non-functional-requirements)
+5. [Non-Functional Requirements](#5-non-functional-requirements)
 
 ---
 
@@ -27,17 +26,7 @@ The Customer UI is the primary customer-facing web application for the xshopai e
 | **Secure Authentication**        | Safe user registration, login, and session management |
 | **Real-time Updates**            | Cart updates, inventory status, and order tracking    |
 
-### 1.3 Success Metrics
-
-| Metric                   | Target | Description                          |
-| ------------------------ | ------ | ------------------------------------ |
-| First Contentful Paint   | < 1.5s | Time to first meaningful content     |
-| Largest Contentful Paint | < 2.5s | Time to largest content element      |
-| Time to Interactive      | < 3.0s | Time until page is fully interactive |
-| Lighthouse Performance   | > 90   | Google Lighthouse performance score  |
-| Error Rate               | < 0.5% | Client-side error rate               |
-
-### 1.4 Target Users
+### 1.3 Target Users
 
 | User                     | Interaction                                                      |
 | ------------------------ | ---------------------------------------------------------------- |
@@ -335,22 +324,9 @@ Multi-step checkout process for completing purchases.
 
 ---
 
-## 5. Traceability Matrix
+## 5. Non-Functional Requirements
 
-| User Story                     | Story Title         | Requirements                                         |
-| ------------------------------ | ------------------- | ---------------------------------------------------- |
-| [3.1](#31-product-discovery)   | Product Discovery   | [4.1](#41-homepage), [4.2](#42-product-listing-page) |
-| [3.2](#32-product-details)     | Product Details     | [4.3](#43-product-detail-page)                       |
-| [3.3](#33-shopping-cart)       | Shopping Cart       | [4.4](#44-cart-page)                                 |
-| [3.4](#34-user-authentication) | User Authentication | [4.5](#45-authentication-pages)                      |
-| [3.5](#35-checkout-flow)       | Checkout Flow       | [4.7](#47-checkout-flow)                             |
-| [3.6](#36-order-management)    | Order Management    | [4.6](#46-user-profile-pages)                        |
-
----
-
-## 6. Non-Functional Requirements
-
-### 6.1 Performance
+### 5.1 Performance
 
 | Metric                   | Target    | Description                      |
 | ------------------------ | --------- | -------------------------------- |
@@ -360,7 +336,7 @@ Multi-step checkout process for completing purchases.
 | Bundle Size              | < 250KB   | Gzipped JavaScript bundle        |
 | Image Load               | Lazy load | Images below fold load on scroll |
 
-### 6.2 Accessibility
+### 5.2 Accessibility
 
 | Requirement            | Priority |
 | ---------------------- | -------- |
@@ -370,7 +346,7 @@ Multi-step checkout process for completing purchases.
 | Color contrast ratios  | High     |
 | Focus indicators       | Medium   |
 
-### 6.3 Browser Support
+### 5.3 Browser Support
 
 | Browser       | Minimum Version |
 | ------------- | --------------- |
@@ -381,7 +357,7 @@ Multi-step checkout process for completing purchases.
 | Mobile Safari | iOS 14+         |
 | Chrome Mobile | Android 10+     |
 
-### 6.4 Security
+### 5.4 Security
 
 | Requirement             | Priority |
 | ----------------------- | -------- |
@@ -391,15 +367,7 @@ Multi-step checkout process for completing purchases.
 | HTTPS only              | Critical |
 | Content Security Policy | High     |
 
-### 6.5 Reliability
-
-| Metric               | Target   |
-| -------------------- | -------- |
-| Uptime               | 99.9%    |
-| Error Rate           | < 0.5%   |
-| Graceful Degradation | Required |
-
-### 6.6 Observability
+### 5.5 Observability
 
 | Requirement                   | Priority |
 | ----------------------------- | -------- |
