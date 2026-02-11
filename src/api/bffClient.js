@@ -4,6 +4,7 @@
  */
 import axios from 'axios';
 import { getToken, setToken, clearAuth } from '../utils/storage';
+import { parseApiError, requiresReAuth } from '../utils/errorMessages';
 
 // BFF Configuration
 // - For Azure Container Apps: Use relative URL (nginx proxies /api to web-bff)
@@ -141,19 +142,19 @@ bffClient.interceptors.response.use(
       }
     }
 
-    // Enhance error with backend message
-    const backendError = new Error(
-      error.response.data?.error?.message ||
-        error.response.data?.message ||
-        error.response.statusText ||
-        'An error occurred'
-    );
-    backendError.statusCode = error.response.status;
+    // Enhance error with backend message and user-friendly message
+    const errorInfo = parseApiError(error);
+
+    const backendError = new Error(errorInfo.message);
+    backendError.statusCode = errorInfo.statusCode;
+    backendError.code = errorInfo.code;
     backendError.response = error.response;
     backendError.correlationId = error.response.headers['x-correlation-id'];
+    backendError.details = errorInfo.details;
 
     console.error('❌ BFF Error:', {
       message: backendError.message,
+      code: backendError.code,
       statusCode: backendError.statusCode,
       correlationId: backendError.correlationId,
     });
