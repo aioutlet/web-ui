@@ -81,6 +81,16 @@ export const API_ENDPOINTS = {
     DETAIL: id => `/api/orders/${id}`,
     CREATE: '/api/orders',
     CANCEL: id => `/api/orders/${id}/cancel`,
+    TRACKING: id => `/api/orders/${id}/tracking`,
+  },
+
+  // Returns
+  RETURNS: {
+    CREATE: '/api/returns',
+    MY: '/api/returns/my',
+    DETAIL: id => `/api/returns/${id}`,
+    BY_ORDER: orderId => `/api/returns/order/${orderId}`,
+    ELIGIBILITY: orderId => `/api/returns/eligibility/${orderId}`,
   },
 
   // Reviews

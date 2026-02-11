@@ -64,10 +64,25 @@ export const getOrderById = async orderId => {
 /**
  * Cancel an order
  * @param {string} orderId - Order ID
+ * @param {Object} data - Cancellation data
+ * @param {string} data.cancellationReason - Reason for cancellation
  * @returns {Promise<Object>} Cancellation result
  */
-export const cancelOrder = async orderId => {
-  const response = await bffClient.post(API_ENDPOINTS.ORDERS.CANCEL(orderId));
+export const cancelOrder = async (orderId, data) => {
+  const response = await bffClient.post(
+    API_ENDPOINTS.ORDERS.CANCEL(orderId),
+    data
+  );
+  return response.data;
+};
+
+/**
+ * Get order tracking information
+ * @param {string} orderId - Order ID
+ * @returns {Promise<Object>} Tracking information
+ */
+export const getOrderTracking = async orderId => {
+  const response = await bffClient.get(API_ENDPOINTS.ORDERS.TRACKING(orderId));
   return response.data;
 };
 
@@ -77,6 +92,7 @@ const ordersAPI = {
   getMyOrdersPaged,
   getOrderById,
   cancelOrder,
+  getOrderTracking,
 };
 
 export default ordersAPI;

@@ -1,15 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowLeftIcon,
+  ExclamationTriangleIcon,
+  TruckIcon,
+  ArrowPathIcon,
+} from '@heroicons/react/24/outline';
 import OrderProgressBar from '../components/ui/OrderProgressBar';
+import OrderTrackingTimeline from '../components/ui/OrderTrackingTimeline';
 import ordersAPI from '../api/ordersAPI';
+import returnsAPI from '../api/returnsAPI';
 
 const OrderDetailsPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
+  const [tracking, setTracking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [cancelError, setCancelError] = useState(null);
+  const [returnEligibility, setReturnEligibility] = useState(null);
+  const [checkingEligibility, setCheckingEligibility] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -27,6 +41,47 @@ const OrderDetailsPage = () => {
         const orderData = response.data || response;
         setOrder(orderData);
         setError(null);
+
+        // Fetch tracking information if order has been shipped
+        if (
+          orderData.shippingStatus === 'Shipped' ||
+          orderData.status === 'Shipped' ||
+          orderData.trackingNumber
+        ) {
+          try {
+            const trackingResponse = await ordersAPI.getOrderTracking(orderId);
+            const trackingData = trackingResponse.data || trackingResponse;
+            setTracking(trackingData);
+            console.log('📦 Order tracking fetched:', trackingData);
+          } catch (trackingErr) {
+            console.warn(
+              '⚠️ Failed to fetch tracking (non-critical):',
+              trackingErr
+            );
+            // Don't set error - tracking is optional
+          }
+        }
+
+        // Check return eligibility if order is delivered
+        if (orderData.status === 'Delivered') {
+          try {
+            setCheckingEligibility(true);
+            const eligibilityResponse =
+              await returnsAPI.checkReturnEligibility(orderId);
+            const eligibilityData =
+              eligibilityResponse.data || eligibilityResponse;
+            setReturnEligibility(eligibilityData);
+            console.log('📦 Return eligibility:', eligibilityData);
+          } catch (eligibilityErr) {
+            console.warn(
+              '⚠️ Failed to check return eligibility:',
+              eligibilityErr
+            );
+            // Don't set error - eligibility check is optional
+          } finally {
+            setCheckingEligibility(false);
+          }
+        }
       } catch (err) {
         console.error('❌ Failed to fetch order:', err);
         console.error('❌ Error response:', err.response?.data);
@@ -41,6 +96,58 @@ const OrderDetailsPage = () => {
       fetchOrder();
     }
   }, [orderId]);
+
+  // Check if order can be cancelled
+  const canCancelOrder = () => {
+    if (!order) return false;
+    const status = order.status?.toLowerCase();
+    // Can cancel if not already cancelled, delivered, or refunded
+    return !['cancelled', 'delivered', 'refunded'].includes(status);
+  };
+
+  // Handle cancel order
+  const handleCancelOrder = async () => {
+    if (!cancelReason.trim()) {
+      setCancelError('Please provide a cancellation reason');
+      return;
+    }
+
+    if (cancelReason.trim().length < 5) {
+      setCancelError('Cancellation reason must be at least 5 characters');
+      return;
+    }
+
+    try {
+      setCancelling(true);
+      setCancelError(null);
+
+      // Call API to cancel order
+      await ordersAPI.cancelOrder(orderId, {
+        cancellationReason: cancelReason.trim(),
+      });
+
+      // Refetch order to get updated status
+      const response = await ordersAPI.getOrderById(orderId);
+      const orderData = response.data || response;
+      setOrder(orderData);
+
+      // Close dialog
+      setShowCancelDialog(false);
+      setCancelReason('');
+
+      // Show success message (you could add a toast notification here)
+      console.log('Order cancelled successfully');
+    } catch (err) {
+      console.error('Failed to cancel order:', err);
+      setCancelError(
+        err.response?.data?.message ||
+          err.message ||
+          'Failed to cancel order. Please try again.'
+      );
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -102,9 +209,28 @@ const OrderDetailsPage = () => {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Order {order.orderNumber || order.id}
             </h1>
-            <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">
-              View invoice →
-            </button>
+            <div className="flex gap-3">
+              <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">
+                View invoice →
+              </button>
+              {returnEligibility?.isEligible && (
+                <button
+                  onClick={() => navigate(`/returns/request/${orderId}`)}
+                  className="px-4 py-2 text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 border border-purple-600 dark:border-purple-400 rounded-md hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors inline-flex items-center gap-2"
+                >
+                  <ArrowPathIcon className="h-4 w-4" />
+                  Request Return
+                </button>
+              )}
+              {canCancelOrder() && (
+                <button
+                  onClick={() => setShowCancelDialog(true)}
+                  className="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 border border-red-600 dark:border-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                >
+                  Cancel Order
+                </button>
+              )}
+            </div>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Order placed{' '}
@@ -174,6 +300,73 @@ const OrderDetailsPage = () => {
 
             {/* Progress Bar */}
             <OrderProgressBar status={order.status} />
+
+            {/* Tracking Information */}
+            {tracking && tracking.trackingNumber && (
+              <div className="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
+                  <TruckIcon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                    Shipment Tracking
+                  </h3>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Carrier:
+                    </span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {tracking.carrierName}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Tracking Number:
+                    </span>
+                    {tracking.trackingUrl ? (
+                      <a
+                        href={tracking.trackingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+                      >
+                        {tracking.trackingNumber} →
+                      </a>
+                    ) : (
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {tracking.trackingNumber}
+                      </span>
+                    )}
+                  </div>
+                  {tracking.estimatedDeliveryDate && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Estimated Delivery:
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {new Date(
+                          tracking.estimatedDeliveryDate
+                        ).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Tracking Timeline */}
+                {tracking.timeline && tracking.timeline.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                      Shipment History
+                    </h4>
+                    <OrderTrackingTimeline timeline={tracking.timeline} />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Three Column Layout */}
@@ -309,6 +502,79 @@ const OrderDetailsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Cancel Order Dialog */}
+      {showCancelDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+                <ExclamationTriangleIcon className="h-6 w-6 text-red-600 dark:text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Cancel Order
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Order #{order.orderNumber}
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                Are you sure you want to cancel this order? This action cannot
+                be undone. If payment was processed, you'll receive a refund
+                within 5-7 business days.
+              </p>
+
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Reason for cancellation *
+              </label>
+              <textarea
+                value={cancelReason}
+                onChange={e => setCancelReason(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white"
+                rows="3"
+                placeholder="Please provide a reason for cancelling this order (minimum 5 characters)"
+                maxLength="500"
+              />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {cancelReason.length}/500 characters
+              </p>
+
+              {cancelError && (
+                <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    {cancelError}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowCancelDialog(false);
+                  setCancelReason('');
+                  setCancelError(null);
+                }}
+                disabled={cancelling}
+                className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors disabled:opacity-50"
+              >
+                Keep Order
+              </button>
+              <button
+                onClick={handleCancelOrder}
+                disabled={cancelling || !cancelReason.trim()}
+                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {cancelling ? 'Cancelling...' : 'Cancel Order'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
