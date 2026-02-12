@@ -30,9 +30,12 @@ export const addItem = async itemData => {
  * @returns {Promise} Updated cart
  */
 export const updateItem = async (sku, quantity) => {
-  const response = await bffClient.put(`/api/cart/items/${sku}`, {
-    quantity,
-  });
+  const response = await bffClient.put(
+    `/api/cart/items/${encodeURIComponent(sku)}`,
+    {
+      quantity,
+    }
+  );
   return response.data;
 };
 
@@ -42,7 +45,9 @@ export const updateItem = async (sku, quantity) => {
  * @returns {Promise} Updated cart
  */
 export const removeItem = async sku => {
-  const response = await bffClient.delete(`/api/cart/items/${sku}`);
+  const response = await bffClient.delete(
+    `/api/cart/items/${encodeURIComponent(sku)}`
+  );
   return response.data;
 };
 
@@ -102,7 +107,7 @@ export const addGuestItem = async (guestId, itemData) => {
  */
 export const updateGuestItem = async (guestId, sku, quantity) => {
   const response = await bffClient.put(
-    `/api/cart/guest/${guestId}/items/${sku}`,
+    `/api/cart/guest/${guestId}/items/${encodeURIComponent(sku)}`,
     { quantity }
   );
   return response.data;
@@ -116,7 +121,7 @@ export const updateGuestItem = async (guestId, sku, quantity) => {
  */
 export const removeGuestItem = async (guestId, sku) => {
   const response = await bffClient.delete(
-    `/api/cart/guest/${guestId}/items/${sku}`
+    `/api/cart/guest/${guestId}/items/${encodeURIComponent(sku)}`
   );
   return response.data;
 };
