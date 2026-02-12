@@ -133,9 +133,23 @@ export const addToCartAsync = createAsyncThunk(
   async ({ product, quantity = 1 }, { getState, rejectWithValue }) => {
     try {
       const { auth } = getState();
+
+      // Generate variant SKU if we have base SKU and variant selection
+      // Format: BASE-SKU-COLOR-SIZE (e.g., WOM-CLO-TOP-001-BLACK-M)
+      let variantSku = product.sku || null;
+      if (variantSku && (product.selectedColor || product.selectedSize)) {
+        if (product.selectedColor) {
+          variantSku += `-${product.selectedColor.toUpperCase().replace(/[^A-Z0-9]/g, '')}`;
+        }
+        if (product.selectedSize) {
+          variantSku += `-${product.selectedSize.toUpperCase().replace(/[^A-Z0-9]/g, '')}`;
+        }
+      }
+
       const itemData = {
         productId: product.id,
         productName: product.name,
+        sku: variantSku, // Send variant SKU directly to avoid extra service call
         price: product.price,
         quantity,
         imageUrl: product.images?.[0] || product.image || '/placeholder.png',

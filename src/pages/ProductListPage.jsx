@@ -348,8 +348,20 @@ const ProductListPage = ({ category: propCategory }) => {
     });
 
     if (isInCart(product.id)) {
-      console.log('Removing product from cart:', product.id);
-      dispatch(removeFromCartAsync(product.id));
+      // Find the cart item to get its SKU (API requires SKU, not product ID)
+      const cartItem = cartItems.find(item => item.id === product.id);
+      if (cartItem && cartItem.sku) {
+        console.log('Removing product from cart:', {
+          productId: product.id,
+          sku: cartItem.sku,
+        });
+        dispatch(removeFromCartAsync(cartItem.sku));
+      } else {
+        console.error(
+          'Cannot remove: cart item or SKU not found for product:',
+          product.id
+        );
+      }
     } else {
       // For products with variants, select first available color/size
       // Users can change variant in cart sidebar/page

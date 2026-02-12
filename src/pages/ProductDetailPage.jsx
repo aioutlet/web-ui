@@ -253,6 +253,7 @@ const ProductDetailPage = () => {
             id: product.id,
             name: product.name,
             price: product.price,
+            sku: product.sku, // Include base SKU for variant SKU generation
             image: product.images[selectedImage],
           },
           quantity: quantity,
