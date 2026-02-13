@@ -95,6 +95,7 @@ export const API_ENDPOINTS = {
 
   // Reviews
   REVIEWS: {
+    MY: '/api/reviews/my',
     BY_PRODUCT: productId => `/api/reviews/products/${productId}`,
     CREATE: '/api/reviews',
     UPDATE: id => `/api/reviews/${id}`,

@@ -44,6 +44,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import ReturnsPage from './pages/ReturnsPage';
 import ReturnRequestPage from './pages/ReturnRequestPage';
 import ReturnDetailsPage from './pages/ReturnDetailsPage';
+import MyReviewsPage from './pages/MyReviewsPage';
 
 // Create React Query client
 const queryClient = new QueryClient({
@@ -261,6 +262,14 @@ function App() {
                         element={
                           <ProtectedRoute>
                             <WishlistPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/account/reviews"
+                        element={
+                          <ProtectedRoute>
+                            <MyReviewsPage />
                           </ProtectedRoute>
                         }
                       />
